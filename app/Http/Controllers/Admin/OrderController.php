@@ -154,6 +154,13 @@ class OrderController extends Controller
             // 3. Award points
             if ($totalPointsToAward > 0) {
                 $order->user->increment('points', $totalPointsToAward);
+
+                \App\Models\PointTransaction::create([
+                    'user_id' => $order->user_id,
+                    'amount' => $totalPointsToAward,
+                    'type' => 'purchase',
+                    'description' => 'Puntos ganados por compra - Orden #' . $order->order_number
+                ]);
             }
 
             // 4. Update coupon usage
