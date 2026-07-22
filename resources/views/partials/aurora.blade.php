@@ -23,7 +23,7 @@
         </div>
 
         <h1 class="text-6xl md:text-8xl font-black tracking-tight mb-8 leading-tight">
-            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2121] to-[#F51B1B]">$1</span>', e($settings['hero_title'] ?? 'Recursos [G]Premium[/G]')) !!}
+            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', e($settings['hero_title'] ?? 'Recursos [G]Premium[/G]')) !!}
         </h1>
 
         <p class="text-xl text-gray-300 max-w-2xl mb-12 leading-relaxed">

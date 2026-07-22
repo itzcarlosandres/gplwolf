@@ -51,7 +51,7 @@
 
         <!-- Main Title (Adaptativo en Móviles) -->
         <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white mb-4 sm:mb-6 leading-[1.1] md:leading-[1.05]">
-            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2121] via-[#F51B1B] to-amber-400">$1</span>', e($settings['hero_title'] ?? 'Las mejores [G]Marcas WordPress[/G] en un solo lugar')) !!}
+            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', e($settings['hero_title'] ?? 'Las mejores [G]Marcas WordPress[/G] en un solo lugar')) !!}
         </h1>
 
         <!-- Subtitle -->

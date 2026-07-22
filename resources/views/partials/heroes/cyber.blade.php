@@ -18,7 +18,7 @@
             </div>
 
             <h1 class="{{ $settings['hero_title_size'] ?? 'text-5xl md:text-7xl' }} font-black text-white mb-6 leading-none tracking-tight">
-                {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2121] via-[#F51B1B] to-red-400 drop-shadow-[0_0_25px_rgba(255,33,33,0.5)]">$1</span>', e($settings['hero_title'] ?? 'Ecosistema [G]WordPress Cyber[/G]')) !!}
+                {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow drop-shadow-[0_0_25px_rgba(255,33,33,0.5)]">$1</span>', e($settings['hero_title'] ?? 'Ecosistema [G]WordPress Cyber[/G]')) !!}
             </h1>
 
             <p class="text-lg text-gray-400 mb-10 max-w-xl font-mono leading-relaxed">

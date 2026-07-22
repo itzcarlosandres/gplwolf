@@ -14,7 +14,7 @@
             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F51B1B]/10 to-transparent rounded-full blur-3xl group-hover:bg-[#F51B1B]/20 transition-all duration-700"></div>
             
             <h1 class="text-5xl lg:text-7xl font-black text-white leading-tight mb-6 z-10">
-                 {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="bg-clip-text text-transparent bg-gradient-to-r from-[#F51B1B] to-pink-400">$1</span>', e($settings['hero_title'] ?? 'Todo en Uno. [G]Épico.[/G]')) !!}
+                 {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', e($settings['hero_title'] ?? 'Todo en Uno. [G]Épico.[/G]')) !!}
             </h1>
             <p class="text-lg text-gray-400 mb-8 max-w-lg z-10">
                 {{ $settings['hero_description'] ?? 'Plugins, temas y herramientas para desarrolladores. La colección más completa del mercado.' }}

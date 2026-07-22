@@ -87,6 +87,19 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        @keyframes text-shine-sweep {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .text-shimmer-red-yellow {
+            background: linear-gradient(90deg, #FF2121 0%, #f59e0b 50%, #FF2121 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: text-shine-sweep 3s linear infinite;
+            display: inline-block;
+        }
         
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

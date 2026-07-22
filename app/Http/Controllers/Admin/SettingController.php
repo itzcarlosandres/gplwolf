@@ -81,7 +81,7 @@ class SettingController extends Controller
             'hero_title' => 'required|string',
             'hero_description' => 'required|string',
             'hero_title_size' => 'required|string',
-            'hero_style' => 'required|in:aurora,stark,cyber,split',
+            'hero_style' => 'required|in:circles,aurora,stark,cyber,split',
         ]);
 
         foreach ($data as $key => $value) {

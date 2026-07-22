@@ -38,13 +38,24 @@
         }
     </script>
     <style>
-    <style>
         @import url('{{ 'https://fonts.googleapis.com/css2?family=' . str_replace(' ', '+', $globalSettings['site_font'] ?? 'Inter') . ':wght@300;400;500;600;700&display=swap' }}');
         body { font-family: '{{ $globalSettings['site_font'] ?? 'Inter' }}', sans-serif; }
         .sidebar-gradient { background: linear-gradient(180deg, #0d0d0d 0%, #1e1b4b 100%); }
         .active-link { background: rgba(255, 33, 33, 0.15); border-left: 4px solid #FF2121; position: relative; overflow: hidden; }
         .active-link::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255, 33, 33, 0.1) 0%, transparent 100%); }
         .glass-nav { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        @keyframes text-shine-sweep {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .text-shimmer-red-yellow {
+            background: linear-gradient(90deg, #FF2121 0%, #f59e0b 50%, #FF2121 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: text-shine-sweep 3s linear infinite;
+        }
     </style>
 </head>
 <body class="bg-[#0d0d0d] text-gray-200">
@@ -74,7 +85,9 @@
                         <div class="bg-gradient-to-br from-[#FF2121] to-[#F51B1B] p-2 rounded-xl shadow-lg shadow-[#FF2121]/20 group-hover:scale-110 transition-transform">
                             <i class="{{ $globalSettings['site_icon'] ?? 'fas fa-rocket' }} text-white text-lg"></i>
                         </div>
-                        <span class="text-xl font-black tracking-tight text-white group-hover:text-[#FF2121] transition-colors">{{ $globalSettings['site_name'] ?? 'MKTP' }}</span>
+                        <span class="text-xl font-black tracking-tight text-white group-hover:text-[#FF2121] transition-colors">
+                            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', '[G]Premium GPL[/G]') !!}
+                        </span>
                     @endif
                 </a>
                 <!-- Desktop Mini Logo -->

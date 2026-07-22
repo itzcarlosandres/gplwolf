@@ -18,7 +18,7 @@
             </div>
 
             <h1 class="{{ $settings['hero_title_size'] ?? 'text-5xl lg:text-7xl' }} font-black text-white mb-6 leading-[0.95] tracking-tight">
-                {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2121] to-[#F51B1B]">$1</span>', e($settings['hero_title'] ?? 'Construye con [G]código premium[/G]')) !!}
+                {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', e($settings['hero_title'] ?? 'Construye con [G]código premium[/G]')) !!}
             </h1>
 
             <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
