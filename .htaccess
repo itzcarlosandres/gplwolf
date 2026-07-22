@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /gplwolf/
+
+RewriteCond %{REQUEST_URI} !^/gplwolf/public/
+RewriteRule ^(.*)$ /gplwolf/public/$1 [R=301,L]

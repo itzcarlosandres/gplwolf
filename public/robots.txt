@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /download/
+Disallow: /profile/
+Disallow: /storage/*.zip
+Sitemap: /sitemap.xml
