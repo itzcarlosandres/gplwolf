@@ -474,7 +474,7 @@ $schemaData = [
             @endif
 
             <!-- Membership Banner -->
-            <a href="{{ route('home') }}#planes" class="block bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-2xl p-6 hover:border-amber-500/40 transition-all group">
+            <a href="{{ route('membership.pricing') }}" class="block bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-2xl p-6 hover:border-amber-500/40 transition-all group">
                 <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center mb-4">
                     <i class="fas fa-crown text-amber-400 text-xl"></i>
                 </div>

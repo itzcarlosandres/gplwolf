@@ -41,4 +41,14 @@ class MembershipController extends Controller
 
         return redirect()->route('cart.index')->with('success', $msg);
     }
+
+    public function pricing()
+    {
+        $plans = MembershipPlan::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('price', 'asc')
+            ->get();
+
+        return view('membership.pricing', compact('plans'));
+    }
 }

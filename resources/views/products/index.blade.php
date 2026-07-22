@@ -142,7 +142,7 @@
                 </div>
 
                 <!-- Membership Banner -->
-                <div class="bg-gradient-to-br from-[#F51B1B]/20 via-[#F51B1B]/20 to-[#F51B1B]/20 rounded-2xl p-6 border border-[#F51B1B]/30 relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform duration-300" onclick="window.location.href='{{ route('home') }}#planes'">
+                <div class="bg-gradient-to-br from-[#F51B1B]/20 via-[#F51B1B]/20 to-[#F51B1B]/20 rounded-2xl p-6 border border-[#F51B1B]/30 relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform duration-300" onclick="window.location.href='{{ route('membership.pricing') }}'">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#FF2121]/10 to-[#F51B1B]/10 animate-pulse"></div>
                 <div class="relative z-10">
                     <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF2121] to-[#F51B1B] flex items-center justify-center mb-4 shadow-lg shadow-[#F51B1B]/20">
@@ -194,7 +194,7 @@
             @endif
 
             <!-- Membership Promo Banner -->
-            <a href="{{ route('home') }}#planes" class="block w-full mb-6 px-4 py-3 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all group">
+            <a href="{{ route('membership.pricing') }}" class="block w-full mb-6 px-4 py-3 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 border border-amber-500/20 rounded-2xl hover:border-amber-500/40 transition-all group">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">

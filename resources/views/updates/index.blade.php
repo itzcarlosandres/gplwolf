@@ -22,7 +22,7 @@
                 <p class="text-gray-500 text-sm font-medium">Mantén tus proyectos al día con las versiones más recientes.</p>
             </div>
             
-            <a href="{{ route('home') }}#planes" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all group">
+            <a href="{{ route('membership.pricing') }}" class="shrink-0 inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-xl hover:border-amber-500/40 transition-all group">
                 <i class="fas fa-crown text-amber-400 text-sm"></i>
                 <span class="text-xs font-black text-white">Membresía desde $6.99/mes</span>
                 <i class="fas fa-arrow-right text-amber-400 text-xs group-hover:translate-x-1 transition-transform"></i>

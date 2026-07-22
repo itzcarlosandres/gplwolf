@@ -60,6 +60,7 @@ Route::get('/hero-demos', function() {
 })->name('hero.demos');
 
 // Static Info Pages
+Route::get('/membresias', [\App\Http\Controllers\MembershipController::class, 'pricing'])->name('membership.pricing');
 Route::view('/plugin-oficial', 'pages.plugin-info')->name('pages.plugin');
 Route::view('/terminos', 'pages.terms')->name('pages.terms');
 Route::view('/reembolso', 'pages.refund')->name('pages.refund');
