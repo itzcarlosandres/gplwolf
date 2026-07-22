@@ -41,25 +41,8 @@
             Descarga miles de themes y plugins premium de WordPress con licencia GPL original, archivos 100% limpios y actualizaciones automáticas.
         </p>
 
-        <!-- Dynamic Billing Toggle -->
-        <div class="inline-flex items-center bg-white/[0.03] border border-white/[0.06] p-1.5 rounded-2xl mb-16 shadow-inner">
-            <button class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300"
-                    :class="billing === 'monthly' ? 'bg-[#F51B1B] text-white shadow-md' : 'text-gray-400 hover:text-white'"
-                    @click="billing = 'monthly'">
-                Mensual
-            </button>
-            <button class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
-                    :class="billing === 'yearly' ? 'bg-[#F51B1B] text-white shadow-md' : 'text-gray-400 hover:text-white'"
-                    @click="billing = 'yearly'">
-                Anual
-                <span class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded-full">
-                    Ahorra 40%
-                </span>
-            </button>
-        </div>
-
         <!-- Plans Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch text-left">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch text-left">
             @forelse($plans as $plan)
                 @php
                     $isFeatured = $plan->is_featured;
@@ -75,8 +58,7 @@
 
                 <!-- Pricing Card -->
                 <div class="relative bg-gradient-to-b from-white/[0.04] to-transparent border rounded-[36px] p-8 flex flex-col justify-between transition-all duration-500 transform hover:-translate-y-2 group
-                    {{ $isFeatured ? 'border-red-500/40 shadow-2xl shadow-red-500/10' : 'border-white/[0.06] hover:border-white/20' }}"
-                    :class="shouldShow('{{ $billingType }}') ? 'flex' : 'hidden'">
+                    {{ $isFeatured ? 'border-red-500/40 shadow-2xl shadow-red-500/10' : 'border-white/[0.06] hover:border-white/20' }}">
 
                     <!-- Popular Ribbon -->
                     @if($isFeatured)
@@ -370,7 +352,6 @@
 <script>
     function pricingPage() {
         return {
-            billing: 'monthly', // billing switcher
             activeFaq: 1,       // active FAQ index
             timer: 15 * 60,     // 15 minutes in seconds
             timerDisplay: '15:00',
@@ -387,17 +368,6 @@
                     const seconds = this.timer % 60;
                     this.timerDisplay = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
                 }, 1000);
-            },
-
-            shouldShow(duration) {
-                // Return true if plan duration matches user's billing toggle
-                if (this.billing === 'monthly') {
-                    return duration === 'monthly' || duration === 'month';
-                } else if (this.billing === 'yearly') {
-                    // Include 'yearly', 'annual', 'year'
-                    return duration === 'yearly' || duration === 'year' || duration === 'annual';
-                }
-                return true;
             }
         }
     }
