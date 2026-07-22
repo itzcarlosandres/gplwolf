@@ -16,11 +16,15 @@ class SitemapController extends Controller
             URL::forceRootUrl(config('app.url'));
         }
 
-        // Usamos el scope 'active()' del modelo Product en lugar de buscar una columna 'status' que no existe
-        $products = Product::active()->get();
+        $xml = \Illuminate\Support\Facades\Cache::remember('sitemap_xml', 86400, function () {
+            // Usamos el scope 'active()' del modelo Product en lugar de buscar una columna 'status' que no existe
+            $products = Product::active()->get();
 
-        return response()->view('sitemap', [
-            'products' => $products,
-        ])->header('Content-Type', 'text/xml');
+            return view('sitemap', [
+                'products' => $products,
+            ])->render();
+        });
+
+        return response($xml)->header('Content-Type', 'text/xml');
     }
 }

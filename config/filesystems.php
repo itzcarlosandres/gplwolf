@@ -61,7 +61,6 @@ return [
         ],
 
         'bunnycdn' => [
-            'driver' => 'ftp', // Bunny Storage is FTP/SFTP based usually, or S3 compatible. Using S3 compatible here.
             'driver' => 's3',
             'key' => env('BUNNYCDN_API_KEY'),
             'secret' => env('BUNNYCDN_API_KEY'),

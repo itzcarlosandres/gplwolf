@@ -46,5 +46,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Register Setting Observer to clear settings cache on changes
         \App\Models\Setting::observe(\App\Observers\SettingObserver::class);
+
+        // Register Product Observer to clear sitemap cache on changes
+        \App\Models\Product::observe(\App\Observers\ProductObserver::class);
     }
 }
