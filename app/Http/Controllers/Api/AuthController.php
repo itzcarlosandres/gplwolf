@@ -44,11 +44,11 @@ class AuthController extends Controller
         if (!$existingSite) {
             // Get site limit from active membership plan, fallback to global setting if no membership, or admin is bypass
             $activeMembership = $user->activeMembership;
-            if ($user->isAdmin()) {
-                $siteLimit = 0; // Unlimited for admin
-            } elseif ($activeMembership) {
+            if ($activeMembership) {
                 // If sites_limit is 0 in DB, it means unlimited
                 $siteLimit = (int) $activeMembership->plan->sites_limit;
+            } elseif ($user->isAdmin()) {
+                $siteLimit = 0; // Unlimited for admin
             } else {
                 // Fallback to global setting if user has no active membership (e.g. they only have manual purchases)
                 $siteLimit = (int) \App\Models\Setting::where('key', 'plugin_site_limit')->value('value') ?: 1;
@@ -108,10 +108,10 @@ class AuthController extends Controller
         }
 
         // Dynamic site limit calculation
-        if ($user->isAdmin()) {
-            $sitesLimit = 'Ilimitado';
-        } elseif ($activeMembership) {
+        if ($activeMembership) {
             $sitesLimit = $activeMembership->plan->sites_limit > 0 ? $activeMembership->plan->sites_limit : 'Ilimitado';
+        } elseif ($user->isAdmin()) {
+            $sitesLimit = 'Ilimitado';
         } else {
             $sitesLimit = (int) \App\Models\Setting::where('key', 'plugin_site_limit')->value('value') ?: 1;
         }
