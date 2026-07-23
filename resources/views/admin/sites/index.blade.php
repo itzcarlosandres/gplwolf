@@ -9,15 +9,21 @@
             <p class="text-gray-400 text-sm mt-1">Gestión de sitios donde tus plugins están instalados.</p>
         </div>
         
-        <div class="relative">
-            <form action="{{ route('admin.sites.index') }}" method="GET">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" 
-                       name="search" 
-                       value="{{ request('search') }}"
-                       placeholder="Buscar dominio o cliente..." 
-                       class="bg-[#0c0c0c] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm w-64 focus:outline-none focus:border-[#FF2121]/50 focus:ring-1 focus:ring-[#FF2121]/50 transition-all text-white placeholder-gray-500">
-            </form>
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <form action="{{ route('admin.sites.index') }}" method="GET">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" 
+                           name="search" 
+                           value="{{ request('search') }}"
+                           placeholder="Buscar dominio o cliente..." 
+                           class="bg-[#0c0c0c] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm w-64 focus:outline-none focus:border-[#FF2121]/50 focus:ring-1 focus:ring-[#FF2121]/50 transition-all text-white placeholder-gray-500">
+                </form>
+            </div>
+            
+            <a href="{{ route('admin.sites.create') }}" class="px-5 py-2.5 bg-[#FF2121] hover:bg-[#ef1a1a] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#FF2121]/20 transition-all flex items-center gap-2">
+                <i class="fas fa-plus"></i> Autorizar Dominio
+            </a>
         </div>
     </div>
 
@@ -129,6 +135,11 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                            <div class="flex items-center justify-end gap-2">
+                               <!-- Edit Button -->
+                               <a href="{{ route('admin.sites.edit', $site->id) }}" class="p-2 rounded-lg bg-blue-500/10 text-blue-400 hover:text-white hover:bg-blue-500 transition-all text-xs" title="Editar Dominio">
+                                   <i class="fas fa-edit"></i>
+                               </a>
+
                                <form action="{{ route('admin.sites.ban', $site->id) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ $site->is_banned ? '¿Desbanear dominio?' : '¿BANEAR dominio? Esto impedirá que reciba actualizaciones.' }}');">
                                     @csrf
                                     <button type="submit" class="p-2 rounded-lg {{ $site->is_banned ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500' : 'bg-gray-700/50 text-gray-400 hover:bg-rose-500 hover:text-white' }} hover:text-white transition-all text-xs group/ban" title="{{ $site->is_banned ? 'Quitar Ban' : 'Banear Dominio' }}">

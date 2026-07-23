@@ -264,7 +264,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/updates/manager/store', function() { return redirect()->route('admin.updates.manager'); });
 
     // Sites/Domains Management
-    Route::resource('sites', \App\Http\Controllers\Admin\ConnectedSiteController::class)->only(['index', 'destroy']);
+    Route::resource('sites', \App\Http\Controllers\Admin\ConnectedSiteController::class);
     Route::post('sites/{site}/ban', [\App\Http\Controllers\Admin\ConnectedSiteController::class, 'toggleBan'])->name('sites.ban');
 });
 
