@@ -285,6 +285,65 @@
             @endforeach
         </div>
 
+        <!-- Historial de Transacciones de Puntos -->
+        <div class="mt-16">
+            <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-3">
+                <i class="fas fa-history text-yellow-500"></i> Historial de Puntos
+            </h3>
+            
+            <div class="glass border border-white/10 rounded-3xl overflow-hidden shadow-xl">
+                @if($transactions->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/10 bg-white/[0.02]">
+                                    <th class="p-4 text-xs font-black uppercase text-gray-400 tracking-wider">Fecha</th>
+                                    <th class="p-4 text-xs font-black uppercase text-gray-400 tracking-wider">Detalle / Operación</th>
+                                    <th class="p-4 text-xs font-black uppercase text-gray-400 tracking-wider">Tipo</th>
+                                    <th class="p-4 text-xs font-black uppercase text-gray-400 tracking-wider text-right">Puntos</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 text-sm">
+                                @foreach($transactions as $tx)
+                                    <tr class="hover:bg-white/[0.01] transition-colors">
+                                        <td class="p-4 text-gray-500 font-medium whitespace-nowrap">
+                                            {{ $tx->created_at->format('d/m/Y H:i') }}
+                                        </td>
+                                        <td class="p-4 text-white font-bold">
+                                            {{ $tx->description }}
+                                        </td>
+                                        <td class="p-4">
+                                            @if($tx->type === 'purchase')
+                                                <span class="inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-0.5 text-xs font-black uppercase text-emerald-400 border border-emerald-500/20">
+                                                    Compra
+                                                </span>
+                                            @elseif($tx->type === 'daily_claim')
+                                                <span class="inline-flex items-center rounded-md bg-amber-500/10 px-2.5 py-0.5 text-xs font-black uppercase text-amber-400 border border-amber-500/20">
+                                                    Reclamo Diario
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center rounded-md bg-red-500/10 px-2.5 py-0.5 text-xs font-black uppercase text-red-400 border border-red-500/20">
+                                                    Canje
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="p-4 text-right font-black {{ $tx->amount > 0 ? 'text-emerald-400' : 'text-red-400' }}">
+                                            {{ $tx->amount > 0 ? '+' : '' }}{{ number_format($tx->amount) }} pts
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="p-8 text-center text-gray-500 italic flex flex-col items-center gap-3">
+                        <i class="fas fa-folder-open text-4xl text-gray-700"></i>
+                        <span>No tienes transacciones de puntos registradas aún.</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- Info Footer -->
         <div class="mt-8 text-center">
             <p class="text-gray-500 text-sm">

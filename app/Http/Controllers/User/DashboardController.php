@@ -121,8 +121,13 @@ class DashboardController extends Controller
             // User is at max rank
             $progressPercent = 100;
         }
+
+        $transactions = \App\Models\PointTransaction::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
         
-        return view('user.rewards.index', compact('status', 'currentRank', 'allRanks', 'nextRank', 'progressPercent'));
+        return view('user.rewards.index', compact('status', 'currentRank', 'allRanks', 'nextRank', 'progressPercent', 'transactions'));
     }
 
     public function claimReward(\App\Services\GamificationService $gamification)
