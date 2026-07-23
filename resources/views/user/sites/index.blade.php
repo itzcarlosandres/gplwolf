@@ -4,25 +4,31 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white tracking-tight">Sitios Conectados</h1>
             <p class="text-gray-400 mt-2">Gestiona las licencias de tu membresía en tus sitios web.</p>
         </div>
-        <div class="bg-[#F51B1B]/10 border border-[#FF2121]/20 rounded-xl px-4 py-3 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#FF2121]/20 flex items-center justify-center">
-                <i class="fab fa-wordpress text-[#FF2121] text-xl"></i>
-            </div>
-            <div>
-                <p class="text-xs text-[#FF2121] font-bold uppercase tracking-wider">Límite de Sitios</p>
-                <div class="flex items-end gap-1">
-                    <span class="text-xl font-black text-white">{{ auth()->user()->connectedSites()->count() }}</span>
-                    <span class="text-sm text-gray-400 font-bold mb-0.5">/ 
-                        @php
-                            $limit = auth()->user()->activeMembership?->plan?->sites_limit ?? 1;
-                        @endphp
-                        {{ $limit == 0 ? '∞' : $limit }}
-                    </span>
+        <div class="flex flex-wrap items-center gap-4">
+            <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold transition-all border border-white/5 shadow-lg" download>
+                <i class="fas fa-download text-emerald-400"></i> Descargar Plugin Oficial
+            </a>
+            
+            <div class="bg-[#F51B1B]/10 border border-[#FF2121]/20 rounded-xl px-4 py-3 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#FF2121]/20 flex items-center justify-center">
+                    <i class="fab fa-wordpress text-[#FF2121] text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-[#FF2121] font-bold uppercase tracking-wider">Límite de Sitios</p>
+                    <div class="flex items-end gap-1">
+                        <span class="text-xl font-black text-white">{{ auth()->user()->connectedSites()->count() }}</span>
+                        <span class="text-sm text-gray-400 font-bold mb-0.5">/ 
+                            @php
+                                $limit = auth()->user()->activeMembership?->plan?->sites_limit ?? 1;
+                            @endphp
+                            {{ $limit == 0 ? '∞' : $limit }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
