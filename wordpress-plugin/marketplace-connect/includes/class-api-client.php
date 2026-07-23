@@ -98,4 +98,35 @@ class Marketplace_API_Client {
         
         return $file_path; // Retorna la ruta del ZIP descargado
     }
+
+    public function get_user_info() {
+        $token = get_option('mp_api_token');
+        if (!$token) return false;
+
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Accept' => 'application/json',
+            ),
+            'timeout' => 15,
+        );
+
+        $response = wp_remote_get($this->api_url . '/user', $args);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        if ($code !== 200) {
+            return false;
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if ($data) {
+            update_option('mp_user_info', $data);
+            return $data;
+        }
+        return false;
+    }
 }
