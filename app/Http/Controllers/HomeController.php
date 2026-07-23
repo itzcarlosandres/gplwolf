@@ -118,7 +118,7 @@ class HomeController extends Controller
         foreach ($files as $name => $file) {
             if (!$file->isDir()) {
                 $filePath = $file->getRealPath();
-                $relativePath = 'marketplace-connect/' . substr($filePath, strlen($pluginDir) + 1);
+                $relativePath = substr($filePath, strlen($pluginDir) + 1);
                 
                 // If it is the main plugin file, rewrite the API URL dynamically!
                 if ($file->getFilename() === 'marketplace-connect.php') {
