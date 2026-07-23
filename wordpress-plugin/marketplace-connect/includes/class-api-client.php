@@ -56,6 +56,15 @@ class Marketplace_API_Client {
             return false;
         }
 
+        $code = wp_remote_retrieve_response_code($response);
+        if ($code === 401 || $code === 403) {
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+            if (isset($body['code']) && in_array($body['code'], ['UNAUTHENTICATED', 'SITE_DISCONNECTED'])) {
+                delete_option('mp_api_token');
+                delete_option('mp_user_info');
+            }
+        }
+
         return json_decode(wp_remote_retrieve_body($response), true);
     }
 
@@ -118,6 +127,15 @@ class Marketplace_API_Client {
         }
 
         $code = wp_remote_retrieve_response_code($response);
+        if ($code === 401 || $code === 403) {
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+            if (isset($body['code']) && in_array($body['code'], ['UNAUTHENTICATED', 'SITE_DISCONNECTED'])) {
+                delete_option('mp_api_token');
+                delete_option('mp_user_info');
+            }
+            return false;
+        }
+
         if ($code !== 200) {
             return false;
         }
