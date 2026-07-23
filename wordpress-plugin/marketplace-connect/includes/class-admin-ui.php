@@ -145,17 +145,17 @@ class Marketplace_Admin_UI {
                         <span style="color: #a1a1aa; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Descargas Hoy</span>
                         <span style="color: #fff; font-size: 12px; font-weight: 900;"><?php echo $downloadsToday; ?> / <?php echo $isUnlimitedDownloads ? '∞' : $downloadsMax; ?></span>
                     </div>
-                    @if(!$isUnlimitedDownloads)
+                    <?php if(!$isUnlimitedDownloads): ?>
                         <div style="background: rgba(255,255,255,0.06); height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 8px;">
                             <div style="background: #ef4444; height: 100%; width: <?php echo min(100, $progressPercent); ?>%; border-radius: 9999px; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(239,68,68,0.5);"></div>
                         </div>
                         <p style="color: #52525b; font-size: 10px; margin: 0; font-weight: 600;">Cupo disponible: <?php echo max(0, $downloadsMax - $downloadsToday); ?> descargas</p>
-                    @else
+                    <?php else: ?>
                         <div style="background: rgba(255,255,255,0.06); height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 8px;">
                             <div style="background: linear-gradient(90deg, #10b981, #3b82f6); height: 100%; width: 100%; border-radius: 9999px;"></div>
                         </div>
                         <p style="color: #10b981; font-size: 10px; margin: 0; font-weight: 700;">Descargas ilimitadas activadas</p>
-                    @endif
+                    <?php endif; ?>
                 </div>
 
                 <!-- Connected Sites Progress -->
@@ -189,7 +189,14 @@ class Marketplace_Admin_UI {
 
             <!-- Grid -->
             <div class="mp-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px;">
-                <?php if (empty($products)): ?>
+                <?php if (isset($products_data['success']) && !$products_data['success']): ?>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 20px; color: #fff;">
+                        <span class="dashicons dashicons-lock" style="font-size: 36px; width: 36px; height: 36px; color: #ef4444; margin-bottom: 12px;"></span>
+                        <p style="font-size: 16px; font-weight: bold; margin: 0 0 10px 0; color: #ef4444;"><?php echo esc_html($products_data['message']); ?></p>
+                        <p style="font-size: 13px; color: #a1a1aa; margin: 0 0 16px 0;">Tu plan de membresía actual (Gratis) no tiene permisos de descarga activos o tu membresía ha vencido.</p>
+                        <a href="http://localhost/gplwolf/public/membresias" target="_blank" style="color: #fff; background: #ef4444; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Adquirir Membresía</a>
+                    </div>
+                <?php elseif (empty($products)): ?>
                     <p style="color: #71717a; grid-column: 1 / -1; text-align: center; padding: 60px; font-weight: 600;">No se encontraron recursos premium disponibles.</p>
                 <?php else: ?>
                     <?php foreach ($products as $product): ?>
