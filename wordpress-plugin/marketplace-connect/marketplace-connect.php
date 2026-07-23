@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Marketplace Connect
- * Plugin URI:  https://tudominio.com
+ * Plugin URI:  https://gplwolf.com
  * Description: Conecta tu sitio WordPress con nuestro Marketplace para instalar y actualizar recursos premium.
  * Version:     1.0.0
- * Author:      Tu Nombre
- * Author URI:  https://tudominio.com
+ * Author:      GPLWolf
+ * Author URI:  https://gplwolf.com
  * License:     GPL-2.0+
  * Text Domain: marketplace-connect
  */
