@@ -86,7 +86,7 @@
                             <i class="{{ $globalSettings['site_icon'] ?? 'fas fa-rocket' }} text-white text-lg"></i>
                         </div>
                         <span class="text-xl font-black tracking-tight text-white group-hover:text-[#FF2121] transition-colors">
-                            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', '[G]Premium GPL[/G]') !!}
+                            {!! preg_replace('/\[G\](.*?)\[\/G\]/i', '<span class="text-shimmer-red-yellow">$1</span>', e($globalSettings['site_name'] ?? 'MKTP')) !!}
                         </span>
                     @endif
                 </a>
