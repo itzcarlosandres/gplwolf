@@ -42,13 +42,22 @@ class AuthController extends Controller
         $existingSite = $user->connectedSites()->where('domain', $request->site_url)->first();
         
         if (!$existingSite) {
-            // Get site limit from settings
-            $siteLimit = (int) \App\Models\Setting::where('key', 'plugin_site_limit')->value('value') ?: 5;
+            // Get site limit from active membership plan, fallback to global setting if no membership, or admin is bypass
+            $activeMembership = $user->activeMembership;
+            if ($user->isAdmin()) {
+                $siteLimit = 0; // Unlimited for admin
+            } elseif ($activeMembership) {
+                // If sites_limit is 0 in DB, it means unlimited
+                $siteLimit = (int) $activeMembership->plan->sites_limit;
+            } else {
+                // Fallback to global setting if user has no active membership (e.g. they only have manual purchases)
+                $siteLimit = (int) \App\Models\Setting::where('key', 'plugin_site_limit')->value('value') ?: 1;
+            }
             
-            if ($user->connectedSites()->count() >= $siteLimit) {
+            if ($siteLimit > 0 && $user->connectedSites()->count() >= $siteLimit) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Has alcanzado el límite de sitios conectados. Por favor desconecta un sitio antiguo en tu panel de usuario.',
+                    'message' => 'Has alcanzado el límite de sitios conectados (' . $siteLimit . '). Desconecta un sitio antiguo desde tu panel de usuario.',
                     'code' => 'SITE_LIMIT_REACHED'
                 ], 403);
             }
@@ -98,6 +107,15 @@ class AuthController extends Controller
                 ->count('product_id');
         }
 
+        // Dynamic site limit calculation
+        if ($user->isAdmin()) {
+            $sitesLimit = 'Ilimitado';
+        } elseif ($activeMembership) {
+            $sitesLimit = $activeMembership->plan->sites_limit > 0 ? $activeMembership->plan->sites_limit : 'Ilimitado';
+        } else {
+            $sitesLimit = (int) \App\Models\Setting::where('key', 'plugin_site_limit')->value('value') ?: 1;
+        }
+
         return [
             'name' => $user->name,
             'email' => $user->email,
@@ -108,6 +126,8 @@ class AuthController extends Controller
             'downloads_today' => $downloadsToday,
             'downloads_limit' => $activeMembership ? ($downloadLimit > 0 ? $downloadLimit : 'Ilimitado') : 0,
             'avatar' => $user->profile_photo_url ?? null, // Assuming Jetstream or similar
+            'sites_connected' => $user->connectedSites()->count(),
+            'sites_limit' => $sitesLimit,
         ];
     }
 

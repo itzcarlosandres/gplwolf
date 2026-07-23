@@ -42,6 +42,7 @@ class MembershipPlanController extends Controller
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'daily_download_limit' => 'nullable|integer|min:0',
+            'sites_limit' => 'nullable|integer|min:0',
             'reward_points' => 'nullable|integer|min:0',
         ]);
         
@@ -96,6 +97,7 @@ class MembershipPlanController extends Controller
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'daily_download_limit' => 'nullable|integer|min:0',
+            'sites_limit' => 'nullable|integer|min:0',
             'reward_points' => 'nullable|integer|min:0',
         ]);
         
