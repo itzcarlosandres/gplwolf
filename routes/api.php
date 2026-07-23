@@ -19,6 +19,9 @@ use App\Http\Controllers\Api\ProductApiController;
 // Public Routes (Plugin Login)
 Route::middleware('throttle:5,1')->post('/v1/login', [AuthController::class, 'login']);
 
+// Public Download Route (processes token manually to support native WP Upgrader download requests)
+Route::middleware('throttle:10,1')->get('/v1/download/{id}', [ProductApiController::class, 'download']);
+
 // Protected Routes (Plugin Actions)
 Route::middleware(['auth:sanctum', 'plugin.access', 'throttle:60,1'])->prefix('v1')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
@@ -28,7 +31,4 @@ Route::middleware(['auth:sanctum', 'plugin.access', 'throttle:60,1'])->prefix('v
     Route::get('/products', [ProductApiController::class, 'index']);
     Route::get('/products/{id}', [ProductApiController::class, 'show']);
     Route::post('/check-updates', [ProductApiController::class, 'checkUpdates']);
-    
-    // Stricter throttling for downloads (e.g. 10 per minute)
-    Route::middleware('throttle:10,1')->get('/download/{id}', [ProductApiController::class, 'download']);
 });

@@ -58,9 +58,11 @@ class ProductApiController extends Controller
 
     public function download(Request $request, $id)
     {
-        // Support token in query param for WP Updater (which can't send headers easily)
-        if (!$request->user() && $request->has('api_token')) {
-            $token = \Laravel\Sanctum\PersonalAccessToken::findToken($request->api_token);
+        // Support token in query param or bearer header for WP Updater
+        $tokenStr = $request->bearerToken() ?? $request->query('api_token');
+        
+        if ($tokenStr) {
+            $token = \Laravel\Sanctum\PersonalAccessToken::findToken($tokenStr);
             if ($token && $token->tokenable) {
                 // Manually authenticate user for this request scope
                 \Illuminate\Support\Facades\Auth::login($token->tokenable);
@@ -74,6 +76,22 @@ class ProductApiController extends Controller
         
         if (!$user) {
              return response()->json(['success' => false, 'message' => 'Unauthenticated.', 'code' => 'UNAUTHENTICATED'], 401);
+        }
+
+        // Manually run ValidatePluginAccess logic (quick disconnect validation)
+        $tokenRecord = $user->currentAccessToken();
+        if ($tokenRecord && \Illuminate\Support\Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
+            $domain = \Illuminate\Support\Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
+            $siteExists = $user->connectedSites()->where('domain', $domain)->exists();
+            if (!$siteExists) {
+                // Instantly revoke this token since it's disconnected/blocked
+                $tokenRecord->delete();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Este sitio ha sido desconectado o bloqueado por el administrador.',
+                    'code' => 'SITE_DISCONNECTED'
+                ], 403);
+            }
         }
 
         $product = \App\Models\Product::where('is_active', true)->findOrFail($id);
