@@ -59,15 +59,23 @@ class Marketplace_Admin_UI {
             0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
             50% { transform: scale(1.03); box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
         }
-        @keyframes mp_gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes mp_grid_move {
+            0% { background-position: center, 0px 0px, 0px 0px; }
+            100% { background-position: center, 40px 40px, 40px 40px; }
+        }
+        @keyframes mp_scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
         .mp-login-wrapper {
-            background: linear-gradient(-45deg, #09090b, #111115, #1c1917, #020202);
-            background-size: 400% 400%;
-            animation: mp_gradient 18s ease infinite;
+            position: relative;
+            background-color: #06060a;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.15) 0%, transparent 65%),
+                linear-gradient(to right, rgba(239, 68, 68, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(239, 68, 68, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            animation: mp_grid_move 8s linear infinite;
             min-height: 80vh;
             display: flex;
             flex-direction: column;
@@ -77,8 +85,20 @@ class Marketplace_Admin_UI {
             box-sizing: border-box;
             border-radius: 28px;
             margin-top: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+        .mp-login-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(239, 68, 68, 0.1) 50%, transparent);
+            pointer-events: none;
+            animation: mp_scanline 6s linear infinite;
         }
         .mp-login-card {
             background: rgba(255, 255, 255, 0.01) !important;
