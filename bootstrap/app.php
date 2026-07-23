@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'plugin.access' => \App\Http\Middleware\ValidatePluginAccess::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

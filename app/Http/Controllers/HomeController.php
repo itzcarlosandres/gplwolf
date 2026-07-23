@@ -94,4 +94,53 @@ class HomeController extends Controller
     {
         return view('ui-lab');
     }
+
+    public function downloadPlugin()
+    {
+        $pluginDir = base_path('wordpress-plugin/marketplace-connect');
+        if (!file_exists($pluginDir)) {
+            abort(404, 'Directorio del plugin no encontrado.');
+        }
+
+        // Create temporary file path
+        $tempZip = tempnam(sys_get_temp_dir(), 'mp_plugin_');
+        
+        $zip = new \ZipArchive();
+        if ($zip->open($tempZip, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            abort(500, 'No se pudo crear el archivo temporal ZIP.');
+        }
+
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($pluginDir),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+
+        foreach ($files as $name => $file) {
+            if (!$file->isDir()) {
+                $filePath = $file->getRealPath();
+                $relativePath = 'marketplace-connect/' . substr($filePath, strlen($pluginDir) + 1);
+                
+                // If it is the main plugin file, rewrite the API URL dynamically!
+                if ($file->getFilename() === 'marketplace-connect.php') {
+                    $content = file_get_contents($filePath);
+                    
+                    // Replace API URL definition with actual production URL
+                    $apiUrl = url('/api/v1');
+                    $content = preg_replace(
+                        "/define\(\s*'MARKETPLACE_API_URL'\s*,\s*'(.*?)'\s*\);/i",
+                        "define( 'MARKETPLACE_API_URL', '{$apiUrl}' );",
+                        $content
+                    );
+                    
+                    $zip->addFromString($relativePath, $content);
+                } else {
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+        }
+
+        $zip->close();
+
+        return response()->download($tempZip, 'marketplace-connect.zip')->deleteFileAfterSend(true);
+    }
 }

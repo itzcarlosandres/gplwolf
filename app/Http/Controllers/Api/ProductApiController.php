@@ -30,6 +30,7 @@ class ProductApiController extends Controller
                 'id' => $product->id,
                 'slug' => $product->slug,
                 'name' => $product->name,
+                'type' => $product->type,
                 'version' => $product->version, // Current version on server
                 'thumbnail' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                 'can_download' => $request->user()->canDownload($product),
@@ -48,6 +49,7 @@ class ProductApiController extends Controller
             'id' => $product->id,
             'slug' => $product->slug,
             'name' => $product->name,
+            'type' => $product->type,
             'description' => $product->description,
             'version' => $product->version,
             'can_download' => request()->user()->canDownload($product),
@@ -77,6 +79,34 @@ class ProductApiController extends Controller
         $product = \App\Models\Product::where('is_active', true)->findOrFail($id);
 
         // 1. Verify Access Logic (Membership/Purchase)
+        $activeMembership = $user->activeMembership;
+        if ($activeMembership && !$user->hasPurchased($product->id)) {
+            $limit = $activeMembership->plan->daily_download_limit + $activeMembership->extra_daily_downloads;
+            if ($limit > 0) {
+                // Count how many times THIS product has been downloaded today
+                $thisProductToday = $user->downloads()
+                    ->where('product_id', $product->id)
+                    ->whereDate('downloaded_at', \Carbon\Carbon::today())
+                    ->count();
+
+                // If first time today, check total daily limit
+                if ($thisProductToday === 0) {
+                    $distinctToday = $user->downloads()
+                        ->whereDate('downloaded_at', \Carbon\Carbon::today())
+                        ->distinct('product_id')
+                        ->count('product_id');
+                        
+                    if ($distinctToday >= $limit) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Límite de descargas diarias alcanzado (' . $limit . '/' . $limit . '). Tu cupo se restablece mañana.',
+                            'code' => 'DOWNLOAD_LIMIT_REACHED'
+                        ], 403);
+                    }
+                }
+            }
+        }
+
         if (!$user->canDownload($product)) {
             return response()->json([
                 'success' => false, 
@@ -194,14 +224,18 @@ class ProductApiController extends Controller
             $clientVersion = $plugins[$product->slug] ?? '0.0.0';
             
             if (version_compare($product->version, $clientVersion, '>')) {
-                $updates[$product->slug] = [
-                    'id' => $product->id,
-                    'slug' => $product->slug,
-                    'new_version' => $product->version,
-                    'package_url' => url("/api/v1/download/{$product->id}"), 
-                    'requires' => $product->wordpress_version ?? '5.0',
-                    'tested' => '6.4' // Just a fallback or use another DB field if it exists
-                ];
+                // Only serve update packages if user actually has permissions to download
+                if ($request->user()->canDownload($product)) {
+                    $token = $request->bearerToken() ?? $request->query('api_token');
+                    $updates[$product->slug] = [
+                        'id' => $product->id,
+                        'slug' => $product->slug,
+                        'new_version' => $product->version,
+                        'package_url' => url("/api/v1/download/{$product->id}?api_token=" . $token), 
+                        'requires' => $product->wordpress_version ?? '5.0',
+                        'tested' => '6.4'
+                    ];
+                }
             }
         }
 

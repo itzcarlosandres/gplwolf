@@ -126,8 +126,8 @@ class Marketplace_Admin_UI {
                                 <p style="font-size: 13px; color: #666; margin-bottom: 15px;"><?php echo esc_html($product['short_description']); ?></p>
                                 
                                 <?php if($product['can_download']): ?>
-                                    <button class="button button-primary mp-download-btn" data-id="<?php echo $product['id']; ?>" style="width: 100%;">
-                                        <span class="dashicons dashicons-download" style="line-height: 1.3;"></span> Descargar ZIP
+                                    <button class="button button-primary mp-download-btn" data-id="<?php echo $product['id']; ?>" data-type="<?php echo esc_attr($product['type'] ?? 'plugin'); ?>" style="width: 100%;">
+                                        <span class="dashicons dashicons-download" style="line-height: 1.3;"></span> Instalar en WordPress
                                     </button>
                                 <?php else: ?>
                                     <button class="button" disabled style="width: 100%;">
@@ -151,21 +151,28 @@ class Marketplace_Admin_UI {
                 });
             });
 
-            // Download
+            // Download / Auto-Install
             $('.mp-download-btn').click(function() {
                 var btn = $(this);
                 var id = btn.data('id');
-                btn.prop('disabled', true).text('Descargando...');
+                var type = btn.data('type') || 'plugin';
+                
+                if (btn.hasClass('button-disabled')) return;
+                
+                btn.prop('disabled', true).text('Instalando...');
 
-                $.post(mp_ajax.ajax_url, { action: 'mp_download_item', id: id }, function(response) {
+                $.post(mp_ajax.ajax_url, { action: 'mp_download_item', id: id, type: type }, function(response) {
                     if(response.success) {
-                        btn.text('¡Listo!');
-                        // Trigger file download via invisible iframe or window location
-                        window.location.href = response.data.url;
-                        setTimeout(function(){ btn.prop('disabled', false).html('<span class="dashicons dashicons-download"></span> Descargar ZIP'); }, 3000);
+                        btn.removeClass('button-primary').addClass('button-disabled').text('¡Instalado!');
+                        alert(response.data.message || 'Instalado con éxito.');
                     } else {
-                        alert('Error: ' + response.data);
-                        btn.prop('disabled', false).text('Reintentar');
+                        // Display clean API error message or code
+                        var errMsg = response.data;
+                        if (response.data && response.data.message) {
+                            errMsg = response.data.message;
+                        }
+                        alert('Error: ' + errMsg);
+                        btn.prop('disabled', false).html('<span class="dashicons dashicons-download"></span> Instalar de nuevo');
                     }
                 });
             });
@@ -200,21 +207,51 @@ class Marketplace_Admin_UI {
 
     public function handle_download() {
         $id = intval($_POST['id']);
-        $file_path = $this->api->download_product($id);
-
-        if (is_wp_error($file_path)) {
-            wp_send_json_error($file_path->get_error_message());
+        $type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : 'plugin';
+        
+        $token = get_option('mp_api_token');
+        if (!$token) {
+            wp_send_json_error('No hay sesión activa de API. Conéctate de nuevo.');
         }
 
-        // Move to public uploads folder to allow download via browser (TEMPORARY - Secure way is to stream via admin-post.php)
-        // For simplicity in this demo, we move to a public URL.
-        $upload_dir = wp_upload_dir();
-        $file_name = basename($file_path);
-        $public_path = $upload_dir['path'] . '/' . $file_name;
-        $public_url = $upload_dir['url'] . '/' . $file_name;
+        // Build absolute download URL with token
+        $api_url = defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost:8000/api/v1';
+        $package_url = $api_url . '/download/' . $id . '?api_token=' . $token;
 
-        rename($file_path, $public_path);
+        // Require necessary files for installation/upgrades
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+        require_once ABSPATH . 'wp-admin/includes/theme-install.php';
 
-        wp_send_json_success(array('url' => $public_url));
+        if (!class_exists('Automatic_Upgrader_Skin')) {
+            require_once ABSPATH . 'wp-admin/includes/class-automatic-upgrader-skin.php';
+        }
+        $skin = new Automatic_Upgrader_Skin();
+
+        if ($type === 'theme') {
+            $upgrader = new Theme_Upgrader($skin);
+            $result = $upgrader->install($package_url);
+        } else {
+            // plugin, gpl, or premium (Plugin installer)
+            $upgrader = new Plugin_Upgrader($skin);
+            $result = $upgrader->install($package_url);
+
+            // Auto activate plugin on success
+            if ($result && !is_wp_error($result)) {
+                $plugin_slug = $upgrader->plugin_info();
+                if ($plugin_slug) {
+                    activate_plugin($plugin_slug);
+                }
+            }
+        }
+
+        if (is_wp_error($result)) {
+            wp_send_json_error($result->get_error_message());
+        } elseif ($result === null || $result === false) {
+            wp_send_json_error('La instalación falló. Verifica los permisos de escritura en tu servidor WordPress.');
+        } else {
+            wp_send_json_success(array('message' => '¡Recurso instalado y activado con éxito en tu WordPress!'));
+        }
     }
 }

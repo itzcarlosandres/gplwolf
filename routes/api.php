@@ -20,7 +20,7 @@ use App\Http\Controllers\Api\ProductApiController;
 Route::middleware('throttle:5,1')->post('/v1/login', [AuthController::class, 'login']);
 
 // Protected Routes (Plugin Actions)
-Route::middleware(['auth:sanctum', 'throttle:60,1'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'plugin.access', 'throttle:60,1'])->prefix('v1')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
     

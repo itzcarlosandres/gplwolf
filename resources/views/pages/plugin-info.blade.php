@@ -28,7 +28,7 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                <a href="{{ url('marketplace-connect.zip') }}" class="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center justify-center gap-3 group" download>
+                <a href="{{ route('pages.plugin.download') }}" class="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center justify-center gap-3 group" download>
                     <i class="fab fa-wordpress text-2xl group-hover:rotate-12 transition-transform"></i>
                     Descargar Plugin
                 </a>
