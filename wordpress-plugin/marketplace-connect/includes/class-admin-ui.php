@@ -54,21 +54,134 @@ class Marketplace_Admin_UI {
 
     public function display_login_form() {
         ?>
-        <div class="wrap mp-login-container" style="max-width: 400px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-            <h1 style="text-align: center; margin-bottom: 20px;">Conectar con Marketplace</h1>
-            <div id="mp-login-message"></div>
-            <form id="mp-login-form">
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Email</label>
-                    <input type="email" name="email" class="widefat" required>
+        <style>
+        @keyframes mp_pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+        }
+        @keyframes mp_gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .mp-login-wrapper {
+            background: linear-gradient(-45deg, #09090b, #111115, #1c1917, #020202);
+            background-size: 400% 400%;
+            animation: mp_gradient 18s ease infinite;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            border-radius: 28px;
+            margin-top: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .mp-login-card {
+            background: rgba(255, 255, 255, 0.01) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-radius: 24px !important;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            padding: 36px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+        }
+        .mp-login-input {
+            background: rgba(0, 0, 0, 0.45) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #fff !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            width: 100% !important;
+            font-size: 14px !important;
+            outline: none !important;
+            transition: all 0.3s !important;
+            box-sizing: border-box !important;
+            height: auto !important;
+        }
+        .mp-login-input:focus {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+        }
+        .mp-login-label {
+            display: block !important;
+            font-weight: 700 !important;
+            margin-bottom: 8px !important;
+            color: #a1a1aa !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+        }
+        .mp-message-box {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .mp-message-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+        .mp-message-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        .mp-message-loading {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+        </style>
+
+        <div class="mp-login-wrapper">
+            <div class="mp-login-card">
+                <!-- Brand logo/intro -->
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <div style="width: 68px; height: 68px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; animation: mp_pulse 2.5s infinite; box-sizing: border-box;">
+                        <!-- SVG Wolf Shield Logo -->
+                        <svg style="width: 32px; height: 32px; fill: #ef4444;" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12c0 3.06 1.38 5.8 3.58 7.65L12 22l6.42-2.35C20.62 17.8 22 15.06 22 12c0-5.52-4.48-10-10-10zm0 18.09l-4.58-1.68C6.1 16.91 5 14.58 5 12c0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.58-1.1 4.91-2.42 6.41L12 20.09zM11 7h2v2h-2zm0 4h2v6h-2z"/>
+                        </svg>
+                    </div>
+                    <h2 style="color: #fff; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: -0.03em;">GPLWOLF</h2>
+                    <p style="color: #71717a; font-size: 12px; margin: 8px 0 0 0; line-height: 1.5; font-weight: 500;">
+                        Conecta este sitio con tu cuenta de GPLWolf para sincronizar e instalar temas y plugins premium.
+                    </p>
                 </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Contraseña</label>
-                    <input type="password" name="password" class="widefat" required>
-                </div>
-                <button type="submit" class="button button-primary button-hero" style="width: 100%;">Conectar Sitio</button>
-            </form>
+
+                <!-- Messages -->
+                <div id="mp-login-message" class="mp-message-box"></div>
+
+                <!-- Form -->
+                <form id="mp-login-form" style="margin: 0;">
+                    <div style="margin-bottom: 18px;">
+                        <label class="mp-login-label">Correo Electrónico</label>
+                        <input type="email" name="email" class="mp-login-input" placeholder="ejemplo@correo.com" required autocomplete="email">
+                    </div>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <label class="mp-login-label">Contraseña</label>
+                        <input type="password" name="password" class="mp-login-input" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" class="button" style="width: 100%; background: #ef4444; border: none; color: #fff; padding: 12px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);" onmouseover="this.style.background='#dc2626'; this.style.boxShadow='0 4px 20px rgba(239, 68, 68, 0.35)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#ef4444'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.15)'; this.style.transform='translateY(0)'">
+                        Conectar Sitio
+                    </button>
+                </form>
+            </div>
         </div>
+
         <script>
         jQuery(document).ready(function($) {
             $('#mp-login-form').on('submit', function(e) {
@@ -79,13 +192,25 @@ class Marketplace_Admin_UI {
                     password: $('input[name="password"]').val()
                 };
                 
-                $('#mp-login-message').html('<p style="color: blue;">Conectando...</p>');
+                var msgBox = $('#mp-login-message');
+                msgBox.removeClass('mp-message-success mp-message-error')
+                      .addClass('mp-message-loading')
+                      .html('<span class="dashicons dashicons-update spin" style="font-size: 16px; width: 16px; height: 16px; line-height: 1; margin-right: 6px; display: inline-block; vertical-align: middle;"></span> Conectando sitio...')
+                      .fadeIn();
                 
                 $.post(mp_ajax.ajax_url, data, function(response) {
                     if(response.success) {
-                        location.reload();
+                        msgBox.removeClass('mp-message-loading mp-message-error')
+                              .addClass('mp-message-success')
+                              .html('¡Conectado! Redireccionando...');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 800);
                     } else {
-                        $('#mp-login-message').html('<p style="color: red;">' + response.data + '</p>');
+                        var errMsg = response.data || 'Error desconocido';
+                        msgBox.removeClass('mp-message-loading mp-message-success')
+                              .addClass('mp-message-error')
+                              .html(errMsg);
                     }
                 });
             });
