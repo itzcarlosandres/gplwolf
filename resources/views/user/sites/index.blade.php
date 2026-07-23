@@ -34,6 +34,33 @@
         </div>
     </div>
 
+    @if(auth()->user()->activeMembership || auth()->user()->isAdmin())
+    <!-- Add Site Form -->
+    <div class="bg-gray-800/20 border border-white/5 rounded-3xl p-6 mb-6">
+        <h3 class="text-lg font-bold text-white mb-1">Conectar Nuevo Sitio Manualmente</h3>
+        <p class="text-xs text-gray-400 mb-4">Ingresa la URL completa de tu sitio de WordPress para autorizarlo e instalar el plugin oficial.</p>
+        
+        <form action="{{ route('user.sites.store') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
+            @csrf
+            <input type="url" 
+                   name="domain" 
+                   value="{{ old('domain') }}" 
+                   placeholder="https://miblogwordpress.com" 
+                   class="bg-gray-900/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FF2121]/50 focus:ring-1 focus:ring-[#FF2121]/50 flex-1 transition-all" 
+                   required>
+            <button type="submit" class="px-6 py-3 bg-[#F51B1B] hover:bg-[#FF2121] text-white rounded-2xl font-bold text-sm transition-all shadow-lg hover:shadow-[#FF2121]/20 flex items-center justify-center gap-2 whitespace-nowrap">
+                <i class="fas fa-plus"></i> Conectar Sitio
+            </button>
+        </form>
+        @if(session('error'))
+            <p class="text-rose-400 text-xs font-semibold mt-2"><i class="fas fa-exclamation-circle mr-1"></i> {{ session('error') }}</p>
+        @endif
+        @if($errors->has('domain'))
+            <p class="text-rose-400 text-xs font-semibold mt-2"><i class="fas fa-exclamation-circle mr-1"></i> {{ $errors->first('domain') }}</p>
+        @endif
+    </div>
+    @endif
+
     <!-- Sites List -->
     <div class="bg-gray-800/40 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden">
         @if(auth()->user()->connectedSites->count() > 0)

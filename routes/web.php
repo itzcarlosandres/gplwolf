@@ -135,7 +135,7 @@ Route::middleware('auth')->group(function () {
 
     // Connected Sites (Domain Locking)
     Route::resource('connected-sites', \App\Http\Controllers\User\ConnectedSiteController::class)
-        ->only(['index', 'destroy'])
+        ->only(['index', 'store', 'destroy'])
         ->names('user.sites');
 
     // Gamification Routes
