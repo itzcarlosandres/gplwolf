@@ -10,7 +10,7 @@
             <p class="text-gray-400 mt-2">Gestiona las licencias de tu membresía en tus sitios web.</p>
         </div>
         <div class="flex flex-wrap items-center gap-4">
-            <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold transition-all border border-white/5 shadow-lg" download>
+            <a href="{{ url('marketplace-connect.zip') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold transition-all border border-white/5 shadow-lg" download>
                 <i class="fas fa-download text-emerald-400"></i> Descargar Plugin Oficial
             </a>
             
@@ -88,7 +88,7 @@
                 <h3 class="text-xl font-bold text-white mb-2">No tienes sitios conectados</h3>
                 <p class="text-gray-400 max-w-md mx-auto">Instala nuestro plugin de WordPress en tu sitio para conectar tu licencia y descargar recursos directamente.</p>
                 <div class="mt-8">
-                    <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#F51B1B] hover:bg-[#FF2121] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-[#FF2121]/25" download>
+                    <a href="{{ url('marketplace-connect.zip') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#F51B1B] hover:bg-[#FF2121] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-[#FF2121]/25" download>
                         <i class="fas fa-download"></i> Descargar Plugin
                     </a>
                 </div>
