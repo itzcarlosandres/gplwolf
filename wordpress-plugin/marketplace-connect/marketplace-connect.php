@@ -8,6 +8,8 @@
  * Author URI:  https://gplwolf.com
  * License:     GPL-2.0+
  * Text Domain: marketplace-connect
+ * Requires at least: 5.8
+ * Requires PHP:      7.4
  */
 
 // If this file is called directly, abort.
