@@ -33,6 +33,35 @@
                 </div>
             </div>
 
+            @php
+                $hasLicense = $order->items->contains(function($item) {
+                    return $item->product && $item->product->is_license;
+                });
+            @endphp
+
+            @if($hasLicense)
+                <!-- License Activation Notice -->
+                <div class="p-8 bg-amber-500/10 border border-amber-500/20 rounded-[32px] relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 blur-[50px] rounded-full"></div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 shrink-0 text-lg">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-base mb-1">🔑 Tu compra incluye una Licencia Oficial</h3>
+                                <p class="text-gray-400 text-xs leading-relaxed">
+                                    Para activar tu licencia original, por favor crea un Ticket de Soporte indicando el producto y la URL del sitio web donde deseas activarlo.
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('user.support.create') }}" class="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-black text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-amber-500/10 shrink-0">
+                            Solicitar Activación <i class="fas fa-ticket-alt ml-1.5"></i>
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <!-- Items -->
             <div>
                 <h3 class="text-sm font-black text-white uppercase tracking-[0.2em] mb-6">Productos Adquiridos</h3>

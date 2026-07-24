@@ -26,6 +26,35 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <!-- Order Details -->
         <div class="lg:col-span-2 space-y-10">
+            @php
+                $hasLicense = $order->items->contains(function($item) {
+                    return $item->product && $item->product->is_license;
+                });
+            @endphp
+
+            @if($hasLicense && $order->status === 'completed')
+                <!-- License Activation Box -->
+                <div class="glass p-8 rounded-[40px] border-amber-500/20 bg-amber-500/5 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 blur-[50px] rounded-full"></div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 shrink-0 text-lg">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-base mb-1">🔑 Solicita tu Activación de Licencia</h3>
+                                <p class="text-gray-400 text-xs leading-relaxed">
+                                    Este pedido contiene productos de Licencia Oficial. Por favor, crea un ticket de soporte indicando el producto y tu sitio web para proceder a la activación.
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('user.support.create') }}" class="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-black text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-amber-500/10 shrink-0">
+                            Abrir Ticket <i class="fas fa-ticket-alt ml-1.5"></i>
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <!-- Products Card -->
             <div class="glass rounded-[40px] border-white/5 overflow-hidden">
                 <div class="p-8 border-b border-white/5 bg-white/5">
@@ -48,7 +77,12 @@
                                 </div>
                                 <div>
                                     <h4 class="text-white font-bold text-lg group-hover:text-[#FF2121] transition-colors uppercase">{{ $item->product_name }}</h4>
-                                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-1">{{ $item->product_type }}</p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-[10px] text-gray-500 font-black uppercase tracking-widest">{{ $item->product_type }}</span>
+                                        @if($item->product && $item->product->is_license)
+                                            <span class="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest leading-none">🔑 Licencia Oficial</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                             <div class="text-right">

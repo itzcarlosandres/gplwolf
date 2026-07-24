@@ -43,7 +43,7 @@
                         {{ $product->name }}
                     </h3>
                     
-                    <div class="flex items-center gap-3 mb-8">
+                    <div class="flex items-center gap-3 mb-4">
                         <span class="px-2 py-0.5 rounded-md bg-white/5 text-[9px] font-black {{ $hasUpdate ? 'text-green-400 border-green-500/30 bg-green-500/10' : 'text-gray-500 border-white/10' }} border uppercase tracking-widest">
                             v{{ $product->version }}
                         </span>
@@ -53,6 +53,15 @@
                             </span>
                         @endif
                     </div>
+
+                    @if($product->is_license)
+                        <div class="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-between gap-3 relative overflow-hidden">
+                            <span class="text-[9px] font-bold text-amber-400">🔑 Requiere activación oficial</span>
+                            <a href="{{ route('user.support.create') }}" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-black text-[9px] font-black uppercase tracking-wider rounded-lg transition-all shrink-0">
+                                Ticket <i class="fas fa-ticket-alt text-[8px] ml-0.5"></i>
+                            </a>
+                        </div>
+                    @endif
 
                     <div class="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
                         <div class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
