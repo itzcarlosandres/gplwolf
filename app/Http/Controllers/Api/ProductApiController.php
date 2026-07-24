@@ -34,6 +34,7 @@ class ProductApiController extends Controller
                 'version' => $product->version, // Current version on server
                 'thumbnail' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                 'is_license' => (bool) $product->is_license,
+                'is_new' => $product->created_at->gt(now()->subDays(15)),
                 'can_download' => $request->user()->canDownload($product),
                 'short_description' => \Illuminate\Support\Str::limit(strip_tags($product->description), 100),
             ];
@@ -52,6 +53,7 @@ class ProductApiController extends Controller
             'name' => $product->name,
             'type' => $product->type,
             'is_license' => (bool) $product->is_license,
+            'is_new' => $product->created_at->gt(now()->subDays(15)),
             'description' => $product->description,
             'version' => $product->version,
             'can_download' => request()->user()->canDownload($product),

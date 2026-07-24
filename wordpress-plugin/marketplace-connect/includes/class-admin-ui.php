@@ -259,8 +259,62 @@ class Marketplace_Admin_UI {
         $sitesConnected = (int) ($user_info['sites_connected'] ?? 0);
         $sitesLimit = $user_info['sites_limit'] ?? 0;
         $isUnlimitedSites = ($sitesLimit === 'Ilimitado' || (int)$sitesLimit === 0);
+
+        $api_url = defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost/gplwolf/api/v1';
+        $products_json = json_encode($products);
         ?>
-        <div class="wrap" style="background: #09090b; padding: 28px; border-radius: 28px; color: #fff; min-height: 80vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; margin-top: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <!-- Load AlpineJS & FontAwesome -->
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <style>
+            .bauhaus-card {
+                border: 3px solid #1c1c22 !important;
+                background: #09090b !important;
+                border-radius: 0px !important;
+                box-shadow: 6px 6px 0px #1c1c22 !important;
+                transition: all 0.2s ease-in-out;
+            }
+            .bauhaus-card:hover {
+                transform: translate(-3px, -3px);
+                box-shadow: 9px 9px 0px #FF2121 !important;
+                border-color: #FF2121 !important;
+            }
+            .bauhaus-button {
+                border: 2px solid #1c1c22 !important;
+                border-radius: 0px !important;
+                box-shadow: 3px 3px 0px #1c1c22 !important;
+            }
+            .bauhaus-button:hover {
+                box-shadow: 0px 0px 0px #1c1c22 !important;
+                transform: translate(2px, 2px);
+            }
+        </style>
+
+        <div class="wrap" x-data="marketplaceApp(<?php echo esc_attr($products_json); ?>, '<?php echo esc_js($token); ?>', '<?php echo esc_js($api_url); ?>')" style="background: #09090b; padding: 28px; border-radius: 28px; color: #fff; min-height: 80vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; margin-top: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-red-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <!-- Toast Notifications Overlay -->
+            <div class="fixed top-8 right-8 z-[9999] space-y-3 pointer-events-none max-w-sm">
+                <template x-for="toast in toasts" :key="toast.id">
+                    <div x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="translate-y-2 opacity-0 scale-95"
+                         x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="p-4 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0"
+                             :class="toast.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'">
+                            <i class="fas" :class="toast.type === 'success' ? 'fa-check-circle' : 'fa-info-circle'"></i>
+                        </div>
+                        <div>
+                            <p class="text-white text-xs font-bold" x-text="toast.message"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
             <!-- Header -->
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 24px; margin-bottom: 28px;">
                 <div>
@@ -342,139 +396,417 @@ class Marketplace_Admin_UI {
                 </div>
             </div>
 
-            <!-- Resource Catalog Title -->
-            <h2 style="color: #fff; font-size: 22px; font-weight: 900; margin: 0 0 24px 0; display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;">
-                <span style="display: inline-block; width: 4px; height: 22px; background: #ef4444; border-radius: 2px;"></span> Explorador de Recursos Premium
-            </h2>
-
-            <!-- Grid -->
-            <div class="mp-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px;">
-                <?php if (isset($products_data['success']) && !$products_data['success']): ?>
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 20px; color: #fff;">
-                        <span class="dashicons dashicons-lock" style="font-size: 36px; width: 36px; height: 36px; color: #ef4444; margin-bottom: 12px;"></span>
-                        <p style="font-size: 16px; font-weight: bold; margin: 0 0 10px 0; color: #ef4444;"><?php echo esc_html($products_data['message']); ?></p>
-                        <p style="font-size: 13px; color: #a1a1aa; margin: 0 0 16px 0;">Tu plan de membresía actual (Gratis) no tiene permisos de descarga activos o tu membresía ha vencido.</p>
-                        <a href="http://localhost/gplwolf/public/membresias" target="_blank" style="color: #fff; background: #ef4444; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Adquirir Membresía</a>
+            <!-- Controls and Redesign Tabs Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 bg-zinc-950/30 border border-white/5 p-4 rounded-2xl">
+                <!-- Search & Filters -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Search input -->
+                    <div class="relative" style="width: 240px;">
+                        <span class="dashicons dashicons-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs" style="font-size: 14px; width: 14px; height: 14px; line-height: 1;"></span>
+                        <input type="text" x-model="searchQuery" placeholder="Buscar plugin o theme..." class="w-full bg-[#050505] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all" style="height: auto;">
                     </div>
-                <?php elseif (empty($products)): ?>
-                    <p style="color: #71717a; grid-column: 1 / -1; text-align: center; padding: 60px; font-weight: 600;">No se encontraron recursos premium disponibles.</p>
-                <?php else: ?>
-                    <?php foreach ($products as $product): ?>
-                        <div class="mp-card" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" onmouseover="this.style.borderColor='rgba(239,68,68,0.2)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.15)'">
-                            <!-- Thumbnail Area -->
-                            <div style="height: 160px; background: #121214; overflow: hidden; position: relative;">
-                                <?php if($product['thumbnail']): ?>
-                                    <img src="<?php echo esc_url($product['thumbnail']); ?>" style="width: 100%; height: 100%; object-fit: cover;">
-                                <?php else: ?>
-                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #3f3f46; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Sin miniatura</div>
-                                <?php endif; ?>
-                                
-                                <!-- Category Badge -->
-                                <span style="position: absolute; top: 12px; right: 12px; font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(9,9,11,0.75); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 6px; color: #ef4444; border: 1px solid rgba(255,255,255,0.08); letter-spacing: 0.05em;">
-                                    <?php echo esc_html($product['type'] ?? 'Plugin'); ?>
-                                </span>
 
-                                <?php if (!empty($product['is_license'])): ?>
-                                    <span style="position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(245,158,11,0.9); padding: 4px 8px; border-radius: 6px; color: #000; border: 1px solid rgba(251,191,36,0.3); letter-spacing: 0.05em; box-shadow: 0 0 10px rgba(245,158,11,0.4);">
-                                        🔑 Licencia
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <!-- Card Body -->
-                            <div style="padding: 22px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 16px;">
-                                <div>
-                                    <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;" title="<?php echo esc_attr($product['name']); ?>"><?php echo esc_html($product['name']); ?></span>
-                                        <span style="font-size: 9px; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; font-weight: bold; white-space: nowrap;">v<?php echo esc_html($product['version']); ?></span>
-                                    </h3>
-                                    <p style="font-size: 12px; color: #71717a; line-height: 1.5; margin: 0; min-height: 36px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"><?php echo esc_html($product['short_description']); ?></p>
+                    <!-- Category Tabs -->
+                    <div class="flex items-center bg-[#050505] border border-white/10 p-1 rounded-xl">
+                        <button @click="filterTab = 'all'" :class="filterTab === 'all' ? 'bg-red-500 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
+                            Todos
+                        </button>
+                        <button @click="filterTab = 'licenses'" :class="filterTab === 'licenses' ? 'bg-amber-500 text-black' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer flex items-center gap-1">
+                            🔑 Licencias
+                        </button>
+                        <button @click="filterTab = 'news'" :class="filterTab === 'news' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer flex items-center gap-1">
+                            ✨ Nuevos
+                        </button>
+                        <button @click="filterTab = 'plugins'" :class="filterTab === 'plugins' ? 'bg-zinc-800 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
+                            Plugins
+                        </button>
+                        <button @click="filterTab = 'themes'" :class="filterTab === 'themes' ? 'bg-zinc-800 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
+                            Themes
+                        </button>
+                    </div>
+                </div>
 
-                                    <?php if (!empty($product['is_license'])): 
-                                        $api_url = defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost:8000/api/v1';
-                                        $url_parts = parse_url($api_url);
-                                        $base_web_url = ($url_parts['scheme'] ?? 'http') . '://' . ($url_parts['host'] ?? 'localhost') . (!empty($url_parts['port']) ? ':' . $url_parts['port'] : '');
-                                        if (!empty($url_parts['path'])) {
-                                            $path_segments = explode('/', trim($url_parts['path'], '/'));
-                                            $web_segments = array_filter($path_segments, function($seg) {
-                                                return !in_array($seg, ['api', 'v1']);
-                                            });
-                                            if (!empty($web_segments)) {
-                                                $base_web_url .= '/' . implode('/', $web_segments);
-                                            }
-                                        }
-                                        $ticket_url = $base_web_url . '/user/support/create';
-                                    ?>
-                                        <div style="margin-top: 14px; padding: 12px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
-                                            <span style="font-size: 10px; color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 4px; line-height: 1;">
-                                                <span class="dashicons dashicons-key" style="font-size: 12px; width: 12px; height: 12px; line-height: 1; margin-top: -1px;"></span> Requiere activación
-                                            </span>
-                                            <a href="<?php echo esc_url($ticket_url); ?>" target="_blank" style="font-size: 10px; font-weight: 800; color: #000; background: #fbbf24; border-radius: 8px; padding: 6px 12px; text-decoration: none; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; transition: background 0.2s;" onmouseover="this.style.background='#f59e0b'" onmouseout="this.style.background='#fbbf24'">
-                                                Solicitar Llave <span class="dashicons dashicons-external" style="font-size: 10px; width: 10px; height: 10px; line-height: 1; vertical-align: middle; margin-left: 2px;"></span>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
+                <!-- Layout Mode Selector -->
+                <div class="flex items-center gap-2 bg-[#050505] border border-white/10 p-1 rounded-xl shrink-0 self-end lg:self-auto">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest px-2.5">Diseño:</span>
+                    <button @click="layoutMode = 'grid'" :class="layoutMode === 'grid' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Rejilla">
+                        <i class="fas fa-th-large mr-1"></i> Grid
+                    </button>
+                    <button @click="layoutMode = 'list'" :class="layoutMode === 'list' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Lista">
+                        <i class="fas fa-list mr-1"></i> List
+                    </button>
+                    <button @click="layoutMode = 'compact'" :class="layoutMode === 'compact' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Compacto">
+                        <i class="fas fa-align-justify mr-1"></i> Compact
+                    </button>
+                    <button @click="layoutMode = 'bauhaus'" :class="layoutMode === 'bauhaus' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer flex items-center gap-1 font-bold" title="Modo Bauhaus">
+                        <i class="fas fa-palette mr-1"></i> Bauhaus
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products List Render Area -->
+            <div class="min-h-[400px]">
+                
+                <!-- 1. Grid Mode -->
+                <div x-show="layoutMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" x-transition>
+                    <template x-for="product in filteredProducts()" :key="product.id">
+                        <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/30 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,33,33,0.03)] p-5">
+                            <div>
+                                <!-- Image with labels -->
+                                <div class="relative w-full aspect-video rounded-xl bg-zinc-900 border border-white/5 overflow-hidden mb-4 flex items-center justify-center">
+                                    <template x-if="product.thumbnail">
+                                        <img :src="product.thumbnail" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!product.thumbnail">
+                                        <i class="fas fa-box text-3xl text-gray-700"></i>
+                                    </template>
+                                    <span class="absolute top-2 right-2 text-[8px] font-black uppercase bg-zinc-950/80 px-2 py-0.5 rounded border border-white/10 text-red-500 tracking-widest" x-text="product.type"></span>
+                                    
+                                    <!-- Badges -->
+                                    <div class="absolute top-2 left-2 flex flex-col gap-1">
+                                        <template x-if="product.is_license">
+                                            <span class="text-[8px] font-black uppercase bg-amber-500 text-black px-2 py-0.5 rounded shadow">🔑 Licencia</span>
+                                        </template>
+                                        <template x-if="product.is_new">
+                                            <span class="text-[8px] font-black uppercase bg-blue-600 text-white px-2 py-0.5 rounded shadow">✨ Nuevo</span>
+                                        </template>
+                                    </div>
                                 </div>
-                                
-                                <!-- Actions -->
-                                <div style="display: flex; gap: 10px; margin-top: auto;">
-                                    <?php if($product['can_download']): ?>
-                                        <!-- Install Native in WP -->
-                                        <button class="button button-primary mp-download-btn" data-id="<?php echo $product['id']; ?>" data-type="<?php echo esc_attr($product['type'] ?? 'plugin'); ?>" style="flex: 2; background: #ef4444; border: none; color: #fff; padding: 10px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                                            <span class="dashicons dashicons-admin-plugins" style="font-size: 16px; width: 16px; height: 16px; line-height: 1;"></span> Instalar en WP
-                                        </button>
-                                        <!-- Download raw ZIP package -->
-                                        <a href="<?php echo esc_url(defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost:8000/api/v1'); ?>/download/<?php echo $product['id']; ?>?api_token=<?php echo esc_attr($token); ?>" class="button" style="flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 8px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 11px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'" title="Descargar archivo ZIP de forma directa" download>
-                                            <span class="dashicons dashicons-download" style="font-size: 14px; width: 14px; height: 14px; line-height: 1; margin-right: 2px;"></span> ZIP
+
+                                <div class="flex items-center justify-between gap-4 mb-2">
+                                    <h3 class="text-white font-bold text-base truncate" x-text="product.name" :title="product.name"></h3>
+                                    <span class="text-[9px] px-2 py-0.5 bg-white/5 border border-white/10 text-gray-400 rounded-md font-mono shrink-0" x-text="'v' + product.version"></span>
+                                </div>
+                                <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-2" x-text="product.short_description"></p>
+                            </div>
+
+                            <div>
+                                <!-- License Box -->
+                                <template x-if="product.is_license">
+                                    <div class="mb-4 p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl flex flex-col gap-2">
+                                        <span class="text-[9px] font-bold text-amber-400 flex items-center gap-1 leading-none">
+                                            <i class="fas fa-key text-[8px]"></i> Requiere activación por ticket
+                                        </span>
+                                        <a :href="ticketUrl" target="_blank" class="py-1.5 bg-amber-500 hover:bg-amber-600 text-black text-[9px] font-black uppercase tracking-wider rounded-lg text-center transition-all block text-decoration-none">
+                                            Solicitar Llave <span class="dashicons dashicons-external text-[10px] line-height-1"></span>
                                         </a>
-                                    <?php else: ?>
-                                        <button class="button" disabled style="width: 100%; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.01); color: #3f3f46; padding: 10px; border-radius: 12px; font-weight: 700; cursor: not-allowed; font-size: 12px;">
+                                    </div>
+                                </template>
+
+                                <!-- Action Buttons -->
+                                <div class="flex gap-2">
+                                    <template x-if="product.can_download">
+                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500 hover:bg-red-600 text-white'" class="flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer border-none">
+                                            <i class="fas" :class="product.installed ? 'fa-check' : (product.installing ? 'fa-sync animate-spin' : 'fa-download')"></i>
+                                            <span x-text="product.installed ? '¡Instalado!' : (product.installing ? 'Instalando...' : 'Instalar en WP')"></span>
+                                        </button>
+                                    </template>
+                                    <template x-if="!product.can_download">
+                                        <button class="flex-1 py-2.5 bg-zinc-900 border border-white/5 text-gray-500 rounded-xl text-xs font-bold cursor-not-allowed" disabled>
                                             🔒 Requiere Membresía
                                         </button>
-                                    <?php endif; ?>
+                                    </template>
+                                    <template x-if="product.can_download">
+                                        <button @click="downloadZip(product)" class="px-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl transition-all cursor-pointer" title="Descargar ZIP Directo">
+                                            <i class="fas fa-file-zipper text-xs"></i>
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                    </template>
+                </div>
+
+                <!-- 2. List Mode -->
+                <div x-show="layoutMode === 'list'" class="space-y-4" x-transition>
+                    <template x-for="product in filteredProducts()" :key="product.id">
+                        <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all duration-300">
+                            <!-- Left Block: Image & Meta -->
+                            <div class="flex items-center gap-4 w-full md:w-3/5">
+                                <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shrink-0 relative flex items-center justify-center">
+                                    <template x-if="product.thumbnail">
+                                        <img :src="product.thumbnail" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!product.thumbnail">
+                                        <i class="fas fa-box text-lg text-gray-700"></i>
+                                    </template>
+                                    <span class="absolute bottom-1 right-1 text-[7px] font-black uppercase bg-zinc-950/80 px-1 py-0.5 rounded text-red-500 tracking-wider" x-text="product.type"></span>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h4 class="text-white font-bold text-sm truncate" x-text="product.name"></h4>
+                                        <span class="text-[9px] px-1.5 py-0.2 bg-white/5 text-gray-500 rounded border border-white/10 font-mono" x-text="'v' + product.version"></span>
+                                        <div class="flex gap-1">
+                                            <template x-if="product.is_license">
+                                                <span class="text-[7px] font-black uppercase bg-amber-500 text-black px-1 py-0.5 rounded">🔑 Licencia</span>
+                                            </template>
+                                            <template x-if="product.is_new">
+                                                <span class="text-[7px] font-black uppercase bg-blue-600 text-white px-1 py-0.5 rounded">✨ Nuevo</span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-500 text-xs mt-1 truncate" x-text="product.short_description"></p>
+                                </div>
+                            </div>
+
+                            <!-- Right Block: Buttons / License Activation -->
+                            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto shrink-0 md:justify-end">
+                                <!-- License link -->
+                                <template x-if="product.is_license">
+                                    <a :href="ticketUrl" target="_blank" class="px-3 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black rounded-xl text-[10px] font-black uppercase tracking-wider transition-all text-decoration-none">
+                                        🔑 Solicitar Clave
+                                    </a>
+                                </template>
+
+                                <!-- standard install -->
+                                <template x-if="product.can_download">
+                                    <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500 hover:bg-red-600 text-white'" class="px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all w-full sm:w-auto justify-center cursor-pointer border-none">
+                                        <i class="fas" :class="product.installed ? 'fa-check' : (product.installing ? 'fa-sync animate-spin' : 'fa-download')"></i>
+                                        <span x-text="product.installed ? '¡Instalado!' : (product.installing ? 'Instalando...' : 'Instalar en WP')"></span>
+                                    </button>
+                                </template>
+                                <template x-if="!product.can_download">
+                                    <button class="px-5 py-2.5 bg-zinc-900 border border-white/5 text-gray-500 rounded-xl text-xs font-bold cursor-not-allowed" disabled>
+                                        🔒 Requiere Membresía
+                                    </button>
+                                </template>
+                                <template x-if="product.can_download">
+                                    <button @click="downloadZip(product)" class="p-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl transition-all cursor-pointer" title="Descargar ZIP">
+                                        <i class="fas fa-file-zipper text-xs"></i>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- 3. Compact Mode -->
+                <div x-show="layoutMode === 'compact'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" x-transition>
+                    <template x-for="product in filteredProducts()" :key="product.id">
+                        <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/10 rounded-xl p-3 flex flex-col justify-between transition-all duration-300">
+                            <div class="min-w-0">
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-[8px] font-black uppercase tracking-wider text-gray-500" x-text="product.type"></span>
+                                    <div class="flex gap-0.5">
+                                        <template x-if="product.is_license">
+                                            <span class="text-[6px] font-black bg-amber-500 text-black px-1 rounded">🔑</span>
+                                        </template>
+                                        <template x-if="product.is_new">
+                                            <span class="text-[6px] font-black bg-blue-600 text-white px-1 rounded">✨</span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <h4 class="text-white font-bold text-xs truncate mb-1" :title="product.name" x-text="product.name"></h4>
+                                <span class="text-[8px] text-gray-600 font-mono block mb-3" x-text="'v' + product.version"></span>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2 border-t border-white/5 pt-2">
+                                <template x-if="product.is_license">
+                                    <a :href="ticketUrl" target="_blank" class="text-[9px] font-black text-amber-500 hover:text-amber-400 transition-colors text-decoration-none" title="Solicitar clave de activación">
+                                        🔑 Clave
+                                    </a>
+                                </template>
+                                <template x-if="!product.is_license">
+                                    <span class="text-[8px] text-gray-600">GPL Regular</span>
+                                </template>
+
+                                <div class="flex items-center gap-1.5">
+                                    <template x-if="product.can_download">
+                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-500 bg-red-500/10 hover:bg-red-500/20'" class="w-7 h-7 rounded-lg flex items-center justify-center transition-all text-xs border-none cursor-pointer">
+                                            <i class="fas" :class="product.installed ? 'fa-check' : (product.installing ? 'fa-sync animate-spin' : 'fa-arrow-down')"></i>
+                                        </button>
+                                    </template>
+                                    <template x-if="!product.can_download">
+                                        <span class="text-[9px] text-gray-700">🔒</span>
+                                    </template>
+                                    <template x-if="product.can_download">
+                                        <button @click="downloadZip(product)" class="w-7 h-7 text-gray-400 hover:text-white bg-white/5 rounded-lg flex items-center justify-center transition-all text-xs border-none cursor-pointer" title="Descargar ZIP">
+                                            <i class="fas fa-file-zipper"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- 4. Bauhaus Mode -->
+                <div x-show="layoutMode === 'bauhaus'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" x-transition>
+                    <template x-for="product in filteredProducts()" :key="product.id">
+                        <div class="bauhaus-card p-6 flex flex-col justify-between">
+                            <div>
+                                <!-- Image & flat badges -->
+                                <div class="relative w-full aspect-video bg-[#000] border-2 border-[#1c1c22] overflow-hidden mb-5 flex items-center justify-center">
+                                    <template x-if="product.thumbnail">
+                                        <img :src="product.thumbnail" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!product.thumbnail">
+                                        <i class="fas fa-box text-3xl text-gray-700"></i>
+                                    </template>
+                                    
+                                    <span class="absolute top-2 right-2 text-[8px] font-black uppercase bg-[#1c1c22] px-2 py-0.5 text-white tracking-widest border border-white/10" x-text="product.type"></span>
+                                    
+                                    <!-- Left layout flat badges -->
+                                    <div class="absolute top-2 left-2 flex flex-col gap-1.5">
+                                        <template x-if="product.is_license">
+                                            <span class="text-[8px] font-black uppercase bg-amber-500 text-black px-2 py-0.5 border border-[#1c1c22] shadow">🔑 Licencia</span>
+                                        </template>
+                                        <template x-if="product.is_new">
+                                            <span class="text-[8px] font-black uppercase bg-[#FF2121] text-white px-2 py-0.5 border border-[#1c1c22] shadow">✨ Novedad</span>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start justify-between gap-4 mb-2">
+                                    <h3 class="text-white font-extrabold text-base leading-snug line-clamp-1" x-text="product.name" :title="product.name"></h3>
+                                    <span class="text-[9px] px-2 py-0.5 bg-[#1c1c22] border border-white/10 text-white font-mono shrink-0" x-text="'v' + product.version"></span>
+                                </div>
+                                <p class="text-gray-400 text-xs leading-relaxed mb-6 font-semibold line-clamp-2" x-text="product.short_description"></p>
+                            </div>
+
+                            <div>
+                                <!-- Flat styled activation link -->
+                                <template x-if="product.is_license">
+                                    <div class="mb-5 p-3.5 bg-amber-500/5 border-2 border-amber-500/20 flex flex-col gap-2">
+                                        <span class="text-[9px] font-black text-amber-500 flex items-center gap-1 uppercase tracking-wider">
+                                            🔑 Activación Core Requerida
+                                        </span>
+                                        <a :href="ticketUrl" target="_blank" class="py-2 bg-amber-500 hover:bg-amber-600 text-black text-[9px] font-black uppercase tracking-widest text-center transition-all block border-2 border-black text-decoration-none">
+                                            Solicitar Activación
+                                        </a>
+                                    </div>
+                                </template>
+
+                                <!-- Buttons -->
+                                <div class="flex gap-3">
+                                    <template x-if="product.can_download">
+                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'bg-[#10b981] text-black border-2 border-[#1c1c22]' : 'bg-[#FF2121] text-white border-2 border-[#1c1c22]'" class="bauhaus-button flex-1 py-3 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                                            <span x-text="product.installed ? '¡Instalado!' : (product.installing ? 'Instalando...' : 'Instalar')"></span>
+                                        </button>
+                                    </template>
+                                    <template x-if="!product.can_download">
+                                        <button class="bauhaus-button flex-1 py-3 bg-zinc-900 border-2 border-[#1c1c22] text-gray-500 text-xs font-black uppercase tracking-widest cursor-not-allowed" disabled>
+                                            🔒 Bloqueado
+                                        </button>
+                                    </template>
+                                    <template x-if="product.can_download">
+                                        <button @click="downloadZip(product)" class="bauhaus-button px-4 bg-zinc-900 text-white border-2 border-[#1c1c22] hover:bg-[#1c1c22] transition-all cursor-pointer" title="ZIP">
+                                            <i class="fas fa-file-zipper"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Empty state fallback -->
+                <div x-show="filteredProducts().length === 0" class="py-24 text-center bg-zinc-950/20 border border-white/5 rounded-3xl max-w-md mx-auto" style="display: none;">
+                    <i class="fas fa-folder-open text-gray-700 text-4xl mb-4"></i>
+                    <p class="text-gray-400 font-bold text-sm">No se encontraron productos con estos filtros o búsqueda.</p>
+                </div>
+
             </div>
         </div>
 
         <script>
+        function marketplaceApp(initialProducts, apiToken, apiUrl) {
+            return {
+                layoutMode: localStorage.getItem('mp_layout_mode') || 'grid',
+                filterTab: 'all',
+                searchQuery: '',
+                toasts: [],
+                ticketUrl: '',
+                products: initialProducts.map(p => ({
+                    ...p,
+                    installing: false,
+                    installed: false
+                })),
+                
+                init() {
+                    this.$watch('layoutMode', value => localStorage.setItem('mp_layout_mode', value));
+                    this.ticketUrl = this.generateTicketUrl();
+                },
+
+                generateTicketUrl() {
+                    const parts = new URL(apiUrl);
+                    let base = parts.protocol + '//' + parts.host;
+                    if (parts.pathname) {
+                        const segments = parts.pathname.split('/').filter(s => s && s !== 'api' && s !== 'v1');
+                        if (segments.length > 0) {
+                            base += '/' + segments.join('/');
+                        }
+                    }
+                    return base + '/user/support/create';
+                },
+
+                filteredProducts() {
+                    return this.products.filter(p => {
+                        // Search filter
+                        if (this.searchQuery && !p.name.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+                            return false;
+                        }
+                        
+                        // Tab filters
+                        if (this.filterTab === 'licenses') return p.is_license;
+                        if (this.filterTab === 'news') return p.is_new;
+                        if (this.filterTab === 'plugins') return p.type.toLowerCase() === 'plugin' || p.type.toLowerCase() === 'gpl' || p.type.toLowerCase() === 'premium';
+                        if (this.filterTab === 'themes') return p.type.toLowerCase() === 'theme';
+                        
+                        return true;
+                    });
+                },
+                
+                install(product) {
+                    product.installing = true;
+                    this.toast('success', 'Instalando ' + product.name + ' en WordPress...');
+                    
+                    jQuery.post(mp_ajax.ajax_url, { 
+                        action: 'mp_download_item', 
+                        id: product.id, 
+                        type: product.type 
+                    }, (response) => {
+                        product.installing = false;
+                        if (response.success) {
+                            product.installed = true;
+                            this.toast('success', response.data && response.data.message ? response.data.message : '¡Recurso instalado con éxito!');
+                            setTimeout(() => { location.reload(); }, 1500);
+                        } else {
+                            var errMsg = response.data;
+                            if (response.data && response.data.message) {
+                                errMsg = response.data.message;
+                            }
+                            this.toast('error', 'Error: ' + errMsg);
+                        }
+                    }).fail(() => {
+                        product.installing = false;
+                        this.toast('error', 'Error de conexión o red.');
+                    });
+                },
+                
+                downloadZip(product) {
+                    this.toast('success', 'Descargando paquete ZIP de ' + product.name + '...');
+                    const url = apiUrl + '/download/' + product.id + '?api_token=' + apiToken;
+                    window.location.href = url;
+                },
+                
+                toast(type, message) {
+                    const id = Date.now();
+                    this.toasts.push({ id, type, message });
+                    
+                    setTimeout(() => {
+                        this.toasts = this.toasts.filter(t => t.id !== id);
+                    }, 3500);
+                }
+            };
+        }
+
         jQuery(document).ready(function($) {
             // Disconnect
             $('#mp-disconnect-btn').click(function() {
                 if(!confirm('¿Seguro que quieres desconectar este sitio?')) return;
                 $.post(mp_ajax.ajax_url, { action: 'mp_disconnect' }, function() {
                     location.reload();
-                });
-            });
-
-            // Download / Auto-Install
-            $('.mp-download-btn').click(function() {
-                var btn = $(this);
-                var id = btn.data('id');
-                var type = btn.data('type') || 'plugin';
-                
-                if (btn.hasClass('button-disabled')) return;
-                
-                btn.prop('disabled', true).text('Instalando...');
-
-                $.post(mp_ajax.ajax_url, { action: 'mp_download_item', id: id, type: type }, function(response) {
-                    if(response.success) {
-                        btn.removeClass('button-primary').addClass('button-disabled').text('¡Instalado!').css('background', '#10b981');
-                        alert(response.data.message || 'Instalado con éxito.');
-                        // Refresh page after a brief delay to update the statistics
-                        setTimeout(function() { location.reload(); }, 1200);
-                    } else {
-                        // Display clean API error message or code
-                        var errMsg = response.data;
-                        if (response.data && response.data.message) {
-                            errMsg = response.data.message;
-                        }
-                        alert('Error: ' + errMsg);
-                        btn.prop('disabled', false).html('<span class="dashicons dashicons-admin-plugins"></span> Instalar en WP');
-                    }
                 });
             });
         });
