@@ -20,7 +20,7 @@
         <!-- Content -->
         <tr>
             <td style="padding: 40px; font-size: 15px; line-height: 1.6; color: #a1a1aa;">
-                {!! nl2br(e($contentBody)) !!}
+                {!! $contentBody !!}
             </td>
         </tr>
 

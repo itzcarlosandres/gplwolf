@@ -34,7 +34,8 @@ class NewsletterController extends Controller
     public function createMail()
     {
         $subscribersCount = NewsletterSubscriber::where('is_active', true)->count();
-        return view('admin.newsletter.create', compact('subscribersCount'));
+        $products = \App\Models\Product::where('is_active', true)->orderBy('name', 'asc')->get();
+        return view('admin.newsletter.create', compact('subscribersCount', 'products'));
     }
 
     public function sendMail(Request $request)
