@@ -286,15 +286,30 @@ class Marketplace_Admin_UI {
 
                 <!-- Daily Downloads Progress -->
                 <div>
+                    <?php 
+                    $progressColor = '#10b981'; // Green
+                    $progressShadow = 'rgba(16, 185, 129, 0.4)';
+                    if (!$isUnlimitedDownloads) {
+                        if ($progressPercent >= 50 && $progressPercent < 80) {
+                            $progressColor = '#fbbf24'; // Yellow/Amber
+                            $progressShadow = 'rgba(251, 191, 36, 0.4)';
+                        } elseif ($progressPercent >= 80) {
+                            $progressColor = '#ef4444'; // Red
+                            $progressShadow = 'rgba(239, 68, 68, 0.4)';
+                        }
+                    } else {
+                        $progressColor = '#10b981';
+                    }
+                    ?>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <span style="color: #a1a1aa; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Descargas Hoy</span>
-                        <span style="color: #fff; font-size: 12px; font-weight: 900;"><?php echo $downloadsToday; ?> / <?php echo $isUnlimitedDownloads ? '∞' : $downloadsMax; ?></span>
+                        <span style="color: <?php echo $progressColor; ?>; font-size: 12px; font-weight: 900; transition: color 0.4s ease;"><?php echo $downloadsToday; ?> / <?php echo $isUnlimitedDownloads ? '∞' : $downloadsMax; ?></span>
                     </div>
                     <?php if(!$isUnlimitedDownloads): ?>
                         <div style="background: rgba(255,255,255,0.06); height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 8px;">
-                            <div style="background: #ef4444; height: 100%; width: <?php echo min(100, $progressPercent); ?>%; border-radius: 9999px; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(239,68,68,0.5);"></div>
+                            <div style="background: <?php echo $progressColor; ?>; height: 100%; width: <?php echo min(100, $progressPercent); ?>%; border-radius: 9999px; transition: all 0.4s ease; box-shadow: 0 0 10px <?php echo $progressShadow; ?>;"></div>
                         </div>
-                        <p style="color: #52525b; font-size: 10px; margin: 0; font-weight: 600;">Cupo disponible: <?php echo max(0, $downloadsMax - $downloadsToday); ?> descargas</p>
+                        <p style="color: #52525b; font-size: 10px; margin: 0; font-weight: 600;">Cupo disponible: <strong style="color: <?php echo $progressColor; ?>; transition: color 0.4s ease;"><?php echo max(0, $downloadsMax - $downloadsToday); ?></strong> descargas</p>
                     <?php else: ?>
                         <div style="background: rgba(255,255,255,0.06); height: 8px; border-radius: 9999px; overflow: hidden; margin-bottom: 8px;">
                             <div style="background: linear-gradient(90deg, #10b981, #3b82f6); height: 100%; width: 100%; border-radius: 9999px;"></div>

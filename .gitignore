@@ -24,3 +24,6 @@ yarn-error.log
 Homestead.json
 Homestead.yaml
 .phpunit.result.cache
+
+/storage/logs/*
+!/storage/logs/.gitignore
