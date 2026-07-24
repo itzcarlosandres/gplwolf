@@ -36,6 +36,7 @@ class Product extends Model
         'badge',
         'reward_points',
         'points_multiplier',
+        'is_license',
     ];
 
     protected $casts = [
@@ -46,6 +47,7 @@ class Product extends Model
         'is_active' => 'boolean',
         'is_best_seller' => 'boolean',
         'is_popular' => 'boolean',
+        'is_license' => 'boolean',
         'downloads_count' => 'integer',
         'reviews_count' => 'integer',
     ];

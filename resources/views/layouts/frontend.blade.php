@@ -524,6 +524,10 @@
                         <i class="fas fa-cubes text-[11px] mr-1.5 text-gray-500 group-hover:text-gray-200 transition-colors"></i>
                         Productos
                     </a>
+                    <a href="{{ route('products.licenses') }}" class="group flex items-center px-3 py-2 text-xs font-bold text-gray-400 hover:text-white transition-all rounded-xl hover:bg-white/5 {{ request()->routeIs('products.licenses') ? 'text-white bg-white/5' : '' }}">
+                        <i class="fas fa-key text-[11px] mr-1.5 text-gray-500 group-hover:text-gray-200 transition-colors"></i>
+                        Licencias
+                    </a>
                     <a href="{{ route('updates.index') }}" class="group flex items-center px-3 py-2 text-xs font-bold text-gray-400 hover:text-white transition-all rounded-xl hover:bg-white/5 {{ request()->routeIs('updates.index') ? 'text-white bg-white/5' : '' }}">
                         <i class="fas fa-bolt text-[11px] mr-1.5 text-gray-500 group-hover:text-gray-200 transition-colors"></i>
                         Novedades
@@ -651,6 +655,10 @@
             <a href="{{ route('updates.index') }}" class="flex items-center gap-4 text-base font-black uppercase tracking-[0.2em] text-gray-400 active:text-white transition-colors group">
                 <i class="fas fa-magic text-amber-500/50 group-active:text-amber-500"></i>
                 Actualizaciones
+            </a>
+            <a href="{{ route('products.licenses') }}" class="flex items-center gap-4 text-base font-black uppercase tracking-[0.2em] {{ request()->routeIs('products.licenses') ? 'text-white' : 'text-gray-400' }} active:text-white transition-colors group">
+                <i class="fas fa-key text-amber-500/50 group-active:text-amber-500"></i>
+                Licencias
             </a>
             <a href="{{ route('membership.pricing') }}" class="flex items-center gap-4 text-base font-black uppercase tracking-[0.2em] {{ request()->routeIs('membership.pricing') ? 'text-white' : 'text-gray-400' }} active:text-white transition-colors group">
                 <i class="fas fa-crown text-yellow-500/50 group-active:text-yellow-500"></i>

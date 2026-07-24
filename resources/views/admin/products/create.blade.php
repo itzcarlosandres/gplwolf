@@ -228,6 +228,12 @@
                     <label for="is_active" class="ml-4 text-sm font-bold text-[#FF2121] cursor-pointer">Publicar inmediatamente</label>
                 </div>
 
+                <div class="flex items-center p-4 bg-amber-500/10 rounded-2xl border border-amber-500/20 group cursor-pointer hover:bg-amber-500/15 transition-all">
+                    <input type="hidden" name="is_license" value="0">
+                    <input type="checkbox" name="is_license" value="1" id="is_license" class="w-6 h-6 text-amber-500 bg-gray-900 border-white/10 rounded-lg focus:ring-amber-500 focus:ring-offset-gray-900 transition-all cursor-pointer">
+                    <label for="is_license" class="ml-4 text-sm font-bold text-amber-400 cursor-pointer">🔑 Licencia Oficial / Legal</label>
+                </div>
+
 
             </div>
         </div>

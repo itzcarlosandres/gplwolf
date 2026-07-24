@@ -212,4 +212,17 @@ class ProductController extends Controller
 
         return $query->take($limit)->get();
     }
+
+    /**
+     * Display official legal licenses page.
+     */
+    public function licenses()
+    {
+        $products = Product::where('is_active', true)
+            ->where('is_license', true)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return view('products.licenses', compact('products'));
+    }
 }
