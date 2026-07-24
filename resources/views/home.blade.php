@@ -189,7 +189,7 @@
                     {{-- Bauhaus Index --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         @forelse($products as $product)
-                        <div class="bg-[#0c0c0e] text-white border-2 border-[#FF2121] rounded-none p-6 flex flex-col justify-between min-h-[250px] hover:bg-[#FF2121] hover:text-black transition-colors duration-200 group relative">
+                        <a href="{{ route('products.show', $product->slug) }}" class="bg-[#0c0c0e] text-white border-2 border-[#FF2121] rounded-none p-6 flex flex-col justify-between min-h-[250px] hover:bg-[#FF2121] hover:text-black transition-colors duration-200 group relative block cursor-pointer">
                             <div>
                                 <div class="flex justify-between items-start mb-6">
                                     <span class="text-[9px] font-black uppercase tracking-widest border-2 border-[#FF2121] px-2.5 py-1 bg-[#FF2121] text-white group-hover:bg-black group-hover:text-[#FF2121] group-hover:border-black transition-colors leading-none">
@@ -205,11 +205,11 @@
 
                             <div class="flex items-end justify-between border-t-2 border-[#FF2121] group-hover:border-black pt-4 mt-6">
                                 <span class="text-2xl font-black group-hover:text-black">${{ number_format($product->price, 2) }}</span>
-                                <a href="{{ route('products.show', $product->slug) }}" class="bg-[#FF2121] text-white px-4 py-2 text-xs font-black uppercase tracking-widest hover:bg-white hover:text-black group-hover:bg-black group-hover:text-[#FF2121] border-2 border-[#FF2121] group-hover:border-black transition-colors">
+                                <span class="bg-[#FF2121] text-white px-4 py-2 text-xs font-black uppercase tracking-widest hover:bg-white hover:text-black group-hover:bg-black group-hover:text-[#FF2121] border-2 border-[#FF2121] group-hover:border-black transition-colors">
                                     COMPRAR
-                                </a>
+                                </span>
                             </div>
-                        </div>
+                        </a>
                         @empty
                             <div class="col-span-full py-12 text-center text-gray-500">
                                 No hay productos.
