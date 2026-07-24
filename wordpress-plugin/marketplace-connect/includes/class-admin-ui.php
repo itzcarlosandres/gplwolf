@@ -416,111 +416,18 @@ class Marketplace_Admin_UI {
                         <button @click="filterTab = 'news'" :class="filterTab === 'news' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer flex items-center gap-1">
                             ✨ Nuevos
                         </button>
-                        <button @click="filterTab = 'plugins'" :class="filterTab === 'plugins' ? 'bg-zinc-800 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
-                            Plugins
-                        </button>
-                        <button @click="filterTab = 'themes'" :class="filterTab === 'themes' ? 'bg-zinc-800 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
-                            Themes
-                        </button>
                         <template x-for="cat in getCategories()" :key="cat">
                             <button @click="filterTab = cat" :class="filterTab === cat ? 'bg-zinc-700 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer" x-text="cat"></button>
                         </template>
                     </div>
-                </div>
-
-                <!-- Layout Mode Selector -->
-                <div class="flex items-center gap-2 bg-[#050505] border border-white/10 p-1 rounded-xl shrink-0 self-end lg:self-auto">
-                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest px-2.5">Diseño:</span>
-                    <button @click="layoutMode = 'grid'" :class="layoutMode === 'grid' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Rejilla">
-                        <i class="fas fa-th-large mr-1"></i> Grid
-                    </button>
-                    <button @click="layoutMode = 'list'" :class="layoutMode === 'list' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Lista">
-                        <i class="fas fa-list mr-1"></i> List
-                    </button>
-                    <button @click="layoutMode = 'compact'" :class="layoutMode === 'compact' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer" title="Modo Compacto">
-                        <i class="fas fa-align-justify mr-1"></i> Compact
-                    </button>
-                    <button @click="layoutMode = 'bauhaus'" :class="layoutMode === 'bauhaus' ? 'bg-zinc-800 text-white border border-white/10' : 'text-gray-500 hover:text-white'" class="p-2 rounded-lg text-xs transition-all border-none cursor-pointer flex items-center gap-1 font-bold" title="Modo Bauhaus">
-                        <i class="fas fa-palette mr-1"></i> Bauhaus
-                    </button>
                 </div>
             </div>
 
             <!-- Products List Render Area -->
             <div class="min-h-[400px]">
                 
-                <!-- 1. Grid Mode -->
-                <div x-show="layoutMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" x-transition>
-                    <template x-for="product in filteredProducts()" :key="product.id">
-                        <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/30 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,33,33,0.03)] p-5">
-                            <div>
-                                <!-- Image with labels -->
-                                <div class="relative w-full aspect-video rounded-xl bg-zinc-900 border border-white/5 overflow-hidden mb-4 flex items-center justify-center">
-                                    <template x-if="product.thumbnail">
-                                        <img :src="product.thumbnail" class="w-full h-full object-cover">
-                                    </template>
-                                    <template x-if="!product.thumbnail">
-                                        <i class="fas fa-box text-3xl text-gray-700"></i>
-                                    </template>
-                                    <span class="absolute top-2 right-2 text-[8px] font-black uppercase bg-zinc-950/80 px-2 py-0.5 rounded border border-white/10 text-red-500 tracking-widest" x-text="product.type"></span>
-                                    
-                                    <!-- Badges -->
-                                    <div class="absolute top-2 left-2 flex flex-col gap-1">
-                                        <template x-if="product.is_license">
-                                            <span class="text-[8px] font-black uppercase bg-amber-500 text-black px-2 py-0.5 rounded shadow">🔑 Licencia</span>
-                                        </template>
-                                        <template x-if="product.is_new">
-                                            <span class="text-[8px] font-black uppercase bg-blue-600 text-white px-2 py-0.5 rounded shadow">✨ Nuevo</span>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between gap-4 mb-2">
-                                    <h3 class="text-white font-bold text-base truncate" x-text="product.name" :title="product.name"></h3>
-                                    <span class="text-[9px] px-2 py-0.5 bg-white/5 border border-white/10 text-gray-400 rounded-md font-mono shrink-0" x-text="'v' + product.version"></span>
-                                </div>
-                                <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-2" x-text="product.short_description"></p>
-                            </div>
-
-                            <div>
-                                <!-- License Box -->
-                                <template x-if="product.is_license">
-                                    <div class="mb-4 p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl flex flex-col gap-2">
-                                        <span class="text-[9px] font-bold text-amber-400 flex items-center gap-1 leading-none">
-                                            <i class="fas fa-key text-[8px]"></i> Requiere activación por ticket
-                                        </span>
-                                        <a :href="ticketUrl" target="_blank" class="py-1.5 bg-amber-500 hover:bg-amber-600 text-black text-[9px] font-black uppercase tracking-wider rounded-lg text-center transition-all block text-decoration-none">
-                                            Solicitar Llave <span class="dashicons dashicons-external text-[10px] line-height-1"></span>
-                                        </a>
-                                    </div>
-                                </template>
-
-                                <!-- Action Buttons -->
-                                <div class="flex gap-2">
-                                    <template x-if="product.can_download">
-                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500 hover:bg-red-600 text-white'" class="flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer border-none">
-                                            <i class="fas" :class="product.installed ? 'fa-check' : (product.installing ? 'fa-sync animate-spin' : 'fa-download')"></i>
-                                            <span x-text="product.installed ? '¡Instalado!' : (product.installing ? 'Instalando...' : 'Instalar en WP')"></span>
-                                        </button>
-                                    </template>
-                                    <template x-if="!product.can_download">
-                                        <button class="flex-1 py-2.5 bg-zinc-900 border border-white/5 text-gray-500 rounded-xl text-xs font-bold cursor-not-allowed" disabled>
-                                            🔒 Requiere Membresía
-                                        </button>
-                                    </template>
-                                    <template x-if="product.can_download">
-                                        <button @click="downloadZip(product)" class="px-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl transition-all cursor-pointer" title="Descargar ZIP Directo">
-                                            <i class="fas fa-file-zipper text-xs"></i>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- 2. List Mode -->
-                <div x-show="layoutMode === 'list'" class="space-y-4" x-transition>
+                <!-- List Mode Layout (Default & Only Layout) -->
+                <div class="space-y-4">
                     <template x-for="product in filteredProducts()" :key="product.id">
                         <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all duration-300">
                             <!-- Left Block: Image & Meta -->
@@ -582,126 +489,6 @@ class Marketplace_Admin_UI {
                     </template>
                 </div>
 
-                <!-- 3. Compact Mode -->
-                <div x-show="layoutMode === 'compact'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" x-transition>
-                    <template x-for="product in filteredProducts()" :key="product.id">
-                        <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/10 rounded-xl p-3 flex flex-col justify-between transition-all duration-300">
-                            <div class="min-w-0">
-                                <div class="flex items-center justify-between gap-2 mb-1.5">
-                                    <span class="text-[8px] font-black uppercase tracking-wider text-gray-500" x-text="product.type"></span>
-                                    <div class="flex gap-0.5">
-                                        <template x-if="product.is_license">
-                                            <span class="text-[6px] font-black bg-amber-500 text-black px-1 rounded">🔑</span>
-                                        </template>
-                                        <template x-if="product.is_new">
-                                            <span class="text-[6px] font-black bg-blue-600 text-white px-1 rounded">✨</span>
-                                        </template>
-                                    </div>
-                                </div>
-                                <h4 class="text-white font-bold text-xs truncate mb-1" :title="product.name" x-text="product.name"></h4>
-                                <span class="text-[8px] text-gray-600 font-mono block mb-3" x-text="'v' + product.version"></span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-2 border-t border-white/5 pt-2">
-                                <template x-if="product.is_license">
-                                    <a :href="ticketUrl" target="_blank" class="text-[9px] font-black text-amber-500 hover:text-amber-400 transition-colors text-decoration-none" title="Solicitar clave de activación">
-                                        🔑 Clave
-                                    </a>
-                                </template>
-                                <template x-if="!product.is_license">
-                                    <span class="text-[8px] text-gray-600">GPL Regular</span>
-                                </template>
-
-                                <div class="flex items-center gap-1.5">
-                                    <template x-if="product.can_download">
-                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-500 bg-red-500/10 hover:bg-red-500/20'" class="w-7 h-7 rounded-lg flex items-center justify-center transition-all text-xs border-none cursor-pointer">
-                                            <i class="fas" :class="product.installed ? 'fa-check' : (product.installing ? 'fa-sync animate-spin' : 'fa-arrow-down')"></i>
-                                        </button>
-                                    </template>
-                                    <template x-if="!product.can_download">
-                                        <span class="text-[9px] text-gray-700">🔒</span>
-                                    </template>
-                                    <template x-if="product.can_download">
-                                        <button @click="downloadZip(product)" class="w-7 h-7 text-gray-400 hover:text-white bg-white/5 rounded-lg flex items-center justify-center transition-all text-xs border-none cursor-pointer" title="Descargar ZIP">
-                                            <i class="fas fa-file-zipper"></i>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- 4. Bauhaus Mode -->
-                <div x-show="layoutMode === 'bauhaus'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" x-transition>
-                    <template x-for="product in filteredProducts()" :key="product.id">
-                        <div class="bauhaus-card p-6 flex flex-col justify-between">
-                            <div>
-                                <!-- Image & flat badges -->
-                                <div class="relative w-full aspect-video bg-[#000] border-2 border-[#1c1c22] overflow-hidden mb-5 flex items-center justify-center">
-                                    <template x-if="product.thumbnail">
-                                        <img :src="product.thumbnail" class="w-full h-full object-cover">
-                                    </template>
-                                    <template x-if="!product.thumbnail">
-                                        <i class="fas fa-box text-3xl text-gray-700"></i>
-                                    </template>
-                                    
-                                    <span class="absolute top-2 right-2 text-[8px] font-black uppercase bg-[#1c1c22] px-2 py-0.5 text-white tracking-widest border border-white/10" x-text="product.type"></span>
-                                    
-                                    <!-- Left layout flat badges -->
-                                    <div class="absolute top-2 left-2 flex flex-col gap-1.5">
-                                        <template x-if="product.is_license">
-                                            <span class="text-[8px] font-black uppercase bg-amber-500 text-black px-2 py-0.5 border border-[#1c1c22] shadow">🔑 Licencia</span>
-                                        </template>
-                                        <template x-if="product.is_new">
-                                            <span class="text-[8px] font-black uppercase bg-[#FF2121] text-white px-2 py-0.5 border border-[#1c1c22] shadow">✨ Novedad</span>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-start justify-between gap-4 mb-2">
-                                    <h3 class="text-white font-extrabold text-base leading-snug line-clamp-1" x-text="product.name" :title="product.name"></h3>
-                                    <span class="text-[9px] px-2 py-0.5 bg-[#1c1c22] border border-white/10 text-white font-mono shrink-0" x-text="'v' + product.version"></span>
-                                </div>
-                                <p class="text-gray-400 text-xs leading-relaxed mb-6 font-semibold line-clamp-2" x-text="product.short_description"></p>
-                            </div>
-
-                            <div>
-                                <!-- Flat styled activation link -->
-                                <template x-if="product.is_license">
-                                    <div class="mb-5 p-3.5 bg-amber-500/5 border-2 border-amber-500/20 flex flex-col gap-2">
-                                        <span class="text-[9px] font-black text-amber-500 flex items-center gap-1 uppercase tracking-wider">
-                                            🔑 Activación Core Requerida
-                                        </span>
-                                        <a :href="ticketUrl" target="_blank" class="py-2 bg-amber-500 hover:bg-amber-600 text-black text-[9px] font-black uppercase tracking-widest text-center transition-all block border-2 border-black text-decoration-none">
-                                            Solicitar Activación
-                                        </a>
-                                    </div>
-                                </template>
-
-                                <!-- Buttons -->
-                                <div class="flex gap-3">
-                                    <template x-if="product.can_download">
-                                        <button @click="install(product)" :disabled="product.installing || product.installed" :class="product.installed ? 'bg-[#10b981] text-black border-2 border-[#1c1c22]' : 'bg-[#FF2121] text-white border-2 border-[#1c1c22]'" class="bauhaus-button flex-1 py-3 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                                            <span x-text="product.installed ? '¡Instalado!' : (product.installing ? 'Instalando...' : 'Instalar')"></span>
-                                        </button>
-                                    </template>
-                                    <template x-if="!product.can_download">
-                                        <button class="bauhaus-button flex-1 py-3 bg-zinc-900 border-2 border-[#1c1c22] text-gray-500 text-xs font-black uppercase tracking-widest cursor-not-allowed" disabled>
-                                            🔒 Bloqueado
-                                        </button>
-                                    </template>
-                                    <template x-if="product.can_download">
-                                        <button @click="downloadZip(product)" class="bauhaus-button px-4 bg-zinc-900 text-white border-2 border-[#1c1c22] hover:bg-[#1c1c22] transition-all cursor-pointer" title="ZIP">
-                                            <i class="fas fa-file-zipper"></i>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
                 <!-- Empty state fallback -->
                 <div x-show="filteredProducts().length === 0" class="py-24 text-center bg-zinc-950/20 border border-white/5 rounded-3xl max-w-md mx-auto" style="display: none;">
                     <i class="fas fa-folder-open text-gray-700 text-4xl mb-4"></i>
@@ -714,7 +501,6 @@ class Marketplace_Admin_UI {
         <script>
         function marketplaceApp(initialProducts, apiToken, apiUrl) {
             return {
-                layoutMode: localStorage.getItem('mp_layout_mode') || 'grid',
                 filterTab: 'all',
                 searchQuery: '',
                 toasts: [],
@@ -726,7 +512,6 @@ class Marketplace_Admin_UI {
                 })),
                 
                 init() {
-                    this.$watch('layoutMode', value => localStorage.setItem('mp_layout_mode', value));
                     this.ticketUrl = this.generateTicketUrl();
                 },
 
@@ -739,7 +524,7 @@ class Marketplace_Admin_UI {
                             base += '/' + segments.join('/');
                         }
                     }
-                    return base + '/user/support/create';
+                    return base + '/support';
                 },
 
                 getCategories() {
@@ -762,8 +547,6 @@ class Marketplace_Admin_UI {
                         // Tab filters
                         if (this.filterTab === 'licenses') return p.is_license;
                         if (this.filterTab === 'news') return p.is_new;
-                        if (this.filterTab === 'plugins') return p.type.toLowerCase() === 'plugin' || p.type.toLowerCase() === 'gpl' || p.type.toLowerCase() === 'premium';
-                        if (this.filterTab === 'themes') return p.type.toLowerCase() === 'theme';
                         
                         // Dynamic category check
                         if (this.filterTab !== 'all') {
