@@ -373,6 +373,12 @@ class Marketplace_Admin_UI {
                                 <span style="position: absolute; top: 12px; right: 12px; font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(9,9,11,0.75); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 6px; color: #ef4444; border: 1px solid rgba(255,255,255,0.08); letter-spacing: 0.05em;">
                                     <?php echo esc_html($product['type'] ?? 'Plugin'); ?>
                                 </span>
+
+                                <?php if (!empty($product['is_license'])): ?>
+                                    <span style="position: absolute; top: 12px; left: 12px; font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(245,158,11,0.9); padding: 4px 8px; border-radius: 6px; color: #000; border: 1px solid rgba(251,191,36,0.3); letter-spacing: 0.05em; box-shadow: 0 0 10px rgba(245,158,11,0.4);">
+                                        🔑 Licencia
+                                    </span>
+                                <?php endif; ?>
                             </div>
                             
                             <!-- Card Body -->
@@ -383,6 +389,31 @@ class Marketplace_Admin_UI {
                                         <span style="font-size: 9px; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #a1a1aa; font-weight: bold; white-space: nowrap;">v<?php echo esc_html($product['version']); ?></span>
                                     </h3>
                                     <p style="font-size: 12px; color: #71717a; line-height: 1.5; margin: 0; min-height: 36px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"><?php echo esc_html($product['short_description']); ?></p>
+
+                                    <?php if (!empty($product['is_license'])): 
+                                        $api_url = defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost:8000/api/v1';
+                                        $url_parts = parse_url($api_url);
+                                        $base_web_url = ($url_parts['scheme'] ?? 'http') . '://' . ($url_parts['host'] ?? 'localhost') . (!empty($url_parts['port']) ? ':' . $url_parts['port'] : '');
+                                        if (!empty($url_parts['path'])) {
+                                            $path_segments = explode('/', trim($url_parts['path'], '/'));
+                                            $web_segments = array_filter($path_segments, function($seg) {
+                                                return !in_array($seg, ['api', 'v1']);
+                                            });
+                                            if (!empty($web_segments)) {
+                                                $base_web_url .= '/' . implode('/', $web_segments);
+                                            }
+                                        }
+                                        $ticket_url = $base_web_url . '/user/support/create';
+                                    ?>
+                                        <div style="margin-top: 14px; padding: 12px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                            <span style="font-size: 10px; color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 4px; line-height: 1;">
+                                                <span class="dashicons dashicons-key" style="font-size: 12px; width: 12px; height: 12px; line-height: 1; margin-top: -1px;"></span> Requiere activación
+                                            </span>
+                                            <a href="<?php echo esc_url($ticket_url); ?>" target="_blank" style="font-size: 10px; font-weight: 800; color: #000; background: #fbbf24; border-radius: 8px; padding: 6px 12px; text-decoration: none; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; transition: background 0.2s;" onmouseover="this.style.background='#f59e0b'" onmouseout="this.style.background='#fbbf24'">
+                                                Solicitar Llave <span class="dashicons dashicons-external" style="font-size: 10px; width: 10px; height: 10px; line-height: 1; vertical-align: middle; margin-left: 2px;"></span>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <!-- Actions -->
