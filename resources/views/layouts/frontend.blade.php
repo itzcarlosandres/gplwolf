@@ -802,10 +802,62 @@
                                 <i class="fas fa-paper-plane"></i>
                             </div>
                         </div>
-                        <form class="flex gap-2">
-                            <input type="email" placeholder="tu@email.com" class="flex-1 bg-[#080808]/60 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#FF2121]/50 focus:ring-2 focus:ring-[#FF2121]/10 transition-all">
-                            <button type="button" class="px-6 py-3.5 gradient-bg hover:opacity-90 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-[#FF2121]/20">Suscribir</button>
+                        <form id="newsletter-form" class="flex gap-2">
+                            @csrf
+                            <input type="email" name="email" required placeholder="tu@email.com" class="flex-1 bg-[#080808]/60 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#FF2121]/50 focus:ring-2 focus:ring-[#FF2121]/10 transition-all">
+                            <button type="submit" class="px-6 py-3.5 gradient-bg hover:opacity-90 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-[#FF2121]/20">Suscribir</button>
                         </form>
+                        <script>
+                            document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                const form = this;
+                                const emailInput = form.querySelector('input[name="email"]');
+                                const button = form.querySelector('button[type="submit"]');
+                                const originalText = button.textContent;
+                                
+                                button.disabled = true;
+                                button.textContent = '...';
+                                
+                                fetch('{{ route("newsletter.subscribe") }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
+                                    },
+                                    body: JSON.stringify({ email: emailInput.value })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    button.disabled = false;
+                                    button.textContent = originalText;
+                                    
+                                    let msgDiv = document.getElementById('newsletter-msg');
+                                    if (!msgDiv) {
+                                        msgDiv = document.createElement('p');
+                                        msgDiv.id = 'newsletter-msg';
+                                        msgDiv.className = 'text-xs mt-3 font-bold transition-all duration-300';
+                                        form.after(msgDiv);
+                                    }
+                                    
+                                    msgDiv.textContent = data.message;
+                                    if (data.success) {
+                                        msgDiv.className = 'text-xs mt-3 font-bold text-emerald-400';
+                                        emailInput.value = '';
+                                    } else {
+                                        msgDiv.className = 'text-xs mt-3 font-bold text-rose-400';
+                                    }
+                                    
+                                    setTimeout(() => {
+                                        msgDiv.remove();
+                                    }, 5000);
+                                })
+                                .catch(error => {
+                                    button.disabled = false;
+                                    button.textContent = originalText;
+                                    console.error('Error:', error);
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
 

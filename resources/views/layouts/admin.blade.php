@@ -169,6 +169,10 @@
                         <i class="fas fa-ticket-alt w-6 {{ request()->routeIs('admin.coupons.*') ? 'text-pink-400' : 'group-hover:text-[#FF2121]' }}"></i>
                         <span x-show="sidebarOpen" class="ml-3 font-medium">Cupones</span>
                     </a>
+                    <a href="{{ route('admin.newsletter.index') }}" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/5 group {{ request()->routeIs('admin.newsletter.*') ? 'active-link' : 'text-gray-400 hover:text-white' }}">
+                        <i class="fas fa-paper-plane w-6 {{ request()->routeIs('admin.newsletter.*') ? 'text-[#FF2121]' : 'group-hover:text-[#FF2121]' }}"></i>
+                        <span x-show="sidebarOpen" class="ml-3 font-medium">Newsletter</span>
+                    </a>
                 </div>
 
                 <!-- Usuarios -->

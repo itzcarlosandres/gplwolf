@@ -68,6 +68,9 @@ Route::view('/reembolso', 'pages.refund')->name('pages.refund');
 Route::view('/ayuda', 'pages.help')->name('pages.help');
 Route::view('/programa-recompensas', 'pages.rewards-program')->name('pages.rewards');
 
+// Newsletter subscription
+Route::post('/newsletter/subscribe', [\App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
 
 
 
@@ -198,6 +201,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // User Memberships Management
     Route::resource('memberships', \App\Http\Controllers\Admin\MembershipController::class);
     Route::post('memberships/{membership}/extend', [\App\Http\Controllers\Admin\MembershipController::class, 'extend'])->name('memberships.extend');
+
+    // Newsletter Management
+    Route::get('newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');
+    Route::post('newsletter/{subscriber}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('newsletter.toggle');
+    Route::delete('newsletter/{subscriber}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('newsletter.destroy');
+    Route::get('newsletter/create-mail', [\App\Http\Controllers\Admin\NewsletterController::class, 'createMail'])->name('newsletter.create-mail');
+    Route::post('newsletter/send-mail', [\App\Http\Controllers\Admin\NewsletterController::class, 'sendMail'])->name('newsletter.send-mail');
 
     // Settings - Unified Page
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
