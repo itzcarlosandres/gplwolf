@@ -201,7 +201,7 @@ $schemaData = [
                     @if(isset($potentialPoints) && $potentialPoints > 0)
                         <div class="h-10 w-px bg-white/10"></div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Ganancia</span>
+                            <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Puntos</span>
                             <div class="flex items-center gap-2">
                                 <span class="text-lg font-black text-white flex items-center gap-1">
                                     <i class="fas fa-coins text-amber-400 text-sm"></i> +{{ $potentialPoints }}
