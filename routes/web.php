@@ -79,6 +79,7 @@ Route::view('/demo-headers', 'demos.header-designs')->name('demo.headers');
 Route::view('/demo-heroes', 'demos.hero-designs')->name('demo.heroes');
 Route::view('/demo-products', 'demos.product-designs')->name('demo.products');
 Route::view('/demo-footers', 'demos.footer-designs')->name('demo.footers');
+Route::get('/demo-pricing', [\App\Http\Controllers\MembershipController::class, 'demoPricing'])->name('demo.pricing');
 
 // Cart Routes
 Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
