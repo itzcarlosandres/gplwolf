@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo - 5 Productos Designs Pro | CaletaWP</title>
+    <title>Demo - 5 Nuevos Diseños de Productos | GPLWolf</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,63 +27,47 @@
         body { font-family: 'Outfit', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #FF2121 0%, #F51B1B 100%); }
         .glass { background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-
-        /* Design 1: Premium Card */
-        .premium-card {
-            background: linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        
+        /* Custom Smooth Transitions */
+        .transition-accordion {
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .premium-card:hover {
-            border-color: rgba(255, 33, 33, 0.3);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(255, 33, 33, 0.2);
-            transform: translateY(-4px);
-        }
-        .premium-card:hover .premium-image { transform: scale(1.08); }
-        .premium-image { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-
-        /* Design 2: Editorial Card */
-        .editorial-card { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
-        .editorial-card:hover { border-color: rgba(255, 33, 33, 0.2); transform: translateY(-2px); }
-        .editorial-card:hover .editorial-img { filter: brightness(1.1) contrast(1.05); }
-        .editorial-img { transition: all 0.5s ease; }
-
-        /* Design 3: Bento Card */
-        .bento-card { background: #0d1425; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s ease; }
-        .bento-card:hover { border-color: rgba(255, 33, 33, 0.3); box-shadow: 0 10px 30px -5px rgba(255, 33, 33, 0.15); }
-
-        /* Design 4: Magazine */
-        .magazine-card { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.4s ease; }
-        .magazine-card:hover { border-color: rgba(245, 158, 11, 0.3); }
-        .magazine-card:hover .magazine-img { transform: scale(1.05); }
-        .magazine-img { transition: transform 0.6s ease; }
-
-        /* Design 5: Compact List */
-        .compact-row { background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.3s ease; }
-        .compact-row:hover { background: #0d1425; border-color: rgba(255, 33, 33, 0.2); }
-
-        /* Animations */
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: shimmer 3s infinite; }
-
-        /* Smooth scroll */
-        html { scroll-behavior: smooth; }
     </style>
 </head>
-<body class="bg-[#050505] text-gray-300">
+<body class="bg-[#050505] text-gray-300 min-h-screen pb-32" x-data="{ activeDesign: 'glassmorphic' }">
 
-    <!-- Selector -->
-    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-2 pl-4">
-        <a href="#d1" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF2121] flex items-center justify-center text-xs font-black text-white transition-all hover:scale-110 border border-white/10 hover:border-[#FF2121]" title="Premium">1</a>
-        <a href="#d2" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF2121] flex items-center justify-center text-xs font-black text-white transition-all hover:scale-110 border border-white/10 hover:border-[#FF2121]" title="Editorial">2</a>
-        <a href="#d3" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF2121] flex items-center justify-center text-xs font-black text-white transition-all hover:scale-110 border border-white/10 hover:border-[#FF2121]" title="Bento">3</a>
-        <a href="#d4" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF2121] flex items-center justify-center text-xs font-black text-white transition-all hover:scale-110 border border-white/10 hover:border-[#FF2121]" title="Magazine">4</a>
-        <a href="#d5" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF2121] flex items-center justify-center text-xs font-black text-white transition-all hover:scale-110 border border-white/10 hover:border-[#FF2121]" title="Compact">5</a>
+    <!-- Header Section -->
+    <div class="py-16 text-center max-w-4xl mx-auto px-6">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs font-black uppercase text-red-500 tracking-widest mb-6">
+            ✨ Nueva Galería de Productos
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none mb-6">
+            5 Diseños de <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-500 to-amber-500">Productos Pro</span>
+        </h1>
+        <p class="text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            Explora 5 propuestas de interfaces completamente nuevas, limpias y altamente interactivas para mostrar los recursos de tu marketplace.
+        </p>
     </div>
 
-    <div class="py-12 text-center">
-        <h1 class="text-4xl font-black text-white mb-3">5 Diseños de Productos Pro</h1>
-        <p class="text-gray-500 text-sm font-medium">Diseños profesionales para tu marketplace</p>
+    <!-- Design Switcher Tabs -->
+    <div class="max-w-4xl mx-auto mb-16 px-6 relative z-50">
+        <div class="bg-white/5 border border-white/10 p-1.5 rounded-2xl flex flex-wrap justify-between items-center gap-1.5 backdrop-blur-md">
+            <button @click="activeDesign = 'glassmorphic'" :class="activeDesign === 'glassmorphic' ? 'bg-red-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                1. Glassmorphic Glow
+            </button>
+            <button @click="activeDesign = 'split'" :class="activeDesign === 'split' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                2. Editorial Split
+            </button>
+            <button @click="activeDesign = 'cyberpunk'" :class="activeDesign === 'cyberpunk' ? 'bg-amber-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                3. Cyber Tech
+            </button>
+            <button @click="activeDesign = 'floating'" :class="activeDesign === 'floating' ? 'bg-emerald-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                4. Floating Shadow
+            </button>
+            <button @click="activeDesign = 'accordion'" :class="activeDesign === 'accordion' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                5. Expanding Slider
+            </button>
+        </div>
     </div>
 
     @php
@@ -108,316 +92,281 @@
     @endphp
 
     <!-- ============================================ -->
-    <!-- DISEÑO 1: PREMIUM CARD -->
+    <!-- DISEÑO 1: GLASSMORPHIC GLOW CARD -->
     <!-- ============================================ -->
-    <div id="d1" class="mb-4">
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-            <span class="inline-block px-4 py-1.5 bg-[#FF2121]/20 text-[#FF2121] text-[10px] font-black uppercase tracking-[0.2em] rounded-lg border border-[#FF2121]/20">Diseño 1 — Premium Card</span>
-        </div>
+    <div x-show="activeDesign === 'glassmorphic'" class="max-w-7xl mx-auto px-6" style="display: none;">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($products as $p)
+            <div class="backdrop-blur-xl bg-white/[0.02] border border-white/10 hover:border-red-500/30 rounded-3xl p-6 relative overflow-hidden transition-all duration-300 shadow-xl group">
+                <!-- Radial Glow Background -->
+                <div class="absolute -top-12 -right-12 w-24 h-24 bg-red-600/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-500"></div>
 
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($products as $p)
-                <div class="premium-card rounded-2xl overflow-hidden group">
-                    <div class="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#FF2121]/30 to-[#F51B1B]/20">
-                        @if($p['thumb'])
-                            <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="premium-image w-full h-full object-cover">
-                        @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
-                        @if($p['badge'])
-                        <div class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-wider border border-white/20 text-white">
-                            <i class="fas fa-crown text-amber-400 text-[8px]"></i> {{ $p['badge'] }}
+                <div class="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d] rounded-2xl border border-white/5 mb-5 flex items-center justify-center">
+                    @if($p['thumb'])
+                        <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    @else
+                        <div class="w-16 h-16 rounded-2xl bg-red-600/10 flex items-center justify-center text-red-500 border border-red-500/20">
+                            <i class="fas fa-cubes text-2xl"></i>
                         </div>
-                        @endif
-                        <div class="absolute top-3 right-3 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">
-                            v{{ $p['version'] }}
-                        </div>
-                        <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-                            <span class="px-2.5 py-1 bg-[#FF2121]/90 backdrop-blur-sm rounded-md text-[10px] font-black uppercase tracking-wider text-white">
-                                {{ $p['type'] }}
-                            </span>
-                            <div class="flex items-center gap-1 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md text-[10px] font-bold text-amber-400 border border-white/10">
-                                <i class="fas fa-star text-[8px]"></i>
-                                <span>{{ $p['rating'] ?: '5.0' }}</span>
-                            </div>
-                        </div>
+                    @endif
+                    
+                    @if($p['badge'])
+                    <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-red-600/20 backdrop-blur-md border border-red-500/30 text-[9px] font-black uppercase text-red-400 tracking-wider">
+                        {{ $p['badge'] }}
                     </div>
-                    <div class="p-5">
-                        <h3 class="text-white font-bold text-base mb-2 line-clamp-1 group-hover:text-[#FF2121] transition-colors">{{ $p['name'] }}</h3>
-                        <div class="flex items-center gap-3 text-[11px] text-gray-500 mb-4">
-                            <div class="flex items-center gap-1">
-                                <i class="fas fa-download text-[10px]"></i>
-                                <span>{{ number_format($p['downloads']) }}</span>
-                            </div>
-                            <div class="w-1 h-1 bg-gray-700 rounded-full"></div>
-                            <div class="flex items-center gap-1">
-                                <i class="fas fa-comment text-[10px]"></i>
-                                <span>{{ $p['reviews'] }}</span>
-                            </div>
-                            <div class="w-1 h-1 bg-gray-700 rounded-full"></div>
-                            <div class="flex items-center gap-1 text-emerald-400">
-                                <i class="fas fa-shield-halved text-[10px]"></i>
-                                <span>GPL</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                            <div>
-                                <span class="text-[10px] text-gray-500 uppercase tracking-wider block">Desde</span>
-                                <span class="text-2xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all border border-white/5">
-                                    <i class="far fa-heart text-sm"></i>
-                                </button>
-                                <button class="px-4 py-2.5 gradient-bg rounded-lg text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-[#FF2121]/20 hover:scale-105 transition-all">
-                                    Ver más
-                                </button>
-                            </div>
-                        </div>
+                    @endif
+                </div>
+
+                <div class="flex justify-between items-start gap-3 mb-3">
+                    <div>
+                        <span class="text-[10px] font-black text-red-500 uppercase tracking-widest block mb-1">{{ $p['type'] }}</span>
+                        <h3 class="text-white font-bold text-base leading-snug line-clamp-1 group-hover:text-red-400 transition-colors">{{ $p['name'] }}</h3>
+                    </div>
+                    <div class="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-0.5 rounded-lg text-[10px] font-bold text-amber-400 shrink-0">
+                        <i class="fas fa-star text-[8px]"></i>
+                        <span>{{ $p['rating'] ?: '5.0' }}</span>
                     </div>
                 </div>
-                @endforeach
+
+                <div class="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <span class="text-[9px] text-gray-500 uppercase block tracking-wider">Versión</span>
+                            <span class="text-xs font-bold text-gray-300">v{{ $p['version'] }}</span>
+                        </div>
+                        <div class="w-px h-6 bg-white/10"></div>
+                        <div>
+                            <span class="text-[9px] text-gray-500 uppercase block tracking-wider">Descargas</span>
+                            <span class="text-xs font-bold text-gray-300">{{ number_format($p['downloads']) }}</span>
+                        </div>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center shadow-lg shadow-red-600/30 transition-all hover:scale-110">
+                        <i class="fas fa-shopping-bag text-xs"></i>
+                    </button>
+                </div>
             </div>
+            @endforeach
         </div>
     </div>
 
     <!-- ============================================ -->
-    <!-- DISEÑO 2: EDITORIAL -->
+    <!-- DISEÑO 2: EDITORIAL SPLIT CARD -->
     <!-- ============================================ -->
-    <div id="d2" class="mb-4">
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-            <span class="inline-block px-4 py-1.5 bg-[#F51B1B]/20 text-[#F51B1B] text-[10px] font-black uppercase tracking-[0.2em] rounded-lg border border-[#F51B1B]/20">Diseño 2 — Editorial</span>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($products as $p)
-                <div class="editorial-card rounded-xl overflow-hidden group">
-                    <div class="flex">
-                        <div class="w-32 h-32 flex-shrink-0 relative overflow-hidden bg-gradient-to-br from-[#FF2121]/40 to-[#F51B1B]/20">
-                            @if($p['thumb'])
-                                <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="editorial-img w-full h-full object-cover">
-                            @endif
-                        </div>
-                        <div class="flex-1 p-4 flex flex-col justify-between min-w-0">
-                            <div>
-                                <div class="flex items-center gap-2 mb-1.5">
-                                    <span class="text-[9px] font-black text-[#FF2121] uppercase tracking-widest">{{ $p['type'] }}</span>
-                                    @if($p['badge'])
-                                    <span class="text-[9px] font-bold text-amber-400">• {{ $p['badge'] }}</span>
-                                    @endif
-                                </div>
-                                <h3 class="text-white font-bold text-sm leading-tight mb-1 line-clamp-2 group-hover:text-[#FF2121] transition-colors">{{ $p['name'] }}</h3>
-                                <div class="flex items-center gap-2 text-[10px] text-gray-500">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fas fa-star text-amber-400 text-[8px]"></i>
-                                        <span class="text-amber-400 font-bold">{{ $p['rating'] ?: '5.0' }}</span>
-                                    </div>
-                                    <span>•</span>
-                                    <span>v{{ $p['version'] }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="text-lg font-black text-white">${{ number_format($p['price'], 2) }}</span>
-                                <button class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white hover:scale-110 transition-all shadow-md shadow-[#FF2121]/30">
-                                    <i class="fas fa-arrow-right text-[10px]"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- DISEÑO 3: BENTO GRID -->
-    <!-- ============================================ -->
-    <div id="d3" class="mb-4">
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-            <span class="inline-block px-4 py-1.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg border border-emerald-500/20">Diseño 3 — Bento Grid</span>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                @foreach($products->take(2) as $p)
-                <div class="bento-card md:col-span-2 rounded-2xl overflow-hidden group">
-                    <div class="relative h-48 overflow-hidden bg-gradient-to-br from-emerald-900/30 to-[#F51B1B]/20">
+    <div x-show="activeDesign === 'split'" class="max-w-7xl mx-auto px-6" style="display: none;">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            @foreach($products as $p)
+            <div class="bg-zinc-950 border border-white/5 rounded-3xl p-5 hover:border-blue-500/30 transition-all duration-300 group">
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-6 items-center">
+                    <div class="sm:col-span-2 relative aspect-[12/9] overflow-hidden bg-zinc-900 rounded-2xl border border-white/5 flex items-center justify-center">
                         @if($p['thumb'])
-                            <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover">
+                        @else
+                            <i class="fas fa-code text-zinc-700 text-4xl"></i>
                         @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0d1425] via-[#0d1425]/40 to-transparent"></div>
-                        <div class="absolute top-3 left-3 flex items-center gap-2">
-                            <span class="px-2 py-0.5 bg-white/10 backdrop-blur-md rounded text-[9px] font-black uppercase tracking-wider text-white border border-white/20">{{ $p['type'] }}</span>
-                            @if($p['badge'])
-                            <span class="px-2 py-0.5 bg-emerald-500/20 backdrop-blur-md rounded text-[9px] font-black uppercase tracking-wider text-emerald-400 border border-emerald-500/30">{{ $p['badge'] }}</span>
-                            @endif
-                        </div>
+                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-blue-600/20 border border-blue-500/30 text-[8px] font-black uppercase text-blue-400 tracking-wider">
+                            {{ $p['type'] }}
+                        </span>
                     </div>
-                    <div class="p-5">
-                        <h3 class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-emerald-400 transition-colors">{{ $p['name'] }}</h3>
-                        <div class="flex items-center gap-3 text-[11px] text-gray-500 mb-4">
-                            <div class="flex items-center gap-1 text-amber-400">
-                                <i class="fas fa-star text-[9px]"></i>
-                                <span class="font-bold">{{ $p['rating'] ?: '5.0' }}</span>
-                            </div>
-                            <span>•</span>
-                            <span>{{ number_format($p['downloads']) }} downloads</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
-                            <button class="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-[10px] font-black uppercase tracking-wider transition-all">
-                                Ver detalles
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-                @foreach($products->skip(2)->take(4) as $p)
-                <div class="bento-card rounded-2xl overflow-hidden group">
-                    <div class="relative h-32 overflow-hidden bg-gradient-to-br from-[#FF2121]/30 to-[#F51B1B]/20">
-                        @if($p['thumb'])
-                            <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0d1425] to-transparent"></div>
-                        <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[8px] font-black uppercase tracking-wider text-white">{{ $p['type'] }}</div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-white font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:text-[#FF2121] transition-colors">{{ $p['name'] }}</h3>
-                        <div class="flex items-center justify-between">
-                            <span class="text-lg font-black text-white">${{ number_format($p['price'], 2) }}</span>
-                            <div class="flex items-center gap-1 text-amber-400 text-[10px] font-bold">
-                                <i class="fas fa-star text-[8px]"></i>
-                                <span>{{ $p['rating'] ?: '5.0' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- DISEÑO 4: MAGAZINE -->
-    <!-- ============================================ -->
-    <div id="d4" class="mb-4">
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-            <span class="inline-block px-4 py-1.5 bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg border border-amber-500/20">Diseño 4 — Magazine</span>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($products as $p)
-                <div class="magazine-card rounded-xl overflow-hidden group">
-                    <div class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-900/20 to-orange-900/10">
-                        @if($p['thumb'])
-                            <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="magazine-img w-full h-full object-cover">
-                        @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
-                        <div class="absolute top-4 left-4 right-4 flex items-center justify-between">
-                            <span class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em]">№ {{ $loop->iteration }}</span>
-                            <div class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
-                                <i class="fas fa-bookmark text-[10px]"></i>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-4 left-4 right-4">
+                    <div class="sm:col-span-3 flex flex-col justify-between h-full min-w-0">
+                        <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest">{{ $p['type'] }}</span>
-                                <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
-                                <span class="text-[10px] text-gray-400">v{{ $p['version'] }}</span>
+                                <span class="text-[9px] font-bold text-gray-500">v{{ $p['version'] }}</span>
+                                <span class="w-1 h-1 bg-zinc-700 rounded-full"></span>
+                                <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Seguro GPL</span>
                             </div>
+                            <h3 class="text-white font-bold text-base leading-snug line-clamp-2 group-hover:text-blue-400 transition-colors mb-3">{{ $p['name'] }}</h3>
                         </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-white text-xl font-black leading-tight mb-3 line-clamp-2 group-hover:text-amber-400 transition-colors">{{ $p['name'] }}</h3>
-                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/5">
-                            <div class="flex items-center gap-1 text-amber-400 text-xs">
-                                <i class="fas fa-star text-[10px]"></i>
-                                <span class="font-black">{{ $p['rating'] ?: '5.0' }}</span>
-                            </div>
-                            <span class="text-gray-700">•</span>
-                            <span class="text-[11px] text-gray-500">{{ number_format($p['downloads']) }} ventas</span>
-                            <span class="text-gray-700">•</span>
-                            <span class="text-[11px] text-emerald-400 font-bold">GPL</span>
-                        </div>
-                        <div class="flex items-center justify-between">
+
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
                             <div>
-                                <span class="text-[10px] text-gray-500 uppercase tracking-wider block">Precio</span>
-                                <span class="text-3xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
+                                <span class="text-[9px] text-gray-500 uppercase block tracking-wider">Precio Licencia</span>
+                                <span class="text-xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
                             </div>
-                            <button class="w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 flex items-center justify-center text-black shadow-lg shadow-amber-500/30 transition-all hover:scale-110">
-                                <i class="fas fa-arrow-right text-sm"></i>
+                            <button class="px-4 py-2 rounded-xl border border-blue-500/30 text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all text-xs font-black uppercase tracking-wider">
+                                Descargar
                             </button>
                         </div>
                     </div>
                 </div>
-                @endforeach
             </div>
+            @endforeach
         </div>
     </div>
 
     <!-- ============================================ -->
-    <!-- DISEÑO 5: COMPACT TABLE -->
+    <!-- DISEÑO 3: CYBER TECH GRID -->
     <!-- ============================================ -->
-    <div id="d5" class="mb-4">
-        <div class="max-w-7xl mx-auto px-6 mb-4">
-            <span class="inline-block px-4 py-1.5 bg-pink-500/20 text-pink-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg border border-pink-500/20">Diseño 5 — Compact Table</span>
-        </div>
+    <div x-show="activeDesign === 'cyberpunk'" class="max-w-7xl mx-auto px-6" style="display: none;">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($products as $p)
+            <div class="bg-black border border-white/10 p-5 rounded-xl relative overflow-hidden transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] group">
+                <!-- Tech Corners -->
+                <div class="absolute w-2 h-2 border-t-2 border-l-2 border-amber-500 top-0 left-0"></div>
+                <div class="absolute w-2 h-2 border-t-2 border-r-2 border-amber-500 top-0 right-0"></div>
+                <div class="absolute w-2 h-2 border-b-2 border-l-2 border-amber-500 bottom-0 left-0"></div>
+                <div class="absolute w-2 h-2 border-b-2 border-r-2 border-amber-500 bottom-0 right-0"></div>
 
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="rounded-xl overflow-hidden border border-white/5">
-                <div class="grid grid-cols-12 gap-4 px-6 py-3 bg-white/[0.02] text-[10px] font-black uppercase tracking-wider text-gray-500 border-b border-white/5">
-                    <div class="col-span-1">#</div>
-                    <div class="col-span-5">Producto</div>
-                    <div class="col-span-2">Tipo</div>
-                    <div class="col-span-1 text-center">Rating</div>
-                    <div class="col-span-1 text-center">v</div>
-                    <div class="col-span-2 text-right">Precio</div>
+                <div class="relative bg-zinc-950/60 p-4 border border-white/5 rounded-lg mb-4 flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-amber-500 tracking-wider">SYS_STATUS: // OK</span>
+                    <span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-mono uppercase tracking-widest rounded">
+                        {{ $p['type'] }}
+                    </span>
                 </div>
-                @foreach($products as $p)
-                <div class="compact-row grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5 last:border-0 group">
-                    <div class="col-span-1 text-[10px] font-black text-gray-500">{{ $loop->iteration }}</div>
-                    <div class="col-span-5 flex items-center gap-3 min-w-0">
-                        <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#FF2121]/40 to-[#F51B1B]/20 border border-white/5">
-                            @if($p['thumb'])
-                                <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover">
-                            @endif
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <h3 class="text-white font-bold text-sm truncate group-hover:text-[#FF2121] transition-colors">{{ $p['name'] }}</h3>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                @if($p['badge'])
-                                <span class="text-[9px] font-black text-amber-400 uppercase tracking-wider">{{ $p['badge'] }}</span>
-                                @endif
-                            </div>
-                        </div>
+
+                <h3 class="text-white font-mono font-bold text-sm leading-snug line-clamp-1 mb-4 group-hover:text-amber-400 transition-colors uppercase tracking-tight">> {{ $p['name'] }}</h3>
+
+                <div class="space-y-2 border-t border-b border-white/5 py-4 mb-4">
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500">SHA256_VERIFICATION</span>
+                        <span class="text-emerald-400 font-bold">VERIFIED_SECURE</span>
                     </div>
-                    <div class="col-span-2">
-                        <span class="text-[10px] font-black text-[#FF2121] uppercase tracking-wider">{{ $p['type'] }}</span>
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500">ACTIVE_RELEASES</span>
+                        <span class="text-gray-300">v{{ $p['version'] }}</span>
                     </div>
-                    <div class="col-span-1 text-center">
-                        <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-amber-400 text-[10px] font-bold">
-                            <i class="fas fa-star text-[8px]"></i>
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500">SYSTEM_RATING</span>
+                        <span class="text-amber-400">{{ $p['rating'] ?: '5.0' }} / 5.0</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center font-mono">
+                    <span class="text-2xl font-black text-amber-400 font-mono">${{ number_format($p['price'], 2) }}</span>
+                    <button class="px-4 py-2 bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30 rounded text-[10px] font-mono font-black uppercase tracking-wider transition-all">
+                        DEPLOY
+                    </button>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DISEÑO 4: FLOATING SHADOW -->
+    <!-- ============================================ -->
+    <div x-show="activeDesign === 'floating'" class="max-w-7xl mx-auto px-6" style="display: none;">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($products as $p)
+            <div class="bg-zinc-900/60 rounded-3xl p-6 transition-all duration-500 hover:bg-zinc-900 hover:translate-y-[-8px] hover:shadow-[0_20px_50px_rgba(0,0,0,0.8),_0_0_20px_rgba(255,255,255,0.02)] border border-transparent hover:border-white/5 group">
+                <div class="aspect-[16/10] overflow-hidden rounded-2xl mb-6 relative bg-zinc-950 flex items-center justify-center border border-white/5">
+                    @if($p['thumb'])
+                        <img src="{{ $p['thumb'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover">
+                    @else
+                        <i class="fas fa-layer-group text-zinc-800 text-4xl"></i>
+                    @endif
+                    
+                    <span class="absolute bottom-3 left-3 px-3 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[9px] font-black uppercase text-emerald-400 tracking-widest border border-white/5">
+                        {{ $p['type'] }}
+                    </span>
+                </div>
+
+                <div class="space-y-2 mb-6">
+                    <h3 class="text-white font-black text-lg leading-tight line-clamp-1 group-hover:text-emerald-400 transition-colors">{{ $p['name'] }}</h3>
+                    <div class="flex items-center gap-3 text-xs text-gray-500 font-bold">
+                        <span>v{{ $p['version'] }}</span>
+                        <span>•</span>
+                        <div class="flex items-center gap-1 text-amber-400">
+                            <i class="fas fa-star text-[9px]"></i>
                             <span>{{ $p['rating'] ?: '5.0' }}</span>
                         </div>
                     </div>
-                    <div class="col-span-1 text-center text-[10px] text-gray-500 font-bold">v{{ $p['version'] }}</div>
-                    <div class="col-span-2 text-right flex items-center justify-end gap-3">
-                        <span class="text-lg font-black text-white">${{ number_format($p['price'], 2) }}</span>
-                        <button class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all shadow-md shadow-[#FF2121]/30">
-                            <i class="fas fa-arrow-right text-[10px]"></i>
-                        </button>
-                    </div>
                 </div>
-                @endforeach
+
+                <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                    <span class="text-2xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
+                    <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white flex items-center justify-center transition-all border border-white/10">
+                        <i class="fas fa-download text-xs"></i>
+                    </button>
+                </div>
             </div>
+            @endforeach
         </div>
     </div>
 
-    <div class="py-20 text-center">
-        <p class="text-gray-600 text-sm">Selecciona el que más te guste para CaletaWP</p>
+    <!-- ============================================ -->
+    <!-- DISEÑO 5: EXPANDING ACCORDION SLIDER -->
+    <!-- ============================================ -->
+    <div x-show="activeDesign === 'accordion'" class="max-w-7xl mx-auto px-6" style="display: none;" x-data="{ expandedIndex: 0 }">
+        <div class="hidden lg:flex gap-4 w-full min-h-[460px] items-stretch">
+            @foreach($products as $index => $p)
+            <div @mouseenter="expandedIndex = {{ $index }}" 
+                 class="transition-accordion rounded-[32px] overflow-hidden border border-white/5 p-6 flex flex-col justify-between relative bg-zinc-950"
+                 :class="expandedIndex === {{ $index }} ? 'flex-[2.5] border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-950 to-purple-950/20' : 'flex-1 cursor-pointer hover:border-white/20'">
+                
+                <div>
+                    <!-- Category & Status -->
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-[9px] font-black text-purple-400 uppercase tracking-widest">{{ $p['type'] }}</span>
+                        <span x-show="expandedIndex === {{ $index }}" class="px-2.5 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded text-[9px] font-bold">100% OK</span>
+                    </div>
+
+                    <!-- Visual Accent when collapsed -->
+                    <div x-show="expandedIndex !== {{ $index }}" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-6">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </div>
+
+                    <!-- Layout when expanded -->
+                    <div x-show="expandedIndex === {{ $index }}" class="flex gap-6 items-center mb-6">
+                        <div class="w-32 h-20 rounded-2xl bg-zinc-900 overflow-hidden border border-white/5 flex-shrink-0 flex items-center justify-center">
+                            @if($p['thumb'])
+                                <img src="{{ $p['thumb'] }}" class="w-full h-full object-cover">
+                            @else
+                                <i class="fas fa-cubes text-zinc-700 text-2xl"></i>
+                            @endif
+                        </div>
+                        <div>
+                            <h3 class="text-white font-black text-xl leading-tight mb-2">{{ $p['name'] }}</h3>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 font-bold">
+                                <span>v{{ $p['version'] }}</span>
+                                <span>•</span>
+                                <div class="flex items-center gap-1 text-amber-400">
+                                    <i class="fas fa-star text-[9px]"></i>
+                                    <span>{{ $p['rating'] ?: '5.0' }} ({{ $p['reviews'] }} reviews)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-show="expandedIndex !== {{ $index }}" class="mt-4">
+                        <h3 class="text-white font-bold text-sm truncate rotate-90 origin-left translate-x-2 whitespace-nowrap mt-8">{{ $p['name'] }}</h3>
+                    </div>
+                </div>
+
+                <div x-show="expandedIndex === {{ $index }}" class="flex items-center justify-between pt-6 border-t border-white/5">
+                    <div>
+                        <span class="text-[9px] text-gray-500 uppercase block tracking-wider">Pago Seguro GPL</span>
+                        <span class="text-3xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
+                    </div>
+                    <button class="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-purple-500/20 transition-all hover:scale-105">
+                        Descargar Ahora
+                    </button>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- Fallback Grid for Mobile & Tablets -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+            @foreach($products as $p)
+            <div class="bg-zinc-950 border border-white/5 rounded-3xl p-6 flex flex-col justify-between">
+                <div>
+                    <span class="text-[9px] font-black text-purple-400 uppercase tracking-widest block mb-2">{{ $p['type'] }}</span>
+                    <h3 class="text-white font-black text-lg mb-4">{{ $p['name'] }}</h3>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t border-white/5">
+                    <span class="text-2xl font-black text-white">${{ number_format($p['price'], 2) }}</span>
+                    <button class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-black uppercase">
+                        Descargar
+                    </button>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Page Footer / Selector Message -->
+    <div class="py-24 text-center">
+        <p class="text-gray-600 text-sm font-medium">Todos los componentes utilizan variables y datos reales de la base de datos.</p>
     </div>
 
 </body>
