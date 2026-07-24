@@ -4,7 +4,7 @@
 @section('meta_description', 'Únete al club GPLWolf y descarga más de 5,000 temas y plugins premium de WordPress con descargas ilimitadas, actualizaciones automáticas y 100% seguros.')
 
 @section('content')
-<div class="relative overflow-hidden bg-[#050505] text-white pt-24 pb-20 font-sans" x-data="pricingPage()">
+<div class="relative overflow-hidden bg-[#050505] text-white pb-20 font-sans" x-data="pricingPage()">
     <!-- Background Effects -->
     <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[150px] -z-10 animate-pulse"></div>
     <div class="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[180px] -z-10"></div>
