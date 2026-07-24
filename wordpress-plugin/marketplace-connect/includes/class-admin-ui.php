@@ -34,11 +34,10 @@ class Marketplace_Admin_UI {
 
     public function enqueue_styles() {
         wp_enqueue_style( 'mp-admin-css', MARKETPLACE_CONNECT_PLUGIN_URL . 'assets/css/admin.css', array(), $this->version, 'all' );
-        // Usar Tailwind CDN para prototipado rápido o estilos propios
-        wp_enqueue_style( 'mp-tailwind', 'https://cdn.tailwindcss.com' ); 
     }
 
     public function enqueue_scripts() {
+        wp_enqueue_script( 'mp-tailwind', 'https://cdn.tailwindcss.com', array(), $this->version, false );
         wp_enqueue_script( 'mp-admin-js', MARKETPLACE_CONNECT_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery' ), $this->version, false );
         wp_localize_script( 'mp-admin-js', 'mp_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
     }
