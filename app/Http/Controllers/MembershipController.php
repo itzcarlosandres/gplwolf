@@ -52,13 +52,4 @@ class MembershipController extends Controller
         return view('membership.pricing', compact('plans'));
     }
 
-    public function demoPricing()
-    {
-        $plans = MembershipPlan::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('price', 'asc')
-            ->get();
-
-        return view('demos.pricing-designs', compact('plans'));
-    }
 }
