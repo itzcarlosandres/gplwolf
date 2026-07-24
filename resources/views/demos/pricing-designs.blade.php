@@ -407,6 +407,8 @@
                 </button>
             </form>
         </div>
+        @empty
+            <div class="col-span-3 text-center py-20 text-gray-500 italic">No hay planes de membresía activos disponibles en este momento.</div>
         @endforelse
     </div>
 </div>
