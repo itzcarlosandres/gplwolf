@@ -80,7 +80,7 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
                 @foreach($products as $product)
-                <div class="group relative bg-[#0a0a0c] border border-white/[0.06] hover:border-amber-500/40 rounded-[32px] p-6 flex flex-col justify-between transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.05)]">
+                <a href="{{ route('products.show', $product->slug) }}" class="group relative bg-[#0a0a0c] border border-white/[0.06] hover:border-amber-500/40 rounded-[32px] p-6 flex flex-col justify-between transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.05)] cursor-pointer block">
                     <div>
                         <!-- Image & Badges -->
                         <div class="relative w-full aspect-video rounded-2xl bg-zinc-950/50 border border-white/5 overflow-hidden mb-6 flex items-center justify-center">
@@ -116,14 +116,14 @@
                             <span class="text-xl font-black text-white">${{ number_format($product->price, 2) }}</span>
                         </div>
 
-                        <form action="{{ route('cart.add', $product) }}" method="POST" class="inline">
+                        <form action="{{ route('cart.add', $product) }}" method="POST" class="inline" onclick="event.stopPropagation();">
                             @csrf
                             <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-black rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-amber-500/10 flex items-center gap-1.5">
                                 <i class="fas fa-shopping-cart text-[10px]"></i> Comprar
                             </button>
                         </form>
                     </div>
-                </div>
+                </a>
                 @endforeach
             </div>
         @endif
