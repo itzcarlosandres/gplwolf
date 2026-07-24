@@ -31,6 +31,8 @@ class ProductApiController extends Controller
                 'slug' => $product->slug,
                 'name' => $product->name,
                 'type' => $product->type,
+                'category_name' => $product->category ? $product->category->name : null,
+                'category_slug' => $product->category ? $product->category->slug : null,
                 'version' => $product->version, // Current version on server
                 'thumbnail' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                 'is_license' => (bool) $product->is_license,
@@ -52,6 +54,8 @@ class ProductApiController extends Controller
             'slug' => $product->slug,
             'name' => $product->name,
             'type' => $product->type,
+            'category_name' => $product->category ? $product->category->name : null,
+            'category_slug' => $product->category ? $product->category->slug : null,
             'is_license' => (bool) $product->is_license,
             'is_new' => $product->created_at->gt(now()->subDays(15)),
             'description' => $product->description,

@@ -407,7 +407,7 @@ class Marketplace_Admin_UI {
                     </div>
 
                     <!-- Category Tabs -->
-                    <div class="flex items-center bg-[#050505] border border-white/10 p-1 rounded-xl">
+                    <div class="flex flex-wrap items-center bg-[#050505] border border-white/10 p-1 rounded-xl gap-1">
                         <button @click="filterTab = 'all'" :class="filterTab === 'all' ? 'bg-red-500 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
                             Todos
                         </button>
@@ -423,6 +423,9 @@ class Marketplace_Admin_UI {
                         <button @click="filterTab = 'themes'" :class="filterTab === 'themes' ? 'bg-zinc-800 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer">
                             Themes
                         </button>
+                        <template x-for="cat in getCategories()" :key="cat">
+                            <button @click="filterTab = cat" :class="filterTab === cat ? 'bg-zinc-700 text-white' : 'text-gray-400 hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer" x-text="cat"></button>
+                        </template>
                     </div>
                 </div>
 
@@ -740,6 +743,16 @@ class Marketplace_Admin_UI {
                     return base + '/user/support/create';
                 },
 
+                getCategories() {
+                    const cats = new Set();
+                    this.products.forEach(p => {
+                        if (p.category_name) {
+                            cats.add(p.category_name);
+                        }
+                    });
+                    return Array.from(cats);
+                },
+
                 filteredProducts() {
                     return this.products.filter(p => {
                         // Search filter
@@ -752,6 +765,11 @@ class Marketplace_Admin_UI {
                         if (this.filterTab === 'news') return p.is_new;
                         if (this.filterTab === 'plugins') return p.type.toLowerCase() === 'plugin' || p.type.toLowerCase() === 'gpl' || p.type.toLowerCase() === 'premium';
                         if (this.filterTab === 'themes') return p.type.toLowerCase() === 'theme';
+                        
+                        // Dynamic category check
+                        if (this.filterTab !== 'all') {
+                            return p.category_name === this.filterTab;
+                        }
                         
                         return true;
                     });
