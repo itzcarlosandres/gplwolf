@@ -202,6 +202,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // User Memberships Management
     Route::resource('memberships', \App\Http\Controllers\Admin\MembershipController::class);
     Route::post('memberships/{membership}/extend', [\App\Http\Controllers\Admin\MembershipController::class, 'extend'])->name('memberships.extend');
+    Route::post('memberships/{membership}/toggle-status', [\App\Http\Controllers\Admin\MembershipController::class, 'toggleStatus'])->name('memberships.toggle-status');
 
     // Newsletter Management
     Route::get('newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');

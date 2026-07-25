@@ -80,6 +80,18 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                <form action="{{ route('admin.memberships.toggle-status', $membership) }}" method="POST" class="inline">
+                                    @csrf
+                                    @if($membership->status === 'active')
+                                        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all border-none cursor-pointer bg-transparent" title="Suspender/Bloquear Membresía">
+                                            <i class="fas fa-ban text-xs"></i>
+                                        </button>
+                                    @else
+                                        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-all border-none cursor-pointer bg-transparent" title="Activar/Desbloquear Membresía">
+                                            <i class="fas fa-unlock text-xs"></i>
+                                        </button>
+                                    @endif
+                                </form>
                                 <a href="{{ route('admin.memberships.edit', $membership) }}" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-all" title="Editar">
                                     <i class="fas fa-edit text-xs"></i>
                                 </a>

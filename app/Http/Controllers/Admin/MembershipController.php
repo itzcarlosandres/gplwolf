@@ -81,4 +81,23 @@ class MembershipController extends Controller
         return redirect()->route('admin.memberships.index')
             ->with('success', 'Membresía eliminada correctamente.');
     }
+
+    /**
+     * Toggle status between active and suspended.
+     */
+    public function toggleStatus(Membership $membership)
+    {
+        if ($membership->status === 'active') {
+            $membership->update(['status' => 'suspended']);
+            $msg = 'Membresía suspendida/bloqueada correctamente.';
+        } else {
+            $membership->update([
+                'status' => 'active',
+                'expires_at' => $membership->expires_at && $membership->expires_at->isPast() ? now()->addMonth() : $membership->expires_at
+            ]);
+            $msg = 'Membresía activada/desbloqueada correctamente.';
+        }
+
+        return back()->with('success', $msg);
+    }
 }
