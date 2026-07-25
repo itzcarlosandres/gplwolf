@@ -25,14 +25,14 @@
     <meta property="og:site_name" content="{{ $globalSettings['site_name'] ?? 'WP Marketplace' }}">
     <meta property="og:title" content="@yield('meta_title', $globalSettings['home_meta_title'] ?? ($globalSettings['site_name'] ?? 'WP Marketplace'))">
     <meta property="og:description" content="@yield('meta_description', $globalSettings['home_meta_description'] ?? 'Themes y Plugins Premium para WordPress.')">
-    <meta property="og:image" content="@yield('meta_image', isset($globalSettings['site_og_image']) ? (\Illuminate\Support\Str::startsWith($globalSettings['site_og_image'], 'ui/') ? asset($globalSettings['site_og_image']) : asset('storage/' . $globalSettings['site_og_image'])) : asset('images/og-default.jpg'))">
+    <meta property="og:image" content="@yield('meta_image', isset($globalSettings['site_og_image']) ? (\Illuminate\Support\Str::startsWith($globalSettings['site_og_image'], 'ui/') ? asset($globalSettings['site_og_image']) : asset('storage/' . $globalSettings['site_og_image'])) : asset('ui/og-default.png'))">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:title" content="@yield('meta_title', $globalSettings['home_meta_title'] ?? ($globalSettings['site_name'] ?? 'WP Marketplace'))">
     <meta property="twitter:description" content="@yield('meta_description', $globalSettings['home_meta_description'] ?? 'Themes y Plugins Premium para WordPress.')">
-    <meta property="twitter:image" content="@yield('meta_image', isset($globalSettings['site_og_image']) ? (\Illuminate\Support\Str::startsWith($globalSettings['site_og_image'], 'ui/') ? asset($globalSettings['site_og_image']) : asset('storage/' . $globalSettings['site_og_image'])) : asset('images/og-default.jpg'))">
+    <meta property="twitter:image" content="@yield('meta_image', isset($globalSettings['site_og_image']) ? (\Illuminate\Support\Str::startsWith($globalSettings['site_og_image'], 'ui/') ? asset($globalSettings['site_og_image']) : asset('storage/' . $globalSettings['site_og_image'])) : asset('ui/og-default.png'))">
     <!-- Preload Critical Resources -->
     <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
     
