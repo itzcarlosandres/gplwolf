@@ -62,7 +62,7 @@
 
                     <!-- Popular Ribbon -->
                     @if($isFeatured)
-                        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-amber-500 text-white text-[10px] font-black uppercase px-5 py-1.5 rounded-full tracking-widest shadow-lg border border-red-500/30 animate-[pulse_2s_infinite]">
+                        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gradient-to-r from-red-600 to-amber-500 text-white text-[10px] font-black uppercase px-5 py-1.5 rounded-full tracking-widest shadow-lg border border-red-500/30 animate-[pulse_2s_infinite]">
                             ★ MÁS RECOMENDADO ★
                         </div>
                     @endif
