@@ -117,7 +117,6 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-downloads', [UserDashboardController::class, 'downloads'])->name('user.downloads');
-    Route::get('/my-licenses', [UserDashboardController::class, 'licenses'])->name('user.licenses');
     Route::get('/my-orders', [UserDashboardController::class, 'orders'])->name('user.orders');
     Route::get('/my-orders/{order}', [UserDashboardController::class, 'showOrder'])->name('user.orders.show');
     Route::post('/my-orders/{order}/upload-proof', [UserDashboardController::class, 'uploadProof'])->name('user.orders.upload-proof');

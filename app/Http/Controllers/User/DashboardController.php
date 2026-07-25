@@ -140,19 +140,4 @@ class DashboardController extends Controller
             return response()->json($result, 400); 
         }
     }
-
-    /**
-     * Display client's active license keys and activations.
-     */
-    public function licenses()
-    {
-        $user = Auth::user();
-        
-        $licenses = \App\Models\License::with('product')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->paginate(15);
-            
-        return view('user.licenses', compact('licenses'));
-    }
 }

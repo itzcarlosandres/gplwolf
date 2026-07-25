@@ -265,11 +265,6 @@
                 <span class="ml-3 font-bold">Mis Descargas</span>
             </a>
 
-            <a href="{{ route('user.licenses') }}" class="flex items-center px-4 py-3 rounded-r-xl transition-all {{ request()->routeIs('user.licenses') ? 'active-link' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
-                <i class="fas fa-key w-6"></i>
-                <span class="ml-3 font-bold">Mis Licencias</span>
-            </a>
-
             <a href="{{ route('user.orders') }}" class="flex items-center px-4 py-3 rounded-r-xl transition-all {{ request()->routeIs('user.orders') ? 'active-link' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
                 <i class="fas fa-shopping-bag w-6"></i>
                 <span class="ml-3 font-bold">Mis Compras</span>
