@@ -288,6 +288,25 @@ class Marketplace_Admin_UI {
                 box-shadow: 0px 0px 0px #1c1c22 !important;
                 transform: translate(2px, 2px);
             }
+            .mp-search-input {
+                background: #050505 !important;
+                color: #fff !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                border-radius: 12px !important;
+                padding-left: 36px !important;
+                padding-right: 16px !important;
+                padding-top: 8px !important;
+                padding-bottom: 8px !important;
+                font-size: 12px !important;
+                height: 38px !important;
+                width: 100% !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+            .mp-search-input:focus {
+                border-color: #ef4444 !important;
+                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+                outline: none !important;
+            }
         </style>
 
         <div class="wrap" x-data="marketplaceApp(<?php echo esc_attr($products_json); ?>, '<?php echo esc_js($token); ?>', '<?php echo esc_js($api_url); ?>')" style="background: #09090b; padding: 28px; border-radius: 28px; color: #fff; min-height: 80vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; margin-top: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
@@ -401,8 +420,8 @@ class Marketplace_Admin_UI {
                 <div class="flex flex-wrap items-center gap-3">
                     <!-- Search input -->
                     <div class="relative" style="width: 240px;">
-                        <span class="dashicons dashicons-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs" style="font-size: 14px; width: 14px; height: 14px; line-height: 1;"></span>
-                        <input type="text" x-model="searchQuery" placeholder="Buscar plugin o theme..." class="w-full bg-[#050505] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all" style="height: auto;">
+                        <span class="dashicons dashicons-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" style="font-size: 16px; width: 16px; height: 16px; line-height: 1; pointer-events: none; z-index: 10;"></span>
+                        <input type="text" x-model="searchQuery" placeholder="Buscar plugin o theme..." class="mp-search-input">
                     </div>
 
                     <!-- Category Tabs -->
