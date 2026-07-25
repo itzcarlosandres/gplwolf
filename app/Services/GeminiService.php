@@ -76,7 +76,20 @@ class GeminiService
             
             return $text;
         }
-        return ''; // Return empty string on failure instead of throwing exception for partial success
+
+        $errorMsg = 'API Error';
+        try {
+            $data = $response->json();
+            if (isset($data['error']['message'])) {
+                $errorMsg = $data['error']['message'];
+            } else {
+                $errorMsg = $response->body();
+            }
+        } catch (\Exception $e) {
+            $errorMsg = $response->body() ?: $e->getMessage();
+        }
+
+        throw new \Exception("Error de la API de Gemini: " . $errorMsg);
     }
 
     /**
