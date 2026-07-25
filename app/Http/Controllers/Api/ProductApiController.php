@@ -22,7 +22,11 @@ class ProductApiController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->paginate(12);
+        $perPage = intval($request->query('per_page', 12));
+        if ($perPage < 1 || $perPage > 1000) {
+            $perPage = 12;
+        }
+        $products = $query->paginate($perPage);
 
         // Transform collection to include "can_download" status
         $products->getCollection()->transform(function ($product) use ($request) {

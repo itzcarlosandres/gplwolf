@@ -21,6 +21,7 @@ class Marketplace_Connect {
     private function load_dependencies() {
         require_once MARKETPLACE_CONNECT_PLUGIN_DIR . 'includes/class-api-client.php';
         require_once MARKETPLACE_CONNECT_PLUGIN_DIR . 'includes/class-admin-ui.php';
+        require_once MARKETPLACE_CONNECT_PLUGIN_DIR . 'includes/class-update-manager.php';
 
         $this->api_client = new Marketplace_API_Client();
     }
@@ -36,6 +37,9 @@ class Marketplace_Connect {
         add_action( 'wp_ajax_mp_connect_login', array( $plugin_admin, 'handle_login' ) );
         add_action( 'wp_ajax_mp_disconnect', array( $plugin_admin, 'handle_disconnect' ) );
         add_action( 'wp_ajax_mp_download_item', array( $plugin_admin, 'handle_download' ) );
+
+        // Initialize Update Manager to handle native theme & plugin updates
+        new Marketplace_Update_Manager( $this->api_client );
     }
 
     public function run() {

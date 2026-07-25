@@ -35,7 +35,7 @@ class Marketplace_API_Client {
         }
     }
 
-    public function get_products($page = 1, $search = '') {
+    public function get_products($page = 1, $search = '', $per_page = 12) {
         $token = get_option('mp_api_token');
         if (!$token) return false;
 
@@ -47,7 +47,7 @@ class Marketplace_API_Client {
             'timeout' => 15,
         );
 
-        $url = $this->api_url . '/products?page=' . $page;
+        $url = $this->api_url . '/products?page=' . $page . '&per_page=' . $per_page;
         if($search) $url .= '&search=' . urlencode($search);
 
         $response = wp_remote_get($url, $args);

@@ -524,6 +524,7 @@ class Marketplace_Admin_UI {
                 searchQuery: '',
                 toasts: [],
                 ticketUrl: '',
+                searchTimeout: null,
                 products: initialProducts.map(p => ({
                     ...p,
                     installing: false,
@@ -532,6 +533,42 @@ class Marketplace_Admin_UI {
                 
                 init() {
                     this.ticketUrl = this.generateTicketUrl();
+                    this.$watch('searchQuery', () => {
+                        this.debounceSearch();
+                    });
+                },
+
+                debounceSearch() {
+                    clearTimeout(this.searchTimeout);
+                    this.searchTimeout = setTimeout(() => {
+                        this.performSearch();
+                    }, 300);
+                },
+
+                performSearch() {
+                    jQuery.ajax({
+                        url: apiUrl + '/products',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + apiToken,
+                            'Accept': 'application/json'
+                        },
+                        data: {
+                            search: this.searchQuery
+                        },
+                        success: (response) => {
+                            if (response && response.data) {
+                                this.products = response.data.map(p => ({
+                                    ...p,
+                                    installing: false,
+                                    installed: false
+                                }));
+                            }
+                        },
+                        error: () => {
+                            this.toast('error', 'Error al buscar en el servidor.');
+                        }
+                    });
                 },
 
                 generateTicketUrl() {
@@ -684,16 +721,41 @@ class Marketplace_Admin_UI {
         if ($type === 'theme') {
             $upgrader = new Theme_Upgrader($skin);
             $result = $upgrader->install($package_url);
+
+            // Track theme in installed resources option
+            if ($result && !is_wp_error($result)) {
+                $theme_slug = $upgrader->theme_info();
+                if ($theme_slug) {
+                    $installed = get_option('mp_installed_resources', array());
+                    $installed[$theme_slug] = array(
+                        'id' => $id,
+                        'type' => 'theme',
+                        'slug' => $theme_slug,
+                        'installed_at' => time()
+                    );
+                    update_option('mp_installed_resources', $installed);
+                }
+            }
         } else {
             // plugin, gpl, or premium (Plugin installer)
             $upgrader = new Plugin_Upgrader($skin);
             $result = $upgrader->install($package_url);
 
-            // Auto activate plugin on success
+            // Auto activate plugin on success & track update slug
             if ($result && !is_wp_error($result)) {
                 $plugin_slug = $upgrader->plugin_info();
                 if ($plugin_slug) {
                     activate_plugin($plugin_slug);
+
+                    // Track plugin in installed resources option
+                    $installed = get_option('mp_installed_resources', array());
+                    $installed[$plugin_slug] = array(
+                        'id' => $id,
+                        'type' => 'plugin',
+                        'slug' => $plugin_slug,
+                        'installed_at' => time()
+                    );
+                    update_option('mp_installed_resources', $installed);
                 }
             }
         }
