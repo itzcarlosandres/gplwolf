@@ -212,7 +212,7 @@
             </a>
 
             <!-- Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-{{ min(($gridColumns ?? 3) - 1, 3) }} lg:grid-cols-{{ min(($gridColumns ?? 3) - 1, 4) }} xl:grid-cols-{{ $gridColumns ?? 3 }} gap-5">
                 @forelse($products as $index => $product)
                 <div class="group bg-[#0a0a0a] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#FF2121]/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#FF2121]/5">
                     <!-- Image -->

@@ -260,7 +260,7 @@ class SettingController extends Controller
             'products_grid_columns' => 'required|integer|min:3|max:6',
             'products_per_page' => 'required|integer|min:6|max:100',
             'products_section_title' => 'required|string|max:100',
-            'home_products_style' => 'required|in:grid,list,bento,bauhaus',
+            'home_products_style' => 'required|in:grid,list,bento,bauhaus,minimalist',
             'home_products_count' => 'required|integer|min:1|max:100',
             'home_grid_columns' => 'required|integer|min:3|max:6',
             'home_featured_title' => 'nullable|string|max:150',

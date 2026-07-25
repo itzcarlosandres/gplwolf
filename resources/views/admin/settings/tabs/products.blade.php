@@ -98,11 +98,12 @@
             <!-- Estilo -->
             <div class="lg:col-span-3">
                 <label class="block text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Estilo de Visualización</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                     @php
                         $styles = [
                             'grid' => ['icon' => 'fa-th', 'name' => 'Grid Compacto', 'desc' => 'Recomendado'],
                             'list' => ['icon' => 'fa-list', 'name' => 'Lista Horizontal', 'desc' => 'Detallado'],
+                            'minimalist' => ['icon' => 'fa-grip-vertical', 'name' => 'Bloques Minimalistas', 'desc' => 'Limpio / UX'],
                             'bento' => ['icon' => 'fa-th-large', 'name' => 'Bento Grid', 'desc' => 'Premium'],
                             'bauhaus' => ['icon' => 'fa-square', 'name' => 'Bauhaus Index', 'desc' => 'Artístico'],
                         ];

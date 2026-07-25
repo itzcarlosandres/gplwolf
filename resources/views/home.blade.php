@@ -183,6 +183,91 @@
                             </div>
                         @endforelse
                     </div>
+                @elseif($homeProductsStyle === 'minimalist')
+                    {{-- Bloques Minimalistas --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-{{ min(($homeGridColumns ?? 6) - 2, 3) }} md:grid-cols-{{ min(($homeGridColumns ?? 6) - 1, 4) }} lg:grid-cols-{{ $homeGridColumns ?? 6 }} gap-6">
+                        @forelse($products as $index => $product)
+                        <div class="group relative bg-[#0c0c0c] border border-white/[0.06] rounded-2xl p-4 flex flex-col justify-between hover:border-[#FF2121]/40 transition-all duration-300 premium-glow h-full min-h-[220px]">
+                            <div class="w-full flex flex-col items-center text-center">
+                                <!-- Version Badge (Top-left corner) -->
+                                <span class="absolute top-2 left-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded leading-none shadow-sm shadow-amber-500/5">
+                                    v{{ $product->version }}
+                                </span>
+
+                                <!-- Badge de Estado (Top corner) -->
+                                @if($product->badge)
+                                    @php
+                                        $badges = [
+                                            'Más Vendido' => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                                            'Trending' => 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+                                            'Popular' => 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                                            'Nuevo' => 'bg-[#FF2121]/10 text-[#FF2121] border-[#FF2121]/20',
+                                        ];
+                                        $badgeClass = $badges[$product->badge] ?? 'bg-white/5 text-white/50 border-white/10';
+                                    @endphp
+                                    <span class="absolute top-2 right-2 {{ $badgeClass }} border text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded leading-none">
+                                        {{ $product->badge }}
+                                    </span>
+                                @endif
+
+                                <!-- Image Container -->
+                                <a href="{{ route('products.show', $product->slug) }}" class="relative w-14 h-14 rounded-2xl bg-white/5 border border-white/5 overflow-hidden flex items-center justify-center mb-3 transition-all group-hover:border-[#FF2121]/30 group-hover:bg-[#FF2121]/5 mt-4">
+                                    @if($product->thumbnail)
+                                        <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300" loading="{{ $index < 2 ? 'eager' : 'lazy' }}">
+                                    @else
+                                        <i class="fas {{ $product->type === 'theme' ? 'fa-palette' : 'fa-plug' }} text-xl text-gray-400 group-hover:text-[#FF2121] transition-colors"></i>
+                                    @endif
+                                </a>
+
+                                <!-- Title -->
+                                <a href="{{ route('products.show', $product->slug) }}" class="block w-full">
+                                    <h3 class="text-sm font-bold text-white tracking-tight group-hover:text-[#FF2121] transition-colors line-clamp-2 min-h-[2.25rem] leading-snug">
+                                        {{ $product->name }}
+                                    </h3>
+                                </a>
+                                
+                                <!-- Subtitle / Category -->
+                                <p class="text-[10px] text-gray-500 mt-1 truncate w-full">
+                                    {{ $product->category->name ?? ucfirst($product->type) }}
+                                </p>
+                            </div>
+
+                            <!-- Bottom Row: Price (left) and Add button (right) at the same level -->
+                            <div class="w-full flex items-center justify-between gap-2 mt-4 pt-3 border-t border-white/[0.04]">
+                                <!-- Price (Left) -->
+                                <div class="text-left shrink-0">
+                                    @if($product->price > 0)
+                                        @if($product->sale_price && $product->sale_price < $product->price)
+                                            <div class="flex flex-col">
+                                                <span class="text-[9px] text-gray-500 line-through">${{ number_format($product->price, 2) }}</span>
+                                                <span class="text-white text-xs font-black leading-none">${{ number_format($product->sale_price, 2) }}</span>
+                                            </div>
+                                        @else
+                                            <span class="text-white text-xs font-black leading-none">${{ number_format($product->price, 2) }}</span>
+                                        @endif
+                                    @else
+                                        <span class="text-[#FF2121] font-black text-[10px] uppercase tracking-wider leading-none">Gratis</span>
+                                    @endif
+                                </div>
+
+                                <!-- Add to Cart Button (Right) -->
+                                <div class="flex-grow max-w-[90px]">
+                                    <form action="{{ route('cart.add', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full py-1.5 px-2 rounded-lg bg-[#F51B1B] hover:bg-[#FF2121] text-white text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-1 transition-all hover:scale-105 active:scale-95 shadow-md shadow-[#F51B1B]/10">
+                                            <i class="fas fa-shopping-cart text-[8px]"></i>
+                                            Añadir
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                            <div class="col-span-full py-12 text-center text-gray-500">
+                                No hay productos.
+                            </div>
+                        @endforelse
+                    </div>
                 @elseif($homeProductsStyle === 'bento')
                     @includeIf('partials.products.bento')
                 @elseif($homeProductsStyle === 'bauhaus')
@@ -218,7 +303,7 @@
                     </div>
                 @else
                     {{-- Grid Compacto --}}
-                    <div class="grid grid-cols-2 md:grid-cols-{{ min($homeGridColumns ?? 4, 4) }} lg:grid-cols-{{ $homeGridColumns ?? 4 }} gap-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-{{ min(($homeGridColumns ?? 4) - 2, 3) }} md:grid-cols-{{ min(($homeGridColumns ?? 4) - 1, 4) }} lg:grid-cols-{{ $homeGridColumns ?? 4 }} gap-6">
                         @forelse($products as $index => $product)
                         <div class="bg-gray-800/60 rounded-xl overflow-hidden border border-white/10 hover:border-[#FF2121]/50 transition-all group cursor-pointer">
                             <!-- Imagen Compacta Centrada -->
