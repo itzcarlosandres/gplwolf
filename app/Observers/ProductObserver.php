@@ -21,6 +21,7 @@ class ProductObserver
     public function updated(Product $product): void
     {
         $this->clearSitemapCache();
+        Cache::forget('product_size_' . $product->id);
     }
 
     /**
@@ -29,6 +30,7 @@ class ProductObserver
     public function deleted(Product $product): void
     {
         $this->clearSitemapCache();
+        Cache::forget('product_size_' . $product->id);
     }
 
     /**

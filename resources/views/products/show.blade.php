@@ -277,7 +277,7 @@ $schemaData = [
 
                 <!-- Mini Info -->
                 <div class="flex flex-wrap items-center gap-4 text-[10px] font-black text-gray-500 uppercase tracking-wider">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-file-archive text-gray-600"></i> Archivo .ZIP</span>
+                    <span class="flex items-center gap-1.5"><i class="fas fa-file-archive text-gray-600"></i> {{ $product->formatted_size }}</span>
                     <span class="flex items-center gap-1.5"><i class="fas fa-download text-gray-600"></i> {{ number_format($product->downloads_count) }} descargas</span>
                     <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-gray-600"></i> GPL Licenciado</span>
                 </div>

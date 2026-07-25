@@ -168,4 +168,63 @@ class Product extends Model
     {
         return $this->type === 'premium';
     }
+
+    /**
+     * Get the file size in bytes dynamically or from latest version.
+     */
+    public function getFileSizeAttribute()
+    {
+        if (!$this->product_file) {
+            return null;
+        }
+
+        // Try to get size from latest version first
+        if ($this->latestVersion && $this->latestVersion->file_size) {
+            return $this->latestVersion->file_size;
+        }
+
+        // If not, compute from storage and cache for 1 hour
+        return cache()->remember('product_size_' . $this->id, 3600, function () {
+            try {
+                $disk = config('filesystems.default');
+                $targetDisk = in_array($disk, ['r2', 's3', 'bunnycdn']) ? $disk : 'public';
+                
+                $path = str_replace('\\', '/', $this->product_file);
+                $path = ltrim($path, '/');
+                $path = preg_replace('/^(public\/|storage\/|app\/)/', '', $path);
+                $path = ltrim($path, '/');
+
+                if (\Illuminate\Support\Facades\Storage::disk($targetDisk)->exists($path)) {
+                    return \Illuminate\Support\Facades\Storage::disk($targetDisk)->size($path);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not get file size for product {$this->id}: " . $e->getMessage());
+            }
+            return null;
+        });
+    }
+
+    /**
+     * Get formatted size label for the frontend.
+     */
+    public function getFormattedSizeAttribute()
+    {
+        $bytes = $this->file_size;
+        if (!$bytes) {
+            return 'Archivo .ZIP';
+        }
+
+        if ($bytes >= 1073741824) {
+            $size = number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $size = number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $size = number_format($bytes / 1024, 2) . ' KB';
+        } else {
+            $size = $bytes . ' bytes';
+        }
+
+        return 'Tamaño: ' . $size;
+    }
 }
+
