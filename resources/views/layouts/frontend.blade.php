@@ -258,11 +258,12 @@
             background: #0d0d0d;
         }
         ::-webkit-scrollbar-thumb {
-            background: #1a1a1a;
+            background: #8f1313;
             border-radius: 10px;
+            border: 2px solid #0d0d0d;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #312e81;
+            background: #FF2121;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
