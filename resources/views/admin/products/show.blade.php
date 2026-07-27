@@ -3,6 +3,15 @@
 @section('title', 'Detalle de Producto: ' . $product->name)
 
 @section('content')
+<style>
+    .prose h2 { margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; font-weight: 800; font-size: 1.25rem; color: white !important; }
+    .prose h3 { margin-top: 1.25rem !important; margin-bottom: 0.5rem !important; font-weight: 700; font-size: 1.1rem; color: white !important; }
+    .prose p { margin-bottom: 1rem !important; color: #94a3b8 !important; }
+    .prose ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin-bottom: 1.25rem !important; color: #94a3b8 !important; }
+    .prose li { margin-bottom: 0.4rem !important; color: #94a3b8 !important; }
+    .prose a { color: #FF2121 !important; font-weight: 700; text-decoration: underline; }
+    .prose a:hover { color: white !important; }
+</style>
 <div class="mb-8 flex items-center justify-between">
     <div class="flex items-center">
         <a href="{{ route('admin.products.index') }}" class="mr-4 w-10 h-10 bg-gray-800/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 transition-all border border-white/5">
@@ -41,7 +50,7 @@
                 
                 <h4 class="text-white">Descripción Completa:</h4>
                 <div class="bg-gray-900/50 p-6 rounded-2xl border border-white/5 font-sans">
-                    {!! nl2br(e($product->full_description)) !!}
+                    {!! $product->full_description !!}
                 </div>
             </div>
         </div>

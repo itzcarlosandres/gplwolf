@@ -84,10 +84,14 @@ $schemaData = [
 @section('extra_css')
 <style>
     .prose h1, .prose h2, .prose h3, .prose h4 { color: white !important; font-weight: 800; }
-    .prose p { color: #94a3b8 !important; line-height: 1.8; }
-    .prose ul { color: #94a3b8 !important; }
-    .prose li { color: #94a3b8 !important; }
+    .prose h2 { margin-top: 2rem !important; margin-bottom: 1rem !important; }
+    .prose h3 { margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; }
+    .prose p { color: #94a3b8 !important; line-height: 1.8; margin-bottom: 1.25rem !important; }
+    .prose ul { color: #94a3b8 !important; list-style-type: disc !important; padding-left: 1.25rem !important; margin-bottom: 1.5rem !important; }
+    .prose li { color: #94a3b8 !important; margin-bottom: 0.5rem !important; line-height: 1.6; }
     .prose strong { color: white !important; }
+    .prose a { color: #FF2121 !important; font-weight: 700; text-decoration: underline; transition: all 0.2s ease; }
+    .prose a:hover { color: white !important; }
 </style>
 @endsection
 
@@ -302,7 +306,7 @@ $schemaData = [
                 
                 <div class="relative" x-data="{ expanded: false }">
                     <div class="prose prose-invert max-w-none text-gray-400 transition-all duration-500 overflow-hidden" :class="{ 'max-h-[260px]': !expanded, 'max-h-[5000px]': expanded }" style="position: relative;">
-                        {!! nl2br(e($product->full_description)) !!}
+                        {!! $product->full_description !!}
                         @if(strlen($product->full_description) > 500)
                             <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#111111] to-transparent flex items-end justify-center pb-0 transition-opacity duration-300" x-show="!expanded"></div>
                         @endif

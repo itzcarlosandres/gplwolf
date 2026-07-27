@@ -20,7 +20,7 @@ class GeminiService
     }
 
     /**
-     * Generar todo el contenido SEO de una vez (Optimizado con Http::pool)
+     * Generar todo el contenido SEO de una vez (Ejecución secuencial con reintento para evitar límites de concurrencia)
      */
     public function generateSeoContent($productName, $productType, $features = [], $keywords = [])
     {
@@ -34,20 +34,18 @@ class GeminiService
         $metaDescPrompt = $this->buildMetaDescriptionPrompt($productName, $productType, $keywords);
         $metaKeysPrompt = $this->buildMetaKeywordsPrompt($productName, $productType, $keywords);
         
-        // Ejecutar llamadas en paralelo
-        $responses = Http::pool(fn ($pool) => [
-            $pool->as('short')->timeout(120)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($shortPrompt, 500)),
-            $pool->as('html')->timeout(120)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($htmlPrompt, 3000)),
-            $pool->as('meta_desc')->timeout(120)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaDescPrompt, 300)),
-            $pool->as('meta_keys')->timeout(120)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaKeysPrompt, 300)),
-        ]);
+        // Ejecutar llamadas de manera secuencial con reintentos para evitar picos de demanda/concurrencia
+        $shortResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($shortPrompt, 500));
+        $htmlResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($htmlPrompt, 3000));
+        $metaDescResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaDescPrompt, 300));
+        $metaKeysResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaKeysPrompt, 300));
 
         // Procesar resultados
         return [
-            'short_description' => $this->parseResponse($responses['short']),
-            'full_description' => $this->parseResponse($responses['html']),
-            'meta_description' => $this->parseResponse($responses['meta_desc']),
-            'meta_keywords' => $this->parseResponse($responses['meta_keys']),
+            'short_description' => $this->parseResponse($shortResponse),
+            'full_description' => $this->parseResponse($htmlResponse),
+            'meta_description' => $this->parseResponse($metaDescResponse),
+            'meta_keywords' => $this->parseResponse($metaKeysResponse),
             'slug' => $this->generateSeoSlug($productName),
         ];
     }
@@ -147,13 +145,14 @@ Keywords: {$keywordsStr}
 Características: {$featuresStr}
 
 ESTRUCTURA (300-400 palabras):
-1. NO uses tag <h1>. Comienza con <p> intro 100 palabras
+1. NO uses tag <h1>. Comienza con <p> intro de 100 palabras. Dentro de esta introducción, incluye OBLIGATORIAMENTE de manera literal y natural un enlace HTML utilizando la etiqueta exacta <a href="/products">catálogo de productos</a> o la etiqueta exacta <a href="/products">nuestra colección de temas y plugins</a>. Es sumamente crucial para el enlazado interno que la etiqueta <a> esté presente con href="/products".
 2. <h2>Características</h2> + <ul> 5 items
 3. <h2>Beneficios</h2> + <ul> 4 items  
 4. <h3>¿Para quién?</h3> + <p> 50 palabras
 5. <h2>Por qué elegir</h2> + <p> 80 palabras
 
 Usa <strong> 7 veces, <em> 2 veces. Solo HTML limpio, sin CSS, sin markdown.
+DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO INCLUYAS EXPLICACIONES, RECUENTOS DE ETIQUETAS, NOTAS NI CHAT ADICIONAL FUERA DEL HTML.
 PROMPT;
     }
 
