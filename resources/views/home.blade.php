@@ -268,6 +268,120 @@
                             </div>
                         @endforelse
                     </div>
+                @elseif($homeProductsStyle === 'two_columns')
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                        
+                        <!-- Columna 1: Más Comprados (5 ítems) -->
+                        <div class="bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-40 h-40 bg-[#FF2121]/10 blur-3xl rounded-full pointer-events-none"></div>
+
+                            <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-2xl bg-[#FF2121]/20 border border-[#FF2121]/30 flex items-center justify-center text-[#FF2121] shadow-lg shadow-[#FF2121]/20">
+                                        <i class="fas fa-fire text-base"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-black text-white tracking-tight">Más Comprados</h3>
+                                        <p class="text-xs text-gray-500 font-medium">Los plugins y temas más adquiridos</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 bg-[#FF2121]/10 border border-[#FF2121]/30 text-[#FF2121] text-[10px] font-black uppercase tracking-wider rounded-lg">Top 5</span>
+                            </div>
+
+                            <div class="space-y-3.5">
+                                @foreach($bestSellers->take(5) as $index => $item)
+                                    <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-[#FF2121]/30 transition-all duration-300 group/item">
+                                        <div class="flex items-center gap-3.5 min-w-0">
+                                            <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-[#FF2121] group-hover/item:border-[#FF2121]/40">
+                                                #{{ $index + 1 }}
+                                            </span>
+                                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
+                                                @if($item->thumbnail)
+                                                    <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
+                                                @else
+                                                    <div class="w-full h-full bg-gradient-to-br from-[#FF2121]/20 to-[#F51B1B]/20 flex items-center justify-center text-white/50 text-xs">
+                                                        <i class="fas {{ $item->type === 'theme' ? 'fa-palette' : 'fa-plug' }}"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="min-w-0">
+                                                <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-[#FF2121] transition-colors truncate block">
+                                                    {{ $item->name }}
+                                                </a>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span class="text-[9px] font-black uppercase tracking-wider text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">{{ $item->type }}</span>
+                                                    <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
+                                            @csrf
+                                            <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-[#FF2121] text-gray-300 hover:text-white border border-white/10 hover:border-[#FF2121] transition-all flex items-center justify-center shadow-sm">
+                                                <i class="fas fa-cart-plus text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Columna 2: Populares (5 ítems) -->
+                        <div class="bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-40 h-40 bg-sky-500/10 blur-3xl rounded-full pointer-events-none"></div>
+
+                            <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-500/20">
+                                        <i class="fas fa-star text-base"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-black text-white tracking-tight">Populares</h3>
+                                        <p class="text-xs text-gray-500 font-medium">Los recursos mejor valorados por la comunidad</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[10px] font-black uppercase tracking-wider rounded-lg">Top 5</span>
+                            </div>
+
+                            <div class="space-y-3.5">
+                                @foreach($popularProducts->take(5) as $index => $item)
+                                    <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-sky-500/30 transition-all duration-300 group/item">
+                                        <div class="flex items-center gap-3.5 min-w-0">
+                                            <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-sky-400 group-hover/item:border-sky-500/40">
+                                                #{{ $index + 1 }}
+                                            </span>
+                                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
+                                                @if($item->thumbnail)
+                                                    <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
+                                                @else
+                                                    <div class="w-full h-full bg-gradient-to-br from-sky-500/20 to-blue-600/20 flex items-center justify-center text-white/50 text-xs">
+                                                        <i class="fas {{ $item->type === 'theme' ? 'fa-palette' : 'fa-plug' }}"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="min-w-0">
+                                                <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-sky-400 transition-colors truncate block">
+                                                    {{ $item->name }}
+                                                </a>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span class="text-[9px] font-black uppercase tracking-wider text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">{{ $item->type }}</span>
+                                                    <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
+                                            @csrf
+                                            <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-sky-500 text-gray-300 hover:text-white border border-white/10 hover:border-sky-500 transition-all flex items-center justify-center shadow-sm">
+                                                <i class="fas fa-cart-plus text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                    </div>
                 @elseif($homeProductsStyle === 'bento')
                     @includeIf('partials.products.bento')
                 @elseif($homeProductsStyle === 'bauhaus')
@@ -446,6 +560,7 @@
             </div>
         </section>
 
+        @if($homeProductsStyle !== 'two_columns')
         <!-- Sección 2 Columnas: Más Comprados & Populares -->
         <section class="py-12 bg-[#050505] border-t border-white/5">
             <div class="max-w-7xl mx-auto px-6">
@@ -564,6 +679,7 @@
                 </div>
             </div>
         </section>
+        @endif
 
 
 

@@ -95,10 +95,9 @@
                     class="w-full bg-[#080808] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FF2121]/50 focus:ring-2 focus:ring-[#FF2121]/10 transition-all font-bold placeholder-gray-700" placeholder="Ej: Explora nuestras últimas novedades...">
             </div>
 
-            <!-- Estilo -->
             <div class="lg:col-span-3">
                 <label class="block text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Estilo de Visualización</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
                     @php
                         $styles = [
                             'grid' => ['icon' => 'fa-th', 'name' => 'Grid Compacto', 'desc' => 'Recomendado'],
@@ -106,6 +105,7 @@
                             'minimalist' => ['icon' => 'fa-grip-vertical', 'name' => 'Bloques Minimalistas', 'desc' => 'Limpio / UX'],
                             'bento' => ['icon' => 'fa-th-large', 'name' => 'Bento Grid', 'desc' => 'Premium'],
                             'bauhaus' => ['icon' => 'fa-square', 'name' => 'Bauhaus Index', 'desc' => 'Artístico'],
+                            'two_columns' => ['icon' => 'fa-columns', 'name' => 'Lista 2 Columnas', 'desc' => 'Comprados / Populares'],
                         ];
                     @endphp
                     @foreach($styles as $key => $style)
