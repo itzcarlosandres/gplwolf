@@ -451,11 +451,11 @@
 
                             <!-- Columna Derecha: Otras Categorías -->
                             <div class="bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
-                                <div class="absolute top-0 right-0 w-40 h-40 bg-rose-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                                <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none"></div>
 
                                 <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shadow-lg shadow-rose-500/20">
+                                        <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-lg shadow-indigo-500/20">
                                             <i class="fas fa-folder-open text-base"></i>
                                         </div>
                                         <div>
@@ -463,31 +463,31 @@
                                             <p class="text-xs text-gray-500 font-medium">Traducciones, complementos y recursos varios</p>
                                         </div>
                                     </div>
-                                    <span class="px-2.5 py-1 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-black uppercase tracking-wider rounded-lg">Otros Recursos</span>
+                                    <span class="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-lg whitespace-nowrap">Otros Recursos</span>
                                 </div>
 
                                 <div class="space-y-3.5">
                                     @forelse($otherResources as $index => $item)
-                                        <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-rose-500/30 transition-all duration-300 group/item">
+                                        <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-indigo-500/30 transition-all duration-300 group/item">
                                             <div class="flex items-center gap-3.5 min-w-0">
-                                                <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-rose-400 group-hover/item:border-rose-500/40">
+                                                <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-indigo-400 group-hover/item:border-indigo-500/40">
                                                     #{{ $index + 1 }}
                                                 </span>
                                                 <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
                                                     @if($item->thumbnail)
                                                         <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
                                                     @else
-                                                        <div class="w-full h-full bg-gradient-to-br from-rose-500/20 to-pink-600/20 flex items-center justify-center text-white/50 text-xs">
+                                                        <div class="w-full h-full bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center text-white/50 text-xs">
                                                             <i class="fas fa-folder-open"></i>
                                                         </div>
                                                     @endif
                                                 </div>
                                                 <div class="min-w-0">
-                                                    <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-rose-400 transition-colors truncate block">
+                                                    <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-indigo-400 transition-colors truncate block">
                                                         {{ $item->name }}
                                                     </a>
-                                                    <div class="flex items-center gap-2 mt-0.5">
-                                                        <span class="text-[9px] font-black uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 whitespace-nowrap">{{ $item->category->name ?? 'Recurso' }}</span>
+                                                    <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                        <span class="text-[9px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 whitespace-nowrap">{{ $item->category->name ?? 'Recurso' }}</span>
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">v{{ $item->version }}</span>
                                                     </div>
                                                 </div>
@@ -497,7 +497,7 @@
                                                 <span class="text-xs font-black text-white font-mono shrink-0">${{ number_format($item->price, 2) }}</span>
                                                 <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0">
                                                     @csrf
-                                                    <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-rose-500 text-gray-300 hover:text-white border border-white/10 hover:border-rose-500 transition-all flex items-center justify-center shadow-sm">
+                                                    <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-indigo-500 text-gray-300 hover:text-white border border-white/10 hover:border-indigo-500 transition-all flex items-center justify-center shadow-sm">
                                                         <i class="fas fa-cart-plus text-xs"></i>
                                                     </button>
                                                 </form>
