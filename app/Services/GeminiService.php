@@ -68,6 +68,12 @@ class GeminiService
             $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
             
             $text = trim($text);
+            
+            // Si el texto contiene bloques de código markdown, extraer el primero
+            if (preg_match('/```[a-z]*\s*(.*?)\s*```/is', $text, $matches)) {
+                return trim($matches[1]);
+            }
+            
             $text = trim($text, '"\'');
             $text = preg_replace('/^```html\s*/i', '', $text);
             $text = preg_replace('/\s*```$/i', '', $text);
@@ -262,15 +268,7 @@ PROMPT;
                 ]);
 
             if ($response->successful()) {
-                $data = $response->json();
-                $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
-                
-                $text = trim($text);
-                $text = trim($text, '"\'');
-                $text = preg_replace('/^```html\s*/i', '', $text);
-                $text = preg_replace('/\s*```$/i', '', $text);
-                
-                return $text;
+                return $this->parseResponse($response);
             }
 
             // Log detailed error
