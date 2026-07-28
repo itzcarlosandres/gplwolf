@@ -97,10 +97,23 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        $excludedCategoryIds = \App\Models\Category::where(function($query) {
+            $query->where('name', 'like', '%plugin%')
+                  ->orWhere('name', 'like', '%tema%')
+                  ->orWhere('name', 'like', '%theme%');
+        })->pluck('id')->toArray();
+
+        $otherProducts = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->whereNotIn('category_id', $excludedCategoryIds)
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
         return view('home', compact(
             'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands',
             'settings', 'productsCount', 'usersCount',
-            'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes'
+            'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes', 'otherProducts'
         ));
     }
 
