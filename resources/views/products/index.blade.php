@@ -277,9 +277,9 @@
                         <!-- Meta -->
                         <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/[0.06]">
                             <div class="flex items-center gap-3 text-[10px] text-gray-500 font-bold">
-                                <span class="flex items-center gap-1">
-                                    <i class="fas fa-star text-amber-400 text-[8px]"></i>
-                                    {{ $product->rating ?: '5.0' }}
+                                <span class="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                                    <i class="fas fa-code-branch text-[8px]"></i>
+                                    v{{ $product->version }}
                                 </span>
                                 <span class="flex items-center gap-1">
                                     <i class="fas fa-download text-[8px]"></i>

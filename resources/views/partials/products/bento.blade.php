@@ -37,9 +37,9 @@
             <div class="p-5">
                 <h3 class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-[#FF2121] transition-colors">{{ $p->name }}</h3>
                 <div class="flex items-center gap-3 text-[11px] text-gray-500 mb-4">
-                    <div class="flex items-center gap-1 text-amber-400">
-                        <i class="fas fa-star text-[9px]"></i>
-                        <span class="font-bold">{{ $p->rating ?: '5.0' }}</span>
+                    <div class="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[9px]">
+                        <i class="fas fa-code-branch text-[8px]"></i>
+                        <span>v{{ $p->version }}</span>
                     </div>
                     <span>•</span>
                     <span>{{ number_format($p->downloads_count) }} downloads</span>
@@ -70,9 +70,9 @@
                 <h3 class="text-white font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:text-[#FF2121] transition-colors">{{ $p->name }}</h3>
                 <div class="flex items-center justify-between">
                     <span class="text-lg font-black text-white">${{ number_format($p->price, 2) }}</span>
-                    <div class="flex items-center gap-1 text-amber-400 text-[10px] font-bold">
-                        <i class="fas fa-star text-[8px]"></i>
-                        <span>{{ $p->rating ?: '5.0' }}</span>
+                    <div class="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold">
+                        <i class="fas fa-code-branch text-[8px]"></i>
+                        <span>v{{ $p->version }}</span>
                     </div>
                 </div>
             </div>
@@ -97,9 +97,9 @@
                     <h3 class="text-white font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:text-[#FF2121] transition-colors">{{ $p->name }}</h3>
                     <div class="flex items-center justify-between">
                         <span class="text-lg font-black text-white">${{ number_format($p->price, 2) }}</span>
-                        <div class="flex items-center gap-1 text-amber-400 text-[10px] font-bold">
-                            <i class="fas fa-star text-[8px]"></i>
-                            <span>{{ $p->rating ?: '5.0' }}</span>
+                        <div class="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold">
+                            <i class="fas fa-code-branch text-[8px]"></i>
+                            <span>v{{ $p->version }}</span>
                         </div>
                     </div>
                 </div>

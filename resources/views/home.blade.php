@@ -140,9 +140,9 @@
                                         <h3 class="text-xl font-bold text-white group-hover:text-[#FF2121] transition-colors truncate">{{ $product->name }}</h3>
                                     </a>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <div class="flex text-amber-400 text-[10px]">
-                                            <span class="font-bold mr-1">{{ $product->rating ?? 5.0 }}</span>
-                                            <i class="fas fa-star"></i>
+                                        <div class="flex items-center gap-1 text-emerald-400 text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
+                                            <i class="fas fa-code-branch text-[8px]"></i>
+                                            <span>v{{ $product->version }}</span>
                                         </div>
                                         <span class="text-xs text-gray-400 truncate">{{ $product->short_description ?? '' }}</span>
                                     </div>

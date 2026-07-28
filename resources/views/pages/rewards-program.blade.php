@@ -237,11 +237,9 @@
                                 <div class="text-amber-400 text-xs font-black bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
                                     <i class="fas fa-gem mr-1.5"></i> {{ number_format($pointsCost) }} Pts
                                 </div>
-                                @if($product->rating > 0)
-                                    <div class="flex items-center text-xs text-gray-400">
-                                        <i class="fas fa-star text-yellow-500 mr-1"></i> {{ $product->rating }}
+                                    <div class="flex items-center text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold">
+                                        <i class="fas fa-code-branch mr-1 text-[8px]"></i> v{{ $product->version }}
                                     </div>
-                                @endif
                             </div>
                         </div>
                     </a>
