@@ -105,7 +105,7 @@
                             'minimalist' => ['icon' => 'fa-grip-vertical', 'name' => 'Bloques Minimalistas', 'desc' => 'Limpio / UX'],
                             'bento' => ['icon' => 'fa-th-large', 'name' => 'Bento Grid', 'desc' => 'Premium'],
                             'bauhaus' => ['icon' => 'fa-square', 'name' => 'Bauhaus Index', 'desc' => 'Artístico'],
-                            'two_columns' => ['icon' => 'fa-columns', 'name' => 'Lista 2 Columnas', 'desc' => 'Comprados / Populares'],
+                            'two_columns' => ['icon' => 'fa-columns', 'name' => 'Lista 2 Columnas', 'desc' => 'Plugins y Temas Recientes'],
                         ];
                     @endphp
                     @foreach($styles as $key => $style)

@@ -62,6 +62,20 @@ class HomeController extends Controller
             $popularProducts = $popularProducts->concat($extra);
         }
 
+        $latestPlugins = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->where('type', 'plugin')
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        $latestThemes = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->where('type', 'theme')
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
         $plans = \App\Models\MembershipPlan::where('is_active', true)
             ->orderBy('price', 'asc')
             ->get();
@@ -86,7 +100,7 @@ class HomeController extends Controller
         return view('home', compact(
             'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands',
             'settings', 'productsCount', 'usersCount',
-            'latestUpdates', 'homeProductsStyle', 'homeGridColumns'
+            'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes'
         ));
     }
 
