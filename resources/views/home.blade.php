@@ -565,8 +565,17 @@
         </section>
 
         <!-- Sección 2 Columnas: Más Comprados & Populares -->
-        <section class="py-12 bg-[#050505] border-t border-white/5">
+        <section class="py-20 bg-[#050505] border-t border-white/5">
             <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-12 md:mb-16">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#FF2121]/10 border border-[#FF2121]/20 rounded-full mb-4">
+                        <i class="fas fa-trophy text-[#FF2121] text-[10px]"></i>
+                        <span class="text-[10px] font-black text-[#FF2121] uppercase tracking-widest">Favoritos</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight mb-3">Los Preferidos de la Comunidad</h2>
+                    <p class="text-gray-500 text-sm max-w-lg mx-auto">Explora los plugins y temas GPL más descargados y con mejores valoraciones de nuestra plataforma.</p>
+                </div>
+                
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
                     
                     <!-- Columna 1: Más Comprados (5 ítems) -->
