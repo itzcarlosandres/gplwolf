@@ -386,61 +386,126 @@
                         </div>
                     </div>
 
-                    @if($otherProducts->count() > 0)
-                        <!-- Otros Recursos / Kits de Plantillas -->
-                        <div class="mt-8 bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                    @if($templateKits->count() > 0 || $otherResources->count() > 0)
+                        <!-- Otros Recursos y Kits de Plantillas (2 Columnas) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                            
+                            <!-- Columna Izquierda: Kits de Plantillas -->
+                            <div class="bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 blur-3xl rounded-full pointer-events-none"></div>
 
-                            <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/20">
-                                        <i class="fas fa-cubes text-base"></i>
+                                <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/20">
+                                            <i class="fas fa-cubes text-base"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-black text-white tracking-tight">Kits de Plantillas</h3>
+                                            <p class="text-xs text-gray-500 font-medium">Elementor Kits y maquetaciones web completas</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 class="text-lg font-black text-white tracking-tight">Kits de Plantillas y Más</h3>
-                                        <p class="text-xs text-gray-500 font-medium">Recursos de diseño, Elementor Kits y complementos adicionales</p>
-                                    </div>
+                                    <span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black uppercase tracking-wider rounded-lg">Kits</span>
                                 </div>
-                                <span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-black uppercase tracking-wider rounded-lg">Kits & Otros</span>
-                            </div>
 
-                            <div class="space-y-3.5">
-                                @foreach($otherProducts as $index => $item)
-                                    <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-amber-500/30 transition-all duration-300 group/item">
-                                        <div class="flex items-center gap-3.5 min-w-0">
-                                            <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-amber-400 group-hover/item:border-amber-500/40">
-                                                #{{ $index + 1 }}
-                                            </span>
-                                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
-                                                @if($item->thumbnail)
-                                                    <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
-                                                @else
-                                                    <div class="w-full h-full bg-gradient-to-br from-amber-500/20 to-yellow-600/20 flex items-center justify-center text-white/50 text-xs">
-                                                        <i class="fas fa-cubes"></i>
+                                <div class="space-y-3.5">
+                                    @forelse($templateKits as $index => $item)
+                                        <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-amber-500/30 transition-all duration-300 group/item">
+                                            <div class="flex items-center gap-3.5 min-w-0">
+                                                <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-amber-400 group-hover/item:border-amber-500/40">
+                                                    #{{ $index + 1 }}
+                                                </span>
+                                                <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
+                                                    @if($item->thumbnail)
+                                                        <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
+                                                    @else
+                                                        <div class="w-full h-full bg-gradient-to-br from-amber-500/20 to-yellow-600/20 flex items-center justify-center text-white/50 text-xs">
+                                                            <i class="fas fa-cubes"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-amber-400 transition-colors truncate block">
+                                                        {{ $item->name }}
+                                                    </a>
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        <span class="text-[9px] font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">{{ $item->category->name ?? 'Kits' }}</span>
+                                                        <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">v{{ $item->version }}</span>
+                                                        <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                     </div>
-                                                @endif
-                                            </div>
-                                            <div class="min-w-0">
-                                                <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-amber-400 transition-colors truncate block">
-                                                    {{ $item->name }}
-                                                </a>
-                                                <div class="flex items-center gap-2 mt-0.5">
-                                                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">{{ $item->category->name ?? 'Recurso' }}</span>
-                                                    <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">v{{ $item->version }}</span>
-                                                    <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
-                                            @csrf
-                                            <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-amber-500 text-gray-300 hover:text-white border border-white/10 hover:border-amber-500 transition-all flex items-center justify-center shadow-sm">
-                                                <i class="fas fa-cart-plus text-xs"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endforeach
+                                            <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
+                                                @csrf
+                                                <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-amber-500 text-gray-300 hover:text-white border border-white/10 hover:border-amber-500 transition-all flex items-center justify-center shadow-sm">
+                                                    <i class="fas fa-cart-plus text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @empty
+                                        <p class="text-xs text-gray-500 text-center py-4">No hay kits de plantillas recientes.</p>
+                                    @endforelse
+                                </div>
                             </div>
+
+                            <!-- Columna Derecha: Otras Categorías -->
+                            <div class="bg-[#0c0c0c] p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+
+                                <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-2xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-lg shadow-blue-500/20">
+                                            <i class="fas fa-folder-open text-base"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-black text-white tracking-tight">Otras Categorías</h3>
+                                            <p class="text-xs text-gray-500 font-medium">Traducciones, complementos y recursos varios</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-2.5 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-black uppercase tracking-wider rounded-lg">Otros Recursos</span>
+                                </div>
+
+                                <div class="space-y-3.5">
+                                    @forelse($otherResources as $index => $item)
+                                        <div class="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-blue-500/30 transition-all duration-300 group/item">
+                                            <div class="flex items-center gap-3.5 min-w-0">
+                                                <span class="w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-xs font-black flex items-center justify-center shrink-0 font-mono group-hover/item:text-blue-400 group-hover/item:border-blue-500/40">
+                                                    #{{ $index + 1 }}
+                                                </span>
+                                                <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-900 border border-white/10 shrink-0">
+                                                    @if($item->thumbnail)
+                                                        <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->name }}" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500">
+                                                    @else
+                                                        <div class="w-full h-full bg-gradient-to-br from-blue-500/20 to-cyan-600/20 flex items-center justify-center text-white/50 text-xs">
+                                                            <i class="fas fa-folder-open"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-blue-400 transition-colors truncate block">
+                                                        {{ $item->name }}
+                                                    </a>
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        <span class="text-[9px] font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">{{ $item->category->name ?? 'Recurso' }}</span>
+                                                        <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">v{{ $item->version }}</span>
+                                                        <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
+                                                @csrf
+                                                <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-blue-500 text-gray-300 hover:text-white border border-white/10 hover:border-blue-500 transition-all flex items-center justify-center shadow-sm">
+                                                    <i class="fas fa-cart-plus text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @empty
+                                        <p class="text-xs text-gray-500 text-center py-4">No hay otros recursos recientes.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+
                         </div>
                     @endif
                 @elseif($homeProductsStyle === 'bento')

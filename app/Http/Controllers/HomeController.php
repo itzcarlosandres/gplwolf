@@ -103,9 +103,26 @@ class HomeController extends Controller
                   ->orWhere('name', 'like', '%theme%');
         })->pluck('id')->toArray();
 
-        $otherProducts = \App\Models\Product::with('category')
+        // Obtener categorías de Kits de Plantillas
+        $templateKitCategoryIds = \App\Models\Category::whereNotIn('id', $excludedCategoryIds)
+            ->where(function($query) {
+                $query->where('name', 'like', '%kit%')
+                      ->orWhere('name', 'like', '%template%')
+                      ->orWhere('name', 'like', '%plantilla%');
+            })->pluck('id')->toArray();
+
+        // 1. Kits de Plantillas
+        $templateKits = \App\Models\Product::with('category')
             ->where('is_active', true)
-            ->whereNotIn('category_id', $excludedCategoryIds)
+            ->whereIn('category_id', $templateKitCategoryIds)
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        // 2. Otras categorías (que no sean plugins, temas ni kits de plantillas)
+        $otherResources = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->whereNotIn('category_id', array_merge($excludedCategoryIds, $templateKitCategoryIds))
             ->latest('updated_at')
             ->take(5)
             ->get();
@@ -113,7 +130,8 @@ class HomeController extends Controller
         return view('home', compact(
             'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands',
             'settings', 'productsCount', 'usersCount',
-            'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes', 'otherProducts'
+            'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes',
+            'templateKits', 'otherResources'
         ));
     }
 
