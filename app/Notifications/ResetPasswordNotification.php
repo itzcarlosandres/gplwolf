@@ -42,7 +42,7 @@ class ResetPasswordNotification extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('Restablecer Contraseña - CaletaWP')
+            ->subject('Restablecer Contraseña - GPLWolf')
             ->view('emails.forgot-password', [
                 'url' => $resetUrl,
                 'name' => $notifiable->name ?? 'Usuario',

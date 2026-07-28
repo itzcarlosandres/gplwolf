@@ -1,7 +1,7 @@
 @extends('layouts.frontend')
 
-@section('meta_title', 'Plugin Oficial CaletaWP - Gestor de Actualizaciones')
-@section('meta_description', 'Descarga el plugin oficial de CaletaWP para WordPress. Actualizaciones automáticas, instalación en 1 clic y gestión de licencias centralizada.')
+@section('meta_title', 'Plugin Oficial GPLWolf - Gestor de Actualizaciones')
+@section('meta_description', 'Descarga el plugin oficial de GPLWolf para WordPress. Actualizaciones automáticas, instalación en 1 clic y gestión de licencias centralizada.')
 
 @section('content')
 <div class="relative overflow-hidden">
@@ -20,7 +20,7 @@
             <h1 class="text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tight">
                 El Puente entre <br>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2121] via-[#F51B1B] to-pink-400">Tu WordPress</span>
-                y CaletaWP.
+                y GPLWolf.
             </h1>
             
             <p class="text-xl text-slate-400 leading-relaxed max-w-xl">
@@ -111,7 +111,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-white mb-3">Modo Marca Blanca</h3>
                 <p class="text-slate-400 leading-relaxed">
-                    Oculta nuestra marca. Tus clientes verán "Tu Agencia Updater" en lugar de CaletaWP. Ideal para revendedores.
+                    Oculta nuestra marca. Tus clientes verán "Tu Agencia Updater" en lugar de GPLWolf. Ideal para revendedores.
                 </p>
             </div>
 

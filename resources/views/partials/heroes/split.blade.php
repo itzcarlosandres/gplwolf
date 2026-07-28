@@ -72,7 +72,7 @@
                         <span class="ml-3 text-xs text-gray-500 font-mono">wp-config.php</span>
                     </div>
                     <div class="p-6 font-mono text-sm leading-relaxed text-left">
-                        <div class="text-gray-500 mb-2">// CaletaWP Plugin</div>
+                        <div class="text-gray-500 mb-2">// GPLWolf Plugin</div>
                         <div class="code-line-1 overflow-hidden whitespace-nowrap"><span class="text-[#F51B1B]">require_once</span> <span class="text-[#FF2121]">'marketplace-connect.php'</span>;</div>
                         <br>
                         <div class="text-gray-500 mb-2">// Auto-update config</div>

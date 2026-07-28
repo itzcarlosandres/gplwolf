@@ -433,7 +433,7 @@
                         <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center text-sm text-white shadow-lg shadow-[#F51B1B]/40 group-hover:scale-110 transition-transform">
                             <i class="{{ $globalSettings['site_icon'] ?? 'fas fa-store' }}"></i>
                         </div>
-                        <span class="hidden sm:block">{{ $globalSettings['site_name'] ?? 'CaletaWP' }}</span>
+                        <span class="hidden sm:block">{{ $globalSettings['site_name'] ?? 'GPLWolf' }}</span>
                     @endif
                 </a>
 

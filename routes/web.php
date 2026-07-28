@@ -511,7 +511,7 @@ Route::get('/clear-cache', function() {
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Cache Cleared - CaletaWP</title>
+                <title>Cache Cleared - GPLWolf</title>
                 <style>
                     body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; background: #0a0e27; color: #fff; }
                     h1 { color: #FF2121; }
@@ -603,7 +603,7 @@ Route::get('/submit-to-google', function() {
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Sitemap Enviado a Google - CaletaWP</title>
+                <title>Sitemap Enviado a Google - GPLWolf</title>
                 <style>
                     body { font-family: 'Courier New', monospace; max-width: 900px; margin: 50px auto; padding: 20px; background: {$bgColor}; color: #fff; }
                     h1 { color: #FF2121; }

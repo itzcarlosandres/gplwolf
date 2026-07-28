@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restablecer Contraseña | CaletaWP</title>
+    <title>Restablecer Contraseña | GPLWolf</title>
 </head>
 <body style="background-color: #080808; color: #d1d5db; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 40px 20px; line-height: 1.6;">
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #0d0d0d; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -11,7 +11,7 @@
         <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center;">
                 <div style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #FF2121 0%, #F51B1B 100%); border-radius: 8px; color: #ffffff; font-weight: 900; font-size: 18px; letter-spacing: 1px; text-transform: uppercase;">
-                    CALETA WP
+                    GPL WOLF
                 </div>
             </td>
         </tr>
@@ -25,7 +25,7 @@
                     Hola, <strong>{{ $name }}</strong>:
                 </p>
                 <p style="color: #9ca3af; font-size: 15px; margin-bottom: 30px;">
-                    Recibimos una solicitud para restablecer la contraseña de tu cuenta en CaletaWP. Si no la solicitaste, puedes ignorar este correo de forma segura. De lo contrario, puedes cambiarla haciendo clic en el botón de abajo:
+                    Recibimos una solicitud para restablecer la contraseña de tu cuenta en GPLWolf. Si no la solicitaste, puedes ignorar este correo de forma segura. De lo contrario, puedes cambiarla haciendo clic en el botón de abajo:
                 </p>
                 
                 <!-- Action Button -->
@@ -51,7 +51,7 @@
                     Este es un correo automático, por favor no respondas a esta dirección.
                 </p>
                 <p style="color: #4b5563; font-size: 12px; margin-top: 5px; margin-bottom: 0;">
-                    © 2026 CaletaWP. Temas y Plugins GPL con actualizaciones y soporte.
+                    © 2026 GPLWolf. Temas y Plugins GPL con actualizaciones y soporte.
                 </p>
             </td>
         </tr>
