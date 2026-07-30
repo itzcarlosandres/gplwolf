@@ -25,12 +25,17 @@ $schemaData = [
     'image' => [$metaImage],
     'description' => Str::limit(strip_tags($product->description), 160),
     'sku' => (string) $product->id,
+    'brand' => [
+        '@type' => 'Brand',
+        'name' => config('app.name', 'GPLWolf')
+    ],
     'offers' => [
         '@type' => 'Offer',
         'url' => route('products.show', $product),
+        'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
+        'validFrom' => $product->created_at ? $product->created_at->format('Y-m-d') : date('Y-m-d'),
         'priceCurrency' => 'USD',
         'price' => (string) $product->price,
-        'priceValidUntil' => date('Y-12-31', strtotime('+1 year')),
         'availability' => 'https://schema.org/InStock',
         'seller' => ['@type' => 'Organization', 'name' => config('app.name')],
         'shippingDetails' => [
