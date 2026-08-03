@@ -81,7 +81,8 @@ class AiContentController extends Controller
         ];
 
         // Check longitud (400-600 palabras)
-        $wordCount = str_word_count(strip_tags($html));
+        $cleanText = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
+        $wordCount = empty($cleanText) ? 0 : count(explode(' ', $cleanText));
         $score['checks']['length'] = [
             'passed' => $wordCount >= 400 && $wordCount <= 600,
             'message' => "{$wordCount} palabras",

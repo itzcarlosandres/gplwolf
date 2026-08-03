@@ -54,7 +54,7 @@ class GeminiService
         return [
             'contents' => [['parts' => [['text' => $prompt]]]],
             'generationConfig' => [
-                'temperature' => 0.8,
+                'temperature' => 0.4,
                 'topK' => 40,
                 'topP' => 0.95,
                 'maxOutputTokens' => $maxTokens,
@@ -69,16 +69,32 @@ class GeminiService
             
             $text = trim($text);
             
-            // Si el texto contiene bloques de código markdown, extraer el primero
+            // Extract content from markdown code block if present
             if (preg_match('/```[a-z]*\s*(.*?)\s*```/is', $text, $matches)) {
-                return trim($matches[1]);
+                $text = trim($matches[1]);
+            } else {
+                $text = preg_replace('/^```[a-z]*\s*/i', '', $text);
+                $text = preg_replace('/\s*```$/i', '', $text);
             }
             
-            $text = trim($text, '"\'');
-            $text = preg_replace('/^```html\s*/i', '', $text);
-            $text = preg_replace('/\s*```$/i', '', $text);
+            // Trim standard and curly quotes that AI often wraps output in
+            $text = trim($text, "\"'“”«»");
             
-            return $text;
+            // Fix double-encoded or encoded HTML entities (e.g. &lt;p&gt; -> <p>, &amp;oacute; -> ó)
+            $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            
+            // Remove leaked markdown formatting symbols
+            $text = str_replace(['**', '__'], '', $text);
+            
+            // Remove markdown headers markers inside HTML if they leaked (e.g. <h2>## Title</h2>)
+            $text = preg_replace('/(<h[1-6]>)\s*#+\s*/i', '$1', $text);
+            $text = preg_replace('/\s*#+\s*(<\/h[1-6]>)/i', '$1', $text);
+            
+            // Remove markdown list bullet markers inside <li> if they leaked (e.g. <li>* Feature</li>)
+            $text = preg_replace('/<li>\s*[\*\-\•]\s*/i', '<li>', $text);
+            
+            return trim($text);
         }
 
         $errorMsg = 'API Error';
@@ -150,12 +166,12 @@ Genera HTML SEO para {$typeEs} WordPress: "{$productName}"
 Keywords: {$keywordsStr}
 Características: {$featuresStr}
 
-ESTRUCTURA (300-400 palabras):
-1. NO uses tag <h1>. Comienza con <p> intro de 100 palabras. Dentro de esta introducción, incluye OBLIGATORIAMENTE de manera literal y natural un enlace HTML utilizando la etiqueta exacta <a href="/products">catálogo de productos</a> o la etiqueta exacta <a href="/products">nuestra colección de temas y plugins</a>. Es sumamente crucial para el enlazado interno que la etiqueta <a> esté presente con href="/products".
-2. <h2>Características</h2> + <ul> 5 items
-3. <h2>Beneficios</h2> + <ul> 4 items  
-4. <h3>¿Para quién?</h3> + <p> 50 palabras
-5. <h2>Por qué elegir</h2> + <p> 80 palabras
+ESTRUCTURA (450-600 palabras para lograr un artículo completo y detallado):
+1. NO uses tag <h1>. Comienza con <p> intro de 120-150 palabras. Dentro de esta introducción, incluye OBLIGATORIAMENTE de manera literal y natural un enlace HTML utilizando la etiqueta exacta <a href="/products">catálogo de productos</a> o la etiqueta exacta <a href="/products">nuestra colección de temas y plugins</a>. Es sumamente crucial para el enlazado interno que la etiqueta <a> esté presente con href="/products".
+2. <h2>Características</h2> + <ul> de al menos 5-7 items detallados
+3. <h2>Beneficios</h2> + <ul> de al menos 4-6 items detallados  
+4. <h3>¿Para quién?</h3> + <p> de 80-100 palabras detalladas
+5. <h2>Por qué elegir</h2> + <p> de 100-150 palabras detalladas
 
 Usa <strong> 7 veces, <em> 2 veces. Solo HTML limpio, sin CSS, sin markdown.
 DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO INCLUYAS EXPLICACIONES, RECUENTOS DE ETIQUETAS, NOTAS NI CHAT ADICIONAL FUERA DEL HTML.
@@ -260,7 +276,7 @@ PROMPT;
                         ]
                     ],
                     'generationConfig' => [
-                        'temperature' => 0.8,
+                        'temperature' => 0.4,
                         'topK' => 40,
                         'topP' => 0.95,
                         'maxOutputTokens' => 2500, // Optimized for speed/length balance
