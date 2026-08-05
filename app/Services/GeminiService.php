@@ -36,9 +36,9 @@ class GeminiService
         
         // Ejecutar llamadas de manera secuencial con reintentos para evitar picos de demanda/concurrencia
         $shortResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($shortPrompt, 500));
-        $htmlResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($htmlPrompt, 3000));
-        $metaDescResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaDescPrompt, 300));
-        $metaKeysResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaKeysPrompt, 300));
+        $htmlResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($htmlPrompt, 5000));
+        $metaDescResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaDescPrompt, 500));
+        $metaKeysResponse = Http::timeout(120)->retry(3, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaKeysPrompt, 500));
 
         // Procesar resultados
         return [
@@ -148,9 +148,6 @@ class GeminiService
         return Str::slug($productName);
     }
 
-    /**
-     * Construir prompt para descripción corta
-     */
     protected function buildShortDescriptionPrompt($productName, $productType, $keywords)
     {
         $keywordsStr = !empty($keywords) ? implode(', ', $keywords) : '';
@@ -158,24 +155,21 @@ class GeminiService
         
         return <<<PROMPT
 Eres un experto en marketing de productos WordPress.
-Genera una descripción corta y atractiva (máximo 150 caracteres) para un {$typeEs} de WordPress llamado "{$productName}".
+Genera una descripción corta y atractiva (alrededor de 120 caracteres, máximo 150) para un {$typeEs} de WordPress llamado "{$productName}".
 
 KEYWORDS: {$keywordsStr}
 
 La descripción debe:
-- Ser concisa y directa (máximo 150 caracteres)
+- Ser breve y directa (máximo 150 caracteres)
 - Destacar el beneficio principal
 - Usar lenguaje profesional en español
 - Incluir keyword principal si es posible
 - No incluir emojis ni caracteres especiales
 
-DEVUELVE SOLO LA DESCRIPCIÓN, SIN COMILLAS NI EXPLICACIONES.
+DEVUELVE SOLO LA DESCRIPCIÓN, SIN COMILLAS NI EXPLICACIONES DE CONTEO.
 PROMPT;
     }
 
-    /**
-     * Construir prompt para HTML SEO optimizado
-     */
     protected function buildSeoHtmlPrompt($productName, $productType, $features, $keywords)
     {
         // Auto-generate keywords from product name if not provided
@@ -194,16 +188,16 @@ Genera HTML SEO para {$typeEs} WordPress: "{$productName}"
 Keywords: {$keywordsStr}
 Características: {$featuresStr}
 
-ESTRUCTURA (450-600 palabras para lograr un artículo completo y detallado):
-1. NO uses tag <h1>. Comienza con <p> intro de 120-150 palabras. Dentro de esta introducción, incluye OBLIGATORIAMENTE de manera literal y natural un enlace HTML utilizando la etiqueta exacta <a href="/products">catálogo de productos</a> o la etiqueta exacta <a href="/products">nuestra colección de temas y plugins</a>. Es sumamente crucial para el enlazado interno que la etiqueta <a> esté presente con href="/products".
-2. <h2>Características</h2> + <ul> de al menos 5-7 items detallados
-3. <h2>Beneficios</h2> + <ul> de al menos 4-6 items detallados  
-4. <h3>¿Para quién?</h3> + <p> de 80-100 palabras detalladas
-5. <h2>Por qué elegir</h2> + <p> de 100-150 palabras detalladas
+ESTRUCTURA (un artículo completo y detallado de unas 500 palabras en total):
+1. NO uses tag <h1>. Comienza con un párrafo <p> de introducción (aproximadamente de 130 palabras). Dentro de esta introducción, incluye OBLIGATORIAMENTE de manera literal y natural un enlace HTML utilizando la etiqueta exacta <a href="/products">catálogo de productos</a> o la etiqueta exacta <a href="/products">nuestra colección de temas y plugins</a>. Es sumamente crucial para el enlazado interno que la etiqueta <a> esté presente con href="/products".
+2. <h2>Características</h2> + <ul> de al menos 5 a 7 items detallados.
+3. <h2>Beneficios</h2> + <ul> de al menos 4 a 6 items detallados.
+4. <h3>¿Para quién?</h3> + un párrafo <p> detallado.
+5. <h2>Por qué elegir</h2> + un párrafo <p> detallado.
 
 Usa la etiqueta <strong> para resaltar palabras clave importantes de forma natural (entre 5 y 10 veces en todo el texto) y la etiqueta <em> unas 2 veces. Solo HTML limpio, sin CSS, sin markdown.
 
-IMPORTANTE: DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO realices conteos, no incluyas listas de verificación, no expliques cómo contaste las etiquetas ni agregues notas al final. Comienza directamente con el tag <p> y termina con </p>.
+IMPORTANTE: DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO realices conteos, no incluyas listas de verificación, no expliques cómo contaste las etiquetas ni agregues notas de validación al final. Comienza directamente con el tag <p> y termina con </p>.
 PROMPT;
     }
 
@@ -235,9 +229,6 @@ PROMPT;
         return array_unique(array_slice($keywords, 0, 8));
     }
 
-    /**
-     * Construir prompt para meta description
-     */
     protected function buildMetaDescriptionPrompt($productName, $productType, $keywords)
     {
         $keywordsStr = !empty($keywords) ? implode(', ', $keywords) : 'wordpress, premium';
@@ -249,14 +240,14 @@ Genera una meta description SEO para un {$typeEs} de WordPress llamado "{$produc
 KEYWORDS: {$keywordsStr}
 
 REQUISITOS:
-- Exactamente 150-160 caracteres
+- Longitud adecuada para meta descripción (alrededor de 150 caracteres, máximo 160)
 - Incluir keyword principal al inicio
 - Incluir llamada a la acción
 - Persuasivo y atractivo
 - En español
 - Sin emojis
 
-DEVUELVE SOLO LA META DESCRIPTION, SIN COMILLAS NI EXPLICACIONES.
+DEVUELVE SOLO LA META DESCRIPTION, SIN COMILLAS NI EXPLICACIONES DE CONTEO.
 PROMPT;
     }
 
@@ -285,9 +276,6 @@ DEVUELVE SOLO LAS KEYWORDS SEPARADAS POR COMAS, SIN EXPLICACIONES.
 PROMPT;
     }
 
-    /**
-     * Llamada a la API de Gemini
-     */
     protected function callGeminiAPI($prompt)
     {
         try {
@@ -308,7 +296,7 @@ PROMPT;
                         'temperature' => 0.4,
                         'topK' => 40,
                         'topP' => 0.95,
-                        'maxOutputTokens' => 2500, // Optimized for speed/length balance
+                        'maxOutputTokens' => 5000, // Optimized for speed/length balance
                     ]
                 ]);
 
