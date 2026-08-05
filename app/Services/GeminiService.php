@@ -93,6 +93,34 @@ class GeminiService
             
             // Remove markdown list bullet markers inside <li> if they leaked (e.g. <li>* Feature</li>)
             $text = preg_replace('/<li>\s*[\*\-\•]\s*/i', '<li>', $text);
+
+            // Extract only the HTML content block if HTML tags are present
+            if (stripos($text, '<p') !== false || stripos($text, '<h2') !== false || stripos($text, '<ul') !== false) {
+                $firstTagPos = false;
+                $tags = ['<p', '<h2', '<div', '<ul'];
+                foreach ($tags as $tag) {
+                    $pos = stripos($text, $tag);
+                    if ($pos !== false && ($firstTagPos === false || $pos < $firstTagPos)) {
+                        $firstTagPos = $pos;
+                    }
+                }
+                
+                $lastTagPos = false;
+                $closingTags = ['</p>', '</h2>', '</h3>', '</ul>', '</div>'];
+                foreach ($closingTags as $tag) {
+                    $pos = strripos($text, $tag);
+                    if ($pos !== false) {
+                        $tagEnd = $pos + strlen($tag);
+                        if ($lastTagPos === false || $tagEnd > $lastTagPos) {
+                            $lastTagPos = $tagEnd;
+                        }
+                    }
+                }
+                
+                if ($firstTagPos !== false && $lastTagPos !== false && $lastTagPos > $firstTagPos) {
+                    $text = substr($text, $firstTagPos, $lastTagPos - $firstTagPos);
+                }
+            }
             
             return trim($text);
         }
@@ -173,8 +201,9 @@ ESTRUCTURA (450-600 palabras para lograr un artículo completo y detallado):
 4. <h3>¿Para quién?</h3> + <p> de 80-100 palabras detalladas
 5. <h2>Por qué elegir</h2> + <p> de 100-150 palabras detalladas
 
-Usa <strong> 7 veces, <em> 2 veces. Solo HTML limpio, sin CSS, sin markdown.
-DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO INCLUYAS EXPLICACIONES, RECUENTOS DE ETIQUETAS, NOTAS NI CHAT ADICIONAL FUERA DEL HTML.
+Usa la etiqueta <strong> para resaltar palabras clave importantes de forma natural (entre 5 y 10 veces en todo el texto) y la etiqueta <em> unas 2 veces. Solo HTML limpio, sin CSS, sin markdown.
+
+IMPORTANTE: DEVUELVE ÚNICAMENTE EL CÓDIGO HTML DE LA ESTRUCTURA. NO realices conteos, no incluyas listas de verificación, no expliques cómo contaste las etiquetas ni agregues notas al final. Comienza directamente con el tag <p> y termina con </p>.
 PROMPT;
     }
 
