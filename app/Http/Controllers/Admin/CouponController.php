@@ -28,7 +28,7 @@ class CouponController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'code' => 'required|unique:coupons,code',
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
@@ -39,7 +39,7 @@ class CouponController extends Controller
             'restriction_ids' => 'nullable|array',
         ]);
 
-        Coupon::create($request->validated());
+        Coupon::create($validated);
 
         return redirect()->route('admin.coupons.index')->with('success', 'Cupón creado correctamente.');
     }
@@ -55,7 +55,7 @@ class CouponController extends Controller
 
     public function update(Request $request, Coupon $coupon)
     {
-        $request->validate([
+        $validated = $request->validate([
             'code' => 'required|unique:coupons,code,' . $coupon->id,
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
@@ -66,7 +66,7 @@ class CouponController extends Controller
             'restriction_ids' => 'nullable|array',
         ]);
 
-        $coupon->update($request->validated());
+        $coupon->update($validated);
 
         return redirect()->route('admin.coupons.index')->with('success', 'Cupón actualizado correctamente.');
     }
