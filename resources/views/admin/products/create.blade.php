@@ -76,13 +76,19 @@
     @csrf
     
     <!-- Error Display -->
-    <div id="error-container" class="lg:col-span-3 hidden bg-rose-500/10 border border-rose-500/20 text-rose-400 p-5 rounded-2xl mb-2 flex items-start gap-3 shadow-lg shadow-rose-950/20">
-        <i class="fas fa-exclamation-circle mt-0.5 text-lg"></i>
-        <div>
-            <h4 class="font-bold mb-1">Por favor corrige los siguientes errores:</h4>
-            <ul id="error-list" class="list-disc list-inside text-sm font-semibold opacity-90 space-y-1"></ul>
+    @if ($errors->any())
+        <div id="error-container" class="lg:col-span-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 p-5 rounded-2xl mb-2 flex items-start gap-3 shadow-lg shadow-rose-950/20">
+            <i class="fas fa-exclamation-circle mt-0.5 text-lg"></i>
+            <div>
+                <h4 class="font-bold mb-1">Por favor corrige los siguientes errores:</h4>
+                <ul id="error-list" class="list-disc list-inside text-sm font-semibold opacity-90 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
-    </div>
+    @endif
     
     <!-- Left Column: Content -->
     <div class="lg:col-span-2 space-y-8">
@@ -110,12 +116,12 @@
             <div class="space-y-6">
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Nombre del Producto</label>
-                    <input type="text" name="name" required class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 text-sm shadow-inner" placeholder="Ej: OceanWP Pro Bundle">
+                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 text-sm shadow-inner" placeholder="Ej: OceanWP Pro Bundle">
                 </div>
                 
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Descripción Corta</label>
-                    <textarea name="description" required rows="3" class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 resize-none text-sm shadow-inner" placeholder="Breve resumen que aparecerá en los listados..."></textarea>
+                    <textarea name="description" required rows="3" class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 resize-none text-sm shadow-inner" placeholder="Breve resumen que aparecerá en los listados...">{{ old('description') }}</textarea>
                 </div>
                 
                 <div>
@@ -123,7 +129,7 @@
                         <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Descripción Completa (HTML)</label>
                         <span class="text-[9px] font-bold text-gray-600 bg-white/5 border border-white/5 px-2 py-0.5 rounded">Soporta HTML</span>
                     </div>
-                    <textarea name="full_description" rows="10" class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 font-mono text-xs leading-relaxed shadow-inner" placeholder="Detalles técnicos, características clave, guías de uso..."></textarea>
+                    <textarea name="full_description" rows="10" class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 font-mono text-xs leading-relaxed shadow-inner" placeholder="Detalles técnicos, características clave, guías de uso...">{{ old('full_description') }}</textarea>
                 </div>
             </div>
 
@@ -259,9 +265,9 @@
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Elegir Categoría</label>
                     <select name="category_id" required class="w-full bg-gray-950/60 border border-white/10 rounded-2xl px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-[#F51B1B]/50 transition-all text-sm">
-                        <option value="" disabled selected class="bg-gray-950">Seleccionar categoría...</option>
+                        <option value="" disabled {{ !old('category_id') ? 'selected' : '' }} class="bg-gray-950">Seleccionar categoría...</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" class="bg-gray-950">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }} class="bg-gray-950">{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -287,7 +293,7 @@
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Precio Unitario ($)</label>
                     <div class="relative">
                         <span class="absolute left-5 top-1/2 -translate-y-1/2 text-[#F51B1B] font-bold text-sm">$</span>
-                        <input type="number" name="price" step="0.01" required value="0.00" class="w-full modern-input rounded-2xl pl-9 pr-5 py-4 text-white focus:outline-none font-mono font-bold text-base shadow-inner">
+                        <input type="number" name="price" step="0.01" required value="{{ old('price', '0.00') }}" class="w-full modern-input rounded-2xl pl-9 pr-5 py-4 text-white focus:outline-none font-mono font-bold text-base shadow-inner">
                     </div>
                 </div>
 
@@ -295,12 +301,12 @@
                 <div class="grid grid-cols-2 gap-4 pt-5 border-t border-white/5">
                     <div>
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Puntos Fijos</label>
-                        <input type="number" min="0" name="reward_points" value="0" class="w-full modern-input rounded-2xl px-4 py-3 text-white focus:outline-none font-mono text-xs shadow-inner">
+                        <input type="number" min="0" name="reward_points" value="{{ old('reward_points', '0') }}" class="w-full modern-input rounded-2xl px-4 py-3 text-white focus:outline-none font-mono text-xs shadow-inner">
                         <span class="text-[8px] text-gray-600 mt-1.5 block leading-tight">Deja 0 para calcular automático</span>
                     </div>
                     <div>
                         <label class="block text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Multiplicador</label>
-                        <input type="number" step="0.1" min="1" name="points_multiplier" value="1.0" class="w-full modern-input-amber modern-input rounded-2xl px-4 py-3 text-white focus:outline-none font-mono text-xs shadow-inner">
+                        <input type="number" step="0.1" min="1" name="points_multiplier" value="{{ old('points_multiplier', '1.0') }}" class="w-full modern-input-amber modern-input rounded-2xl px-4 py-3 text-white focus:outline-none font-mono text-xs shadow-inner">
                         <span class="text-[8px] text-gray-600 mt-1.5 block leading-tight">Ej: 1.5 = +50% Puntos</span>
                     </div>
                 </div>
@@ -308,7 +314,7 @@
                 <!-- Version Input -->
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Versión de Lanzamiento</label>
-                    <input type="text" name="version" required value="1.0.0" class="w-full modern-input rounded-2xl px-5 py-3.5 text-white focus:outline-none font-mono text-xs shadow-inner">
+                    <input type="text" name="version" required value="{{ old('version', '1.0.0') }}" class="w-full modern-input rounded-2xl px-5 py-3.5 text-white focus:outline-none font-mono text-xs shadow-inner">
                 </div>
 
                 <!-- Publish Switch Card -->

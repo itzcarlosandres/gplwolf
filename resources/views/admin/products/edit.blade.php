@@ -16,6 +16,21 @@
 <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
     @csrf
     @method('PUT')
+
+    <!-- Error Display -->
+    @if ($errors->any())
+        <div id="error-container" class="lg:col-span-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 p-5 rounded-2xl mb-2 flex items-start gap-3 shadow-lg shadow-rose-950/20">
+            <i class="fas fa-exclamation-circle mt-0.5 text-lg"></i>
+            <div>
+                <h4 class="font-bold mb-1">Por favor corrige los siguientes errores:</h4>
+                <ul id="error-list" class="list-disc list-inside text-sm font-semibold opacity-90 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
     
     <!-- Left Column: Basic Info -->
     <div class="lg:col-span-2 space-y-8">

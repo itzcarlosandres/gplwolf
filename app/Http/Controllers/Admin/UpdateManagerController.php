@@ -81,7 +81,7 @@ class UpdateManagerController extends Controller
                 'product_id' => 'required|exists:products,id',
                 'version_number' => 'required|string|max:50',
                 'released_at' => 'required|date',
-                'version_file' => 'required|file|mimes:zip|max:512000',
+                'version_file' => 'required|max:512000',
                 'changelog' => 'nullable|string'
             ]);
 
