@@ -31,9 +31,9 @@ class ValidatePluginAccess
         if ($tokenRecord && Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
             $domain = Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
             
-            // Check if this domain is registered in the user's ConnectedSites
-            $siteExists = $user->connectedSites()->where('domain', $domain)->exists();
-            if (!$siteExists) {
+            // Check if this domain is registered in the user's ConnectedSites and is not banned
+            $site = $user->connectedSites()->where('domain', $domain)->first();
+            if (!$site || $site->is_banned) {
                 // Instantly revoke this token since it's disconnected/blocked
                 $tokenRecord->delete();
                 

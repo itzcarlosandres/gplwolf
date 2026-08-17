@@ -97,8 +97,8 @@ class ProductApiController extends Controller
         }
         if ($tokenRecord && \Illuminate\Support\Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
             $domain = \Illuminate\Support\Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
-            $siteExists = $user->connectedSites()->where('domain', $domain)->exists();
-            if (!$siteExists) {
+            $site = $user->connectedSites()->where('domain', $domain)->first();
+            if (!$site || $site->is_banned) {
                 // Instantly revoke this token since it's disconnected/blocked
                 $tokenRecord->delete();
                 return response()->json([
