@@ -70,6 +70,12 @@ class Marketplace_API_Client {
             if (isset($body['code']) && in_array($body['code'], ['UNAUTHENTICATED', 'SITE_DISCONNECTED'])) {
                 delete_option('mp_api_token');
                 delete_option('mp_user_info');
+                
+                if ($body['code'] === 'SITE_DISCONNECTED') {
+                    update_option('mp_connection_error', 'Este sitio ha sido desconectado o bloqueado por el administrador de GPLWolf.');
+                } else {
+                    update_option('mp_connection_error', 'Tu sesión ha expirado o el token de conexión es inválido.');
+                }
             }
         }
 
@@ -141,6 +147,12 @@ class Marketplace_API_Client {
             if (isset($body['code']) && in_array($body['code'], ['UNAUTHENTICATED', 'SITE_DISCONNECTED'])) {
                 delete_option('mp_api_token');
                 delete_option('mp_user_info');
+                
+                if ($body['code'] === 'SITE_DISCONNECTED') {
+                    update_option('mp_connection_error', 'Este sitio ha sido desconectado o bloqueado por el administrador de GPLWolf.');
+                } else {
+                    update_option('mp_connection_error', 'Tu sesión ha expirado o el token de conexión es inválido.');
+                }
             }
             return false;
         }

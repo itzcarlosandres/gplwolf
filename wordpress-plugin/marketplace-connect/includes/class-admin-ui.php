@@ -204,6 +204,18 @@ class Marketplace_Admin_UI {
                     </p>
                 </div>
 
+                <!-- Error Banner -->
+                <?php 
+                $conn_error = get_option('mp_connection_error');
+                if ($conn_error) :
+                    delete_option('mp_connection_error');
+                ?>
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: start; gap: 8px;">
+                    <i class="fas fa-exclamation-triangle" style="margin-top: 2px;"></i>
+                    <span><?php echo esc_html($conn_error); ?></span>
+                </div>
+                <?php endif; ?>
+
                 <!-- Messages -->
                 <div id="mp-login-message" class="mp-message-box"></div>
 
