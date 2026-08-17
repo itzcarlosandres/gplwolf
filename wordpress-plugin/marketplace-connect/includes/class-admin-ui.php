@@ -270,7 +270,7 @@ class Marketplace_Admin_UI {
         $token = get_option('mp_api_token');
 
         // Fetch products
-        $products_data = $this->api->get_products();
+        $products_data = $this->api->get_products(1, '', 250);
         $products = $products_data['data'] ?? [];
 
         // Dynamic limits calculations
@@ -605,7 +605,8 @@ class Marketplace_Admin_UI {
                             'Accept': 'application/json'
                         },
                         data: {
-                            search: this.searchQuery
+                            search: this.searchQuery,
+                            per_page: 250
                         },
                         success: (response) => {
                             if (response && response.data) {
@@ -758,6 +759,36 @@ class Marketplace_Admin_UI {
         $api_url = defined('MARKETPLACE_API_URL') ? MARKETPLACE_API_URL : 'http://localhost:8000/api/v1';
         $package_url = $api_url . '/download/' . $id . '?api_token=' . $token;
 
+        // Verificar la respuesta del servidor antes de iniciar la instalación de WordPress
+        $check_response = wp_safe_remote_head($package_url, array('timeout' => 10));
+        if (!is_wp_error($check_response)) {
+            $headers = wp_remote_retrieve_headers($check_response);
+            $content_type = isset($headers['content-type']) ? $headers['content-type'] : '';
+            $response_code = intval(wp_remote_retrieve_response_code($check_response));
+            
+            if ($response_code >= 400) {
+                $get_response = wp_safe_remote_get($package_url, array('timeout' => 15));
+                if (!is_wp_error($get_response)) {
+                    $body = json_decode(wp_remote_retrieve_body($get_response), true);
+                    if (isset($body['message'])) {
+                        wp_send_json_error("Error del Servidor: " . $body['message']);
+                    }
+                }
+                wp_send_json_error("El servidor de descargas respondió con un error HTTP {$response_code}.");
+            }
+            
+            if (strpos($content_type, 'application/json') !== false) {
+                $get_response = wp_safe_remote_get($package_url, array('timeout' => 15));
+                if (!is_wp_error($get_response)) {
+                    $body = json_decode(wp_remote_retrieve_body($get_response), true);
+                    if (isset($body['message'])) {
+                        wp_send_json_error("Error del Servidor: " . $body['message']);
+                    }
+                }
+                wp_send_json_error("El servidor devolvió un error JSON en lugar del archivo ZIP.");
+            }
+        }
+
         // Require necessary files for installation/upgrades
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -814,7 +845,14 @@ class Marketplace_Admin_UI {
         if (is_wp_error($result)) {
             wp_send_json_error($result->get_error_message());
         } elseif ($result === null || $result === false) {
-            wp_send_json_error('La instalación falló. Verifica los permisos de escritura en tu servidor WordPress.');
+            $messages = isset($skin->messages) ? $skin->messages : array();
+            $msg = 'La instalación falló. ';
+            if (!empty($messages)) {
+                $msg .= 'Detalles: ' . implode(' | ', array_map('strip_tags', $messages));
+            } else {
+                $msg .= 'Verifica los permisos de escritura en tu servidor WordPress.';
+            }
+            wp_send_json_error($msg);
         } else {
             wp_send_json_success(array('message' => '¡Recurso instalado y activado con éxito en tu WordPress!'));
         }
