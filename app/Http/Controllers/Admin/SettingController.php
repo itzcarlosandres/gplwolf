@@ -60,7 +60,10 @@ class SettingController extends Controller
         
         $settings = array_merge($defaults, $settings);
         
-        return view('admin.settings.index', compact('settings', 'ranks'));
+        $releases = \App\Models\PluginRelease::orderBy('released_at', 'desc')->get();
+        $currentVersion = \App\Models\Setting::getPluginLatestVersion();
+        
+        return view('admin.settings.index', compact('settings', 'ranks', 'releases', 'currentVersion'));
     }
 
     public function hero()
