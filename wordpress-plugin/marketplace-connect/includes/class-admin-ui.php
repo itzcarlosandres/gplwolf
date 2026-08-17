@@ -267,6 +267,12 @@ class Marketplace_Admin_UI {
         // Refresh user info dynamically from API on load
         $fresh_user_info = $this->api->get_user_info();
         $user_info = $fresh_user_info ? $fresh_user_info : get_option('mp_user_info');
+
+        if ( ! $user_info ) {
+            $this->display_login_form();
+            return;
+        }
+
         $token = get_option('mp_api_token');
 
         // Fetch products
