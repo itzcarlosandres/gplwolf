@@ -42,6 +42,31 @@ class Marketplace_Admin_UI {
         wp_localize_script( 'mp-admin-js', 'mp_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
     }
 
+    public function display_update_notice() {
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+            return;
+        }
+
+        $latest_version = get_transient( 'mp_latest_plugin_version' );
+        if ( ! $latest_version ) {
+            $latest_version = get_option( 'mp_latest_plugin_version' );
+        }
+
+        if ( $latest_version && version_compare( $this->version, $latest_version, '<' ) ) {
+            ?>
+            <div class="notice notice-warning is-dismissible" style="border-left-color: #FF2121; padding: 12px; background: #fff; box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);">
+                <p style="margin: 0; font-size: 14px; color: #1d2327; display: flex; align-items: center; gap: 8px;">
+                    <span style="color: #FF2121; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">GPLWolf Connector:</span>
+                    <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Hay una nueva versión (<strong><?php echo esc_html( $latest_version ); ?></strong>) disponible del plugin oficial (versión actual: <?php echo esc_html( $this->version ); ?>).</span>
+                    <a href="https://gplwolf.com/plugin-oficial" target="_blank" style="color: #FF2121; text-decoration: underline; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                        Descargar última versión
+                    </a>
+                </p>
+            </div>
+            <?php
+        }
+    }
+
     public function display_plugin_dashboard() {
         $token = get_option('mp_api_token');
         if (!$token) {
@@ -311,6 +336,32 @@ class Marketplace_Admin_UI {
 
         <div class="wrap" x-data="marketplaceApp(<?php echo esc_attr($products_json); ?>, '<?php echo esc_js($token); ?>', '<?php echo esc_js($api_url); ?>')" style="background: #09090b; padding: 28px; border-radius: 28px; color: #fff; min-height: 80vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; margin-top: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
             <div class="absolute top-0 right-0 w-80 h-80 bg-red-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <!-- Update Warning Banner -->
+            <?php
+            $latest_version = get_transient( 'mp_latest_plugin_version' );
+            if ( ! $latest_version ) {
+                $latest_version = get_option( 'mp_latest_plugin_version' );
+            }
+            if ( $latest_version && version_compare( $this->version, $latest_version, '<' ) ) :
+            ?>
+            <div style="background: rgba(245, 158, 11, 0.1); border: 2px solid rgba(245, 158, 11, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 20px; flex-shrink: 0; box-sizing: border-box;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <h4 style="color: #fff; font-size: 15px; font-weight: 800; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">¡Actualización del Plugin Oficial Recomendada!</h4>
+                        <p style="color: #d4d4d8; font-size: 12px; margin: 4px 0 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Estás usando la versión v<?php echo esc_html($this->version); ?>, pero la versión v<?php echo esc_html($latest_version); ?> está disponible. Descárgala para obtener compatibilidad y mejoras de seguridad.</p>
+                    </div>
+                </div>
+                <div style="flex-shrink: 0;">
+                    <a href="https://gplwolf.com/plugin-oficial" target="_blank" style="background: #f59e0b; color: #000; padding: 8px 16px; border-radius: 10px; font-weight: bold; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
+                        <i class="fas fa-download"></i> Descargar v<?php echo esc_html($latest_version); ?>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- Toast Notifications Overlay -->
             <div class="fixed top-8 right-8 z-[9999] space-y-3 pointer-events-none max-w-sm">

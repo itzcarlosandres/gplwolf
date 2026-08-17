@@ -45,7 +45,7 @@ class ImageService
                 
                 file_put_contents($uploadPath . '/' . $filename, (string) $encoded);
                 return trim($folder, '/') . '/' . $filename;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Si falla la optimización, pasamos al modo manual
             }
         }

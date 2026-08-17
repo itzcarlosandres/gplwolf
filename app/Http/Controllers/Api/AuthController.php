@@ -63,10 +63,16 @@ class AuthController extends Controller
             }
 
             // Register new site
-            $user->connectedSites()->create([
+            $existingSite = $user->connectedSites()->create([
                 'domain' => $request->site_url,
+                'plugin_version' => $request->input('plugin_version'),
                 'connected_at' => now(),
             ]);
+        } else {
+            // Update existing site's version if sent
+            if ($request->has('plugin_version')) {
+                $existingSite->update(['plugin_version' => $request->input('plugin_version')]);
+            }
         }
 
         // Generate Token associated with this domain claim
@@ -88,7 +94,22 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($this->getUserStats($request->user()));
+        $user = $request->user();
+        
+        // Update version from header if calling from a connected plugin
+        $tokenRecord = $user->currentAccessToken();
+        if ($tokenRecord && \Illuminate\Support\Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
+            $domain = \Illuminate\Support\Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
+            $connectedSite = $user->connectedSites()->where('domain', $domain)->first();
+            if ($connectedSite) {
+                $pluginVersion = $request->header('X-Plugin-Version');
+                if ($pluginVersion && $connectedSite->plugin_version !== $pluginVersion) {
+                    $connectedSite->update(['plugin_version' => $pluginVersion]);
+                }
+            }
+        }
+
+        return response()->json($this->getUserStats($user));
     }
 
     private function getUserStats($user)
@@ -128,6 +149,7 @@ class AuthController extends Controller
             'avatar' => $user->profile_photo_url ?? null, // Assuming Jetstream or similar
             'sites_connected' => $user->connectedSites()->count(),
             'sites_limit' => $sitesLimit,
+            'plugin_latest_version' => \App\Models\Setting::getPluginLatestVersion(),
         ];
     }
 

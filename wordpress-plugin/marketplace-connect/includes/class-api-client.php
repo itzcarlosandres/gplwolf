@@ -14,6 +14,7 @@ class Marketplace_API_Client {
                 'email' => $email,
                 'password' => $password,
                 'site_url' => get_site_url(), // Domain Locking
+                'plugin_version' => defined('MARKETPLACE_CONNECT_VERSION') ? MARKETPLACE_CONNECT_VERSION : '1.0.0',
             ),
             'timeout' => 15,
         ));
@@ -29,6 +30,13 @@ class Marketplace_API_Client {
         if ($code === 200 && isset($data['token'])) {
             update_option('mp_api_token', $data['token']);
             update_option('mp_user_info', $data['user']);
+            
+            // Save latest plugin version info returned from server
+            if (isset($data['user']['plugin_latest_version'])) {
+                update_option('mp_latest_plugin_version', $data['user']['plugin_latest_version']);
+                set_transient('mp_latest_plugin_version', $data['user']['plugin_latest_version'], 12 * HOUR_IN_SECONDS);
+            }
+
             return array('success' => true, 'data' => $data);
         } else {
             return array('success' => false, 'message' => $data['message'] ?? 'Error desconocido');
@@ -116,6 +124,7 @@ class Marketplace_API_Client {
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
                 'Accept' => 'application/json',
+                'X-Plugin-Version' => defined('MARKETPLACE_CONNECT_VERSION') ? MARKETPLACE_CONNECT_VERSION : '1.0.0',
             ),
             'timeout' => 15,
         );
@@ -143,6 +152,13 @@ class Marketplace_API_Client {
         $data = json_decode(wp_remote_retrieve_body($response), true);
         if ($data) {
             update_option('mp_user_info', $data);
+            
+            // Save latest plugin version info returned from server
+            if (isset($data['plugin_latest_version'])) {
+                update_option('mp_latest_plugin_version', $data['plugin_latest_version']);
+                set_transient('mp_latest_plugin_version', $data['plugin_latest_version'], 12 * HOUR_IN_SECONDS);
+            }
+
             return $data;
         }
         return false;

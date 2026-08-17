@@ -209,23 +209,69 @@ class SettingController extends Controller
         if (!isset($settings['plugin_site_limit'])) $settings['plugin_site_limit'] = 5;
         if (!isset($settings['plugin_show_menu'])) $settings['plugin_show_menu'] = 0;
 
-        return view('admin.settings.plugin', compact('settings'));
+        $releases = \App\Models\PluginRelease::orderBy('released_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+        $currentVersion = Setting::getPluginLatestVersion();
+
+        return view('admin.settings.plugin', compact('settings', 'releases', 'currentVersion'));
     }
 
     public function updatePlugin(Request $request)
     {
         $data = $request->validate([
             'plugin_site_limit' => 'required|integer|min:1|max:100',
+            'new_version_number' => 'nullable|string|max:50',
+            'changelog' => 'nullable|string',
         ]);
 
         $data['plugin_enabled'] = $request->has('plugin_enabled') ? 1 : 0;
         $data['plugin_show_menu'] = $request->has('plugin_show_menu') ? 1 : 0;
 
-        foreach ($data as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        // Save general settings
+        Setting::updateOrCreate(['key' => 'plugin_site_limit'], ['value' => $data['plugin_site_limit']]);
+        Setting::updateOrCreate(['key' => 'plugin_enabled'], ['value' => $data['plugin_enabled']]);
+        Setting::updateOrCreate(['key' => 'plugin_show_menu'], ['value' => $data['plugin_show_menu']]);
+
+        // Handle new release publishing
+        if (!empty($data['new_version_number'])) {
+            $newVersion = trim($data['new_version_number']);
+            
+            // Check if this version was already published to avoid duplicates
+            $exists = \App\Models\PluginRelease::where('version_number', $newVersion)->exists();
+            if ($exists) {
+                return back()->withInput()->with('error', "La versión {$newVersion} ya ha sido publicada anteriormente.");
+            }
+
+            // Create database record
+            \App\Models\PluginRelease::create([
+                'version_number' => $newVersion,
+                'changelog' => $data['changelog'],
+                'released_at' => now()
+            ]);
+
+            // Sync version number directly inside the source code file: marketplace-connect.php
+            $pluginPath = base_path('wordpress-plugin/marketplace-connect/marketplace-connect.php');
+            if (file_exists($pluginPath)) {
+                $content = file_get_contents($pluginPath);
+                
+                // Replace: * Version:     X.Y.Z
+                $content = preg_replace('/(Version:\s*)([0-9.]+)/i', '${1}' . $newVersion, $content);
+                
+                // Replace: define( 'MARKETPLACE_CONNECT_VERSION', 'X.Y.Z' );
+                $content = preg_replace(
+                    "/(define\(\s*'MARKETPLACE_CONNECT_VERSION'\s*,\s*')(.*?)('\s*\);)/i",
+                    '${1}' . $newVersion . '${3}',
+                    $content
+                );
+                
+                file_put_contents($pluginPath, $content);
+            }
+            
+            return back()->with('success', "Configuración guardada y versión {$newVersion} publicada correctamente.");
         }
 
-        return back()->with('success', 'Configuración del Plugin actualizada correctamente');
+        return back()->with('success', 'Configuración del Plugin actualizada correctamente.');
     }
 
     public function products()

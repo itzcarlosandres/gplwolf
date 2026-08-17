@@ -21,7 +21,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'MARKETPLACE_CONNECT_VERSION', '1.0.0' );
 define( 'MARKETPLACE_CONNECT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MARKETPLACE_CONNECT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'MARKETPLACE_API_URL', 'http://localhost/gplwolf/public/api/v1' ); // Cambiar por URL real en producción
+define( 'MARKETPLACE_API_URL', 'https://gplwolf.com/api/v1' ); // Cambiar por URL real en producción
 
 // Include Core Class
 require_once MARKETPLACE_CONNECT_PLUGIN_DIR . 'includes/class-marketplace-connect.php';

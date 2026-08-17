@@ -28,7 +28,7 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                <a href="{{ url('marketplace-connect.zip') }}" class="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center justify-center gap-3 group" download>
+                <a href="{{ route('pages.plugin.download') }}" class="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center justify-center gap-3 group" download>
                     <i class="fab fa-wordpress text-2xl group-hover:rotate-12 transition-transform"></i>
                     Descargar Plugin
                 </a>
@@ -203,7 +203,7 @@
             
             <div class="relative z-10">
                 <h2 class="text-3xl md:text-5xl font-black text-white mb-8">Empieza a automatizar hoy.</h2>
-                <a href="{{ url('marketplace-connect.zip') }}" class="inline-block px-12 py-5 bg-white text-[#F51B1B] rounded-full font-black text-xl shadow-xl hover:scale-105 hover:bg-[#FF2121]/5 transition-all transform active:scale-95" download>
+                <a href="{{ route('pages.plugin.download') }}" class="inline-block px-12 py-5 bg-white text-[#F51B1B] rounded-full font-black text-xl shadow-xl hover:scale-105 hover:bg-[#FF2121]/5 transition-all transform active:scale-95" download>
                     <i class="fas fa-download mr-2"></i> Descargar Plugin Gratis
                 </a>
                 <p class="mt-6 text-[#FF2121] text-sm font-medium">Versión 2.1.0 • Actualizado Ene 2026 • 150KB</p>

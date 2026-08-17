@@ -32,6 +32,7 @@ class Marketplace_Connect {
         add_action( 'admin_menu', array( $plugin_admin, 'add_plugin_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_styles' ) );
         add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_scripts' ) );
+        add_action( 'admin_notices', array( $plugin_admin, 'display_update_notice' ) );
         
         // AJAX Actions
         add_action( 'wp_ajax_mp_connect_login', array( $plugin_admin, 'handle_login' ) );

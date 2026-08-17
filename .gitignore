@@ -29,3 +29,5 @@ Homestead.yaml
 !/storage/logs/.gitignore
 
 /README_CHANGELOG.md
+
+*.zip

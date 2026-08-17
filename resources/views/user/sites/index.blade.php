@@ -10,7 +10,7 @@
             <p class="text-gray-400 mt-2">Gestiona las licencias de tu membresía en tus sitios web.</p>
         </div>
         <div class="flex flex-wrap items-center gap-4">
-            <a href="{{ url('marketplace-connect.zip') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold transition-all border border-white/5 shadow-lg" download>
+            <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold transition-all border border-white/5 shadow-lg" download>
                 <i class="fas fa-download text-emerald-400"></i> Descargar Plugin Oficial
             </a>
             
@@ -60,6 +60,32 @@
         @endif
     </div>
     @endif
+    @php
+        $latestVersion = \App\Models\Setting::getPluginLatestVersion();
+        $hasOutdatedSites = auth()->user()->connectedSites->contains(function($site) use ($latestVersion) {
+            return !empty($site->plugin_version) && version_compare($site->plugin_version, $latestVersion, '<');
+        });
+    @endphp
+
+    @if($hasOutdatedSites)
+    <!-- Banner de actualización pendiente -->
+    <div class="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-3xl p-6 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center flex-shrink-0 text-amber-500 text-xl">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <h4 class="text-base font-bold text-white mb-1">¡Actualización del Plugin Recomendada!</h4>
+                <p class="text-gray-300 text-xs">Uno o más de tus sitios web de WordPress tienen una versión desactualizada del plugin conector. Descarga la última versión para garantizar la compatibilidad y el rendimiento.</p>
+            </div>
+        </div>
+        <div class="flex-shrink-0">
+            <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-black rounded-xl font-bold transition-all shadow-lg shadow-amber-500/10 text-sm" download>
+                <i class="fas fa-download"></i> Descargar v{{ $latestVersion }}
+            </a>
+        </div>
+    </div>
+    @endif
 
     <!-- Sites List -->
     <div class="bg-gray-800/40 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden">
@@ -69,6 +95,7 @@
                     <thead>
                         <tr class="border-b border-white/5 bg-white/[0.02]">
                             <th class="px-6 py-5 text-xs font-black text-gray-400 uppercase tracking-wider">Dominio / Sitio</th>
+                            <th class="px-6 py-5 text-xs font-black text-gray-400 uppercase tracking-wider">Versión Plugin</th>
                             <th class="px-6 py-5 text-xs font-black text-gray-400 uppercase tracking-wider">Fecha Conexión</th>
                             <th class="px-6 py-5 text-xs font-black text-gray-400 uppercase tracking-wider text-right">Acciones</th>
                         </tr>
@@ -86,6 +113,27 @@
                                         <div class="text-xs text-gray-500 font-mono mt-0.5 truncate max-w-[200px]">{{ $site->domain }}</div>
                                     </div>
                                 </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                @php
+                                    $siteVer = $site->plugin_version;
+                                @endphp
+                                @if(empty($siteVer))
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-white/5 text-gray-400 border border-white/10">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+                                        Desconocida
+                                    </span>
+                                @elseif(version_compare($siteVer, $latestVersion, '<'))
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20" title="Actualización pendiente a v{{ $latestVersion }}">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        v{{ $siteVer }} (Pendiente v{{ $latestVersion }})
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        v{{ $siteVer }} (Al día)
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-5">
                                 <div class="flex flex-col">
@@ -115,7 +163,7 @@
                 <h3 class="text-xl font-bold text-white mb-2">No tienes sitios conectados</h3>
                 <p class="text-gray-400 max-w-md mx-auto">Instala nuestro plugin de WordPress en tu sitio para conectar tu licencia y descargar recursos directamente.</p>
                 <div class="mt-8">
-                    <a href="{{ url('marketplace-connect.zip') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#F51B1B] hover:bg-[#FF2121] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-[#FF2121]/25" download>
+                    <a href="{{ route('pages.plugin.download') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#F51B1B] hover:bg-[#FF2121] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-[#FF2121]/25" download>
                         <i class="fas fa-download"></i> Descargar Plugin
                     </a>
                 </div>

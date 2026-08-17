@@ -93,7 +93,7 @@
                         <div class="flex-1 text-xs font-mono text-[#FF2121] truncate text-left font-bold">
                             marketplace-connect.zip
                         </div>
-                        <a href="{{ url('marketplace-connect.zip') }}" class="p-2 bg-[#FF2121] hover:bg-[#FF2121] rounded-lg text-white transition-colors">
+                        <a href="{{ route('pages.plugin.download') }}" class="p-2 bg-[#FF2121] hover:bg-[#FF2121] rounded-lg text-white transition-colors">
                             <i class="fas fa-download"></i>
                         </a>
                     </div>
