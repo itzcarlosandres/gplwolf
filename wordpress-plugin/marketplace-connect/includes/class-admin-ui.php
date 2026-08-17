@@ -500,15 +500,15 @@ class Marketplace_Admin_UI {
                 <div class="space-y-4">
                     <template x-for="product in filteredProducts()" :key="product.id">
                         <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all duration-300">
-                            <!-- Selection Checkbox -->
-                            <template x-if="product.can_download && !product.installed">
-                                <div class="shrink-0 flex items-center justify-center pl-2">
-                                    <input type="checkbox" :checked="selectedProductIds.includes(product.id)" @change="toggleSelection(product.id)" class="w-5 h-5 text-red-500 bg-black border-white/10 rounded focus:ring-red-500 focus:ring-offset-zinc-950 transition-all cursor-pointer">
-                                </div>
-                            </template>
-
                             <!-- Left Block: Image & Meta -->
                             <div class="flex items-center gap-4 w-full md:w-3/5">
+                                <!-- Selection Checkbox or Placeholder -->
+                                <div class="shrink-0 w-5 h-5 flex items-center justify-center">
+                                    <template x-if="product.can_download && !product.installed">
+                                        <input type="checkbox" :checked="selectedProductIds.includes(product.id)" @change="toggleSelection(product.id)" class="w-5 h-5 text-red-500 bg-black border-white/10 rounded focus:ring-red-500 focus:ring-offset-zinc-950 transition-all cursor-pointer">
+                                    </template>
+                                </div>
+
                                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shrink-0 relative flex items-center justify-center">
                                     <template x-if="product.thumbnail">
                                         <img :src="product.thumbnail" class="w-full h-full object-cover">
