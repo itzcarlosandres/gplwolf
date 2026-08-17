@@ -255,22 +255,34 @@ class SettingController extends Controller
 
             // Sync version number directly inside the source code file: marketplace-connect.php
             $pluginPath = base_path('wordpress-plugin/marketplace-connect/marketplace-connect.php');
+            $fileError = null;
             if (file_exists($pluginPath)) {
-                $content = file_get_contents($pluginPath);
-                
-                // Replace: * Version:     X.Y.Z
-                $content = preg_replace('/(Version:\s*)([0-9.]+)/i', '${1}' . $newVersion, $content);
-                
-                // Replace: define( 'MARKETPLACE_CONNECT_VERSION', 'X.Y.Z' );
-                $content = preg_replace(
-                    "/(define\(\s*'MARKETPLACE_CONNECT_VERSION'\s*,\s*')(.*?)('\s*\);)/i",
-                    '${1}' . $newVersion . '${3}',
-                    $content
-                );
-                
-                file_put_contents($pluginPath, $content);
+                if (!is_writable($pluginPath)) {
+                    $fileError = "La versión {$newVersion} se registró en la base de datos, pero el archivo de código fuente del plugin (marketplace-connect.php) no tiene permisos de escritura. Por favor, ejecuta en la terminal de tu servidor: 'chown -R www:www " . dirname($pluginPath) . "' o dale permisos de escritura.";
+                } else {
+                    $content = file_get_contents($pluginPath);
+                    
+                    // Replace: * Version:     X.Y.Z
+                    $content = preg_replace('/(Version:\s*)([0-9.]+)/i', '${1}' . $newVersion, $content);
+                    
+                    // Replace: define( 'MARKETPLACE_CONNECT_VERSION', 'X.Y.Z' );
+                    $content = preg_replace(
+                        "/(define\(\s*'MARKETPLACE_CONNECT_VERSION'\s*,\s*')(.*?)('\s*\);)/i",
+                        '${1}' . $newVersion . '${3}',
+                        $content
+                    );
+                    
+                    if (file_put_contents($pluginPath, $content) === false) {
+                        $fileError = "No se pudo escribir en el archivo marketplace-connect.php. Verifica los permisos.";
+                    }
+                }
             }
             
+            if ($fileError) {
+                return back()->with('success', "Configuración guardada y versión {$newVersion} registrada en base de datos.")
+                    ->with('error', $fileError);
+            }
+
             return back()->with('success', "Configuración guardada y versión {$newVersion} publicada correctamente.");
         }
 
