@@ -92,6 +92,9 @@ class ProductApiController extends Controller
 
         // Manually run ValidatePluginAccess logic (quick disconnect validation)
         $tokenRecord = $user->currentAccessToken();
+        if (!$tokenRecord && $tokenStr) {
+            $tokenRecord = \Laravel\Sanctum\PersonalAccessToken::findToken($tokenStr);
+        }
         if ($tokenRecord && \Illuminate\Support\Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
             $domain = \Illuminate\Support\Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
             $siteExists = $user->connectedSites()->where('domain', $domain)->exists();

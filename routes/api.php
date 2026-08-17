@@ -25,6 +25,7 @@ Route::middleware('throttle:10,1')->get('/v1/download/{id}', [ProductApiControll
 // Protected Routes (Plugin Actions)
 Route::middleware(['auth:sanctum', 'plugin.access', 'throttle:60,1'])->prefix('v1')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/site/sync', [AuthController::class, 'syncInstalledResources']);
     Route::post('/logout', [AuthController::class, 'logout']);
     
     // Products & Downloads

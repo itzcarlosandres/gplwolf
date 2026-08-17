@@ -159,7 +159,44 @@ class Marketplace_API_Client {
                 set_transient('mp_latest_plugin_version', $data['plugin_latest_version'], 12 * HOUR_IN_SECONDS);
             }
 
+            // Sync installed resources to server (runs once every hour)
+            $this->sync_installed_resources();
+
             return $data;
+        }
+        return false;
+    }
+
+    public function sync_installed_resources() {
+        $token = get_option('mp_api_token');
+        if (!$token) return false;
+
+        // Prevent spamming the sync endpoint: only run once every hour
+        if ( get_transient('mp_last_sync_resources') ) {
+            return false;
+        }
+
+        $installed = get_option('mp_installed_resources', array());
+        
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'installed_resources' => $installed,
+            )),
+            'timeout' => 15,
+        );
+
+        $response = wp_remote_post($this->api_url . '/site/sync', $args);
+        if (!is_wp_error($response)) {
+            $code = wp_remote_retrieve_response_code($response);
+            if ($code === 200) {
+                set_transient('mp_last_sync_resources', true, HOUR_IN_SECONDS);
+                return true;
+            }
         }
         return false;
     }

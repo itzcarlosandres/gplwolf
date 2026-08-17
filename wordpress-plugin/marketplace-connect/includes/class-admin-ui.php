@@ -500,6 +500,13 @@ class Marketplace_Admin_UI {
                 <div class="space-y-4">
                     <template x-for="product in filteredProducts()" :key="product.id">
                         <div class="bg-zinc-950/40 border border-white/5 hover:border-red-500/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all duration-300">
+                            <!-- Selection Checkbox -->
+                            <template x-if="product.can_download && !product.installed">
+                                <div class="shrink-0 flex items-center justify-center pl-2">
+                                    <input type="checkbox" :checked="selectedProductIds.includes(product.id)" @change="toggleSelection(product.id)" class="w-5 h-5 text-red-500 bg-black border-white/10 rounded focus:ring-red-500 focus:ring-offset-zinc-950 transition-all cursor-pointer">
+                                </div>
+                            </template>
+
                             <!-- Left Block: Image & Meta -->
                             <div class="flex items-center gap-4 w-full md:w-3/5">
                                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shrink-0 relative flex items-center justify-center">
@@ -566,6 +573,42 @@ class Marketplace_Admin_UI {
                 </div>
 
             </div>
+
+            <!-- Bulk Installer Action Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-zinc-950/80 border border-white/5 p-3 rounded-2xl mt-4" x-show="products.filter(p => p.can_download && !p.installed).length > 0">
+                <div class="flex items-center gap-3">
+                    <button @click="selectAll()" class="px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer">
+                        <span x-text="filteredProducts().filter(p => p.can_download && !p.installed).every(p => selectedProductIds.includes(p.id)) ? 'Deseleccionar todo' : 'Seleccionar todo'"></span>
+                    </button>
+                    <span class="text-xs text-gray-400 font-bold" x-show="selectedProductIds.length > 0">
+                        <span class="text-red-500 font-black" x-text="selectedProductIds.length"></span> seleccionado(s) para instalar.
+                    </span>
+                    <span class="text-xs text-gray-500 font-bold" x-show="selectedProductIds.length === 0">
+                        Selecciona uno o más plugins para instalarlos en lote.
+                    </span>
+                </div>
+
+                <button @click="installSelected()" :disabled="selectedProductIds.length === 0 || bulkInstalling" :class="selectedProductIds.length === 0 || bulkInstalling ? 'bg-zinc-900 text-gray-600 border border-white/5 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 text-white'" class="px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer border-none">
+                    <i class="fas fa-cubes"></i>
+                    <span x-text="bulkInstalling ? 'Instalando en lote...' : 'Instalar seleccionados'"></span>
+                </button>
+            </div>
+
+            <!-- Bulk Installation Progress Modal -->
+            <div class="fixed bottom-6 right-6 z-[9999] bg-[#0c0c0c] border border-white/10 p-5 rounded-2xl w-80 shadow-2xl transition-all duration-300" x-show="bulkInstalling" x-transition style="display: none;">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-black uppercase tracking-wider text-white">Instalación por Lotes</span>
+                    <span class="text-xs font-mono text-red-500 font-black" x-text="bulkProgress + '%'"></span>
+                </div>
+                <div class="w-full bg-white/5 rounded-full h-2.5 overflow-hidden">
+                    <div class="bg-red-500 h-full transition-all duration-500" :style="'width: ' + bulkProgress + '%'"></div>
+                </div>
+                <div class="mt-3 flex justify-between text-[10px] text-gray-500 font-bold">
+                    <span>Procesados: <strong class="text-white" x-text="bulkProcessed"></strong> / <strong class="text-white" x-text="bulkTotal"></strong></span>
+                    <span x-show="bulkProgress < 100" class="animate-pulse text-amber-500">Instalando...</span>
+                    <span x-show="bulkProgress >= 100" class="text-emerald-500">Completado</span>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -576,6 +619,11 @@ class Marketplace_Admin_UI {
                 toasts: [],
                 ticketUrl: '',
                 searchTimeout: null,
+                selectedProductIds: [],
+                bulkInstalling: false,
+                bulkTotal: 0,
+                bulkProcessed: 0,
+                bulkProgress: 0,
                 products: initialProducts.map(p => ({
                     ...p,
                     installing: false,
@@ -682,7 +730,7 @@ class Marketplace_Admin_UI {
                         } else {
                             var errMsg = response.data;
                             if (response.data && response.data.message) {
-                                errMsg = response.data.message;
+                                  errMsg = response.data.message;
                             }
                             this.toast('error', 'Error: ' + errMsg);
                         }
@@ -690,6 +738,81 @@ class Marketplace_Admin_UI {
                         product.installing = false;
                         this.toast('error', 'Error de conexión o red.');
                     });
+                },
+
+                toggleSelection(productId) {
+                    if (this.selectedProductIds.includes(productId)) {
+                        this.selectedProductIds = this.selectedProductIds.filter(id => id !== productId);
+                    } else {
+                        this.selectedProductIds.push(productId);
+                    }
+                },
+
+                selectAll() {
+                    const visibleProducts = this.filteredProducts().filter(p => p.can_download && !p.installed);
+                    const visibleIds = visibleProducts.map(p => p.id);
+                    const allSelected = visibleIds.every(id => this.selectedProductIds.includes(id));
+                    if (allSelected) {
+                        this.selectedProductIds = this.selectedProductIds.filter(id => !visibleIds.includes(id));
+                    } else {
+                        visibleIds.forEach(id => {
+                            if (!this.selectedProductIds.includes(id)) {
+                                this.selectedProductIds.push(id);
+                            }
+                        });
+                    }
+                },
+
+                async installSelected() {
+                    if (this.selectedProductIds.length === 0) return;
+                    
+                    this.bulkInstalling = true;
+                    this.bulkTotal = this.selectedProductIds.length;
+                    this.bulkProcessed = 0;
+                    this.bulkProgress = 0;
+                    
+                    const idsToInstall = [...this.selectedProductIds];
+                    this.selectedProductIds = [];
+                    
+                    for (let id of idsToInstall) {
+                        const product = this.products.find(p => p.id === id);
+                        if (!product) continue;
+                        
+                        product.installing = true;
+                        this.toast('success', 'Instalando (' + (this.bulkProcessed + 1) + '/' + this.bulkTotal + '): ' + product.name + '...');
+                        
+                        try {
+                            const result = await new Promise((resolve, reject) => {
+                                jQuery.post(mp_ajax.ajax_url, { 
+                                    action: 'mp_download_item', 
+                                    id: product.id, 
+                                    type: product.type 
+                                }, (response) => {
+                                    resolve(response);
+                                }).fail(() => {
+                                    reject(new Error('Error de conexión o red.'));
+                                });
+                            });
+                            
+                            product.installing = false;
+                            if (result.success) {
+                                product.installed = true;
+                                this.toast('success', '¡Instalado!: ' + product.name);
+                            } else {
+                                const errMsg = (result.data && result.data.message) ? result.data.message : (result.data || 'Error desconocido.');
+                                this.toast('error', 'Error en ' + product.name + ': ' + errMsg);
+                            }
+                        } catch (err) {
+                            product.installing = false;
+                            this.toast('error', 'Error en ' + product.name + ': ' + err.message);
+                        }
+                        
+                        this.bulkProcessed++;
+                        this.bulkProgress = Math.round((this.bulkProcessed / this.bulkTotal) * 100);
+                    }
+                    
+                    this.toast('success', 'Instalación por lotes finalizada.');
+                    setTimeout(() => { location.reload(); }, 2000);
                 },
                 
                 downloadZip(product) {

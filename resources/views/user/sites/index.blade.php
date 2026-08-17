@@ -3,7 +3,7 @@
 @section('title', 'Sitios Conectados')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto" x-data="{ showModal: false, activeSite: null }">
     <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white tracking-tight">Sitios Conectados</h1>
@@ -142,13 +142,19 @@
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-right">
-                                <form action="{{ route('user.sites.destroy', $site) }}" method="POST" onsubmit="return confirm('¿Estás seguro? Al desconectar este sitio, el plugin dejará de funcionar en él.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold uppercase tracking-wide border border-rose-500/20">
-                                        <i class="fas fa-unlink"></i> Desconectar
+                                <div class="flex items-center justify-end gap-2">
+                                    <button @click="activeSite = { id: {{ $site->id }}, domain: '{{ parse_url($site->domain, PHP_URL_HOST) ?? $site->domain }}', url: '{{ $site->domain }}', plugin_version: '{{ $site->plugin_version }}', resources: {{ json_encode($site->installed_resources ?? []) }} }; showModal = true;" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-xs font-bold uppercase tracking-wide border border-emerald-500/20 cursor-pointer border-none">
+                                        <i class="fas fa-tasks"></i> Gestionar
                                     </button>
-                                </form>
+                                    
+                                    <form action="{{ route('user.sites.destroy', $site) }}" method="POST" onsubmit="return confirm('¿Estás seguro? Al desconectar este sitio, el plugin dejará de funcionar en él.')" class="m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold uppercase tracking-wide border border-rose-500/20 cursor-pointer">
+                                            <i class="fas fa-unlink"></i> Desconectar
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -169,6 +175,84 @@
                 </div>
             </div>
         @endif
+    </div>
+
+    <!-- Remote Resources Management Modal -->
+    <div class="fixed inset-0 z-50 overflow-y-auto" x-show="showModal" style="display: none;" x-cloak>
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" @click="showModal = false"></div>
+
+        <!-- Modal Wrapper -->
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="relative bg-[#0a0a0a] border border-white/10 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl transition-all duration-300" @click.away="showModal = false" x-transition>
+                <!-- Glow effect -->
+                <div class="absolute top-0 left-0 w-full h-full bg-[#FF2121]/5 blur-3xl pointer-events-none"></div>
+
+                <!-- Header -->
+                <div class="p-6 border-b border-white/5 flex items-center justify-between relative z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-white" x-text="'Sitio: ' + (activeSite ? activeSite.domain : '')"></h3>
+                            <p class="text-xs text-gray-500 font-medium" x-text="'Versión del conector: ' + (activeSite && activeSite.plugin_version ? 'v' + activeSite.plugin_version : 'Desconocida')"></p>
+                        </div>
+                    </div>
+                    <button @click="showModal = false" class="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-all border-none cursor-pointer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 relative z-10 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                    <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Recursos de GPLWolf Instalados</h4>
+
+                    <!-- Empty state -->
+                    <div x-show="!activeSite || !activeSite.resources || Object.keys(activeSite.resources).length === 0" class="py-12 text-center bg-white/[0.01] border border-dashed border-white/10 rounded-2xl">
+                        <i class="fas fa-box-open text-gray-700 text-3xl mb-3"></i>
+                        <p class="text-gray-400 font-bold text-sm">No hay recursos de GPLWolf instalados en este sitio aún.</p>
+                        <p class="text-gray-500 text-xs mt-1 font-medium">Los plugins o temas que instales a través del conector en este sitio aparecerán listados aquí automáticamente.</p>
+                    </div>
+
+                    <!-- Resources List -->
+                    <div x-show="activeSite && activeSite.resources && Object.keys(activeSite.resources).length > 0" class="space-y-3">
+                        <div class="overflow-hidden border border-white/5 rounded-2xl">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-white/5 bg-white/[0.02]">
+                                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Recurso</th>
+                                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Tipo</th>
+                                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Instalado el</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/5">
+                                    <template x-if="activeSite && activeSite.resources">
+                                        <template x-for="(info, slug) in activeSite.resources" :key="slug">
+                                            <tr class="hover:bg-white/[0.01] transition-colors">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <i class="fas text-gray-400 text-xs" :class="info.type === 'theme' ? 'fa-palette' : 'fa-plug'"></i>
+                                                        <span class="text-white text-xs font-bold font-mono" x-text="slug"></span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider" 
+                                                          :class="info.type === 'theme' ? 'bg-blue-600/10 text-blue-400 border border-blue-600/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'" 
+                                                          x-text="info.type === 'theme' ? 'Tema' : 'Plugin'"></span>
+                                                </td>
+                                                <td class="px-4 py-3 text-gray-500 text-xs font-medium" x-text="new Date(info.installed_at * 1000).toLocaleDateString('es-ES', {year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})">
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

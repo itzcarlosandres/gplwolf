@@ -158,4 +158,24 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Sesión cerrada exitosamente.']);
     }
+
+    public function syncInstalledResources(Request $request)
+    {
+        $user = $request->user();
+        $tokenRecord = $user->currentAccessToken();
+        
+        if ($tokenRecord && \Illuminate\Support\Str::startsWith($tokenRecord->name, 'wp-plugin:')) {
+            $domain = \Illuminate\Support\Str::replaceFirst('wp-plugin:', '', $tokenRecord->name);
+            $connectedSite = $user->connectedSites()->where('domain', $domain)->first();
+            
+            if ($connectedSite) {
+                $connectedSite->update([
+                    'installed_resources' => $request->input('installed_resources', [])
+                ]);
+                return response()->json(['success' => true, 'message' => 'Recursos sincronizados correctamente.']);
+            }
+        }
+        
+        return response()->json(['success' => false, 'message' => 'No se encontró el sitio conectado.'], 404);
+    }
 }
