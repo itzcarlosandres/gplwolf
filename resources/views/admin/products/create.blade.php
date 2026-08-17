@@ -117,6 +117,10 @@
                 <div>
                     <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2.5 ml-1">Nombre del Producto</label>
                     <input type="text" name="name" value="{{ old('name') }}" required class="w-full modern-input rounded-2xl px-5 py-4 text-white focus:outline-none placeholder:text-gray-700 text-sm shadow-inner" placeholder="Ej: OceanWP Pro Bundle">
+                    <div id="duplicate-warning" class="mt-2.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl flex items-center gap-2 text-xs font-semibold" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Este producto ya existe en el sistema (evita duplicarlo).</span>
+                    </div>
                 </div>
                 
                 <div>
@@ -666,5 +670,37 @@ function showNotification(message, type = 'success') {
         notification.remove();
     }, 5000);
 }
+
+// Duplicate Name Check
+document.addEventListener('DOMContentLoaded', function () {
+    const nameInput = document.querySelector('input[name="name"]');
+    const warningDiv = document.getElementById('duplicate-warning');
+    let debounceTimeout = null;
+
+    if (nameInput && warningDiv) {
+        nameInput.addEventListener('input', function () {
+            clearTimeout(debounceTimeout);
+            const nameValue = this.value.trim();
+
+            if (nameValue.length < 3) {
+                warningDiv.style.display = 'none';
+                return;
+            }
+
+            debounceTimeout = setTimeout(function () {
+                fetch(`/admin/products/check-duplicate?name=${encodeURIComponent(nameValue)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            warningDiv.style.display = 'flex';
+                        } else {
+                            warningDiv.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Error al validar nombre duplicado:', error));
+            }, 400);
+        });
+    }
+});
 </script>
 @endsection

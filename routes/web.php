@@ -158,6 +158,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
     // Products Management
+    Route::get('products/check-duplicate', [ProductController::class, 'checkDuplicate'])->name('products.check-duplicate');
     Route::resource('products', ProductController::class);
     Route::post('products/{product}/toggle-best-seller', [ProductController::class, 'toggleBestSeller'])->name('products.toggle-best-seller');
     Route::post('products/{product}/toggle-popular', [ProductController::class, 'togglePopular'])->name('products.toggle-popular');

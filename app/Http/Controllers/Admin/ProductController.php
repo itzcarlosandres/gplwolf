@@ -57,6 +57,21 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories'));
     }
 
+    public function checkDuplicate(Request $request)
+    {
+        $name = $request->query('name');
+        if (!$name) {
+            return response()->json(['exists' => false]);
+        }
+
+        $slug = Str::slug($name);
+        $exists = Product::where('name', $name)
+            ->orWhere('slug', $slug)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
     /**
      * Store a newly created product in storage.
      */
