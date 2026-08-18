@@ -305,8 +305,11 @@
                                                 <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-emerald-400 transition-colors truncate block">
                                                     {{ $item->name }}
                                                 </a>
-                                                <div class="flex items-center gap-2 mt-0.5">
+                                                <div class="flex flex-wrap items-center gap-2 mt-0.5">
                                                     <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">v{{ $item->version }}</span>
+                                                    @if($item->is_recently_updated)
+                                                        <x-badge-updated size="xs" />
+                                                    @endif
                                                     <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                 </div>
                                             </div>
@@ -362,8 +365,11 @@
                                                 <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-purple-400 transition-colors truncate block">
                                                     {{ $item->name }}
                                                 </a>
-                                                <div class="flex items-center gap-2 mt-0.5">
+                                                <div class="flex flex-wrap items-center gap-2 mt-0.5">
                                                     <span class="text-[9px] font-black uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">v{{ $item->version }}</span>
+                                                    @if($item->is_recently_updated)
+                                                        <x-badge-updated size="xs" />
+                                                    @endif
                                                     <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                 </div>
                                             </div>
@@ -424,8 +430,11 @@
                                                     <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-amber-400 transition-colors truncate block">
                                                         {{ $item->name }}
                                                     </a>
-                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                    <div class="flex flex-wrap items-center gap-2 mt-0.5">
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">v{{ $item->version }}</span>
+                                                        @if($item->is_recently_updated)
+                                                            <x-badge-updated size="xs" />
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -486,6 +495,9 @@
                                                     <div class="flex flex-wrap items-center gap-2 mt-0.5">
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 whitespace-nowrap">{{ $item->category->name ?? 'Recurso' }}</span>
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">v{{ $item->version }}</span>
+                                                        @if($item->is_recently_updated)
+                                                            <x-badge-updated size="xs" />
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

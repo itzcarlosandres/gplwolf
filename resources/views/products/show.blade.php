@@ -146,25 +146,20 @@ $schemaData = [
                     @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
-                    @if($product->badge || $product->is_recently_updated)
-                        <div class="absolute top-4 left-4 flex items-center gap-2 flex-wrap z-10">
-                            @if($product->badge)
-                                @php
-                                    $badgeColor = match($product->badge) {
-                                        'Más Vendido' => 'bg-amber-500',
-                                        'Trending' => 'bg-rose-500',
-                                        'Popular' => 'bg-[#FF2121]',
-                                        'Nuevo' => 'bg-emerald-500',
-                                        default => 'bg-gray-600',
-                                    };
-                                @endphp
-                                <span class="{{ $badgeColor }} text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
-                                    {{ $product->badge }}
-                                </span>
-                            @endif
-                            @if($product->is_recently_updated)
-                                <x-badge-updated size="md" />
-                            @endif
+                    @if($product->badge)
+                        <div class="absolute top-4 left-4 z-10">
+                            @php
+                                $badgeColor = match($product->badge) {
+                                    'Más Vendido' => 'bg-amber-500',
+                                    'Trending' => 'bg-rose-500',
+                                    'Popular' => 'bg-[#FF2121]',
+                                    'Nuevo' => 'bg-emerald-500',
+                                    default => 'bg-gray-600',
+                                };
+                            @endphp
+                            <span class="{{ $badgeColor }} text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
+                                {{ $product->badge }}
+                            </span>
                         </div>
                     @endif
                 </div>

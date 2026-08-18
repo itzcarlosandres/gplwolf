@@ -62,16 +62,65 @@ class HomeController extends Controller
             $popularProducts = $popularProducts->concat($extra);
         }
 
+        // IDs de categorías principales
+        $pluginCategoryIds = \App\Models\Category::where(function($q) {
+            $q->where('slug', 'plugins')
+              ->orWhere('name', 'like', '%plugin%');
+        })->pluck('id')->toArray();
+
+        $themeCategoryIds = \App\Models\Category::where(function($q) {
+            $q->whereIn('slug', ['temas', 'themes'])
+              ->orWhere('name', 'like', '%tema%')
+              ->orWhere('name', 'like', '%theme%');
+        })->pluck('id')->toArray();
+
+        $templateKitCategoryIds = \App\Models\Category::where(function($q) {
+            $q->whereIn('slug', ['template-kits', 'kits-de-plantillas', 'plantillas'])
+              ->orWhere('name', 'like', '%kit%')
+              ->orWhere('name', 'like', '%template%')
+              ->orWhere('name', 'like', '%plantilla%');
+        })->whereNotIn('id', array_merge($pluginCategoryIds, $themeCategoryIds))->pluck('id')->toArray();
+
+        $mainCategoryIds = array_unique(array_merge($pluginCategoryIds, $themeCategoryIds, $templateKitCategoryIds));
+
+        // 1. Plugins
         $latestPlugins = \App\Models\Product::with('category')
             ->where('is_active', true)
-            ->where('type', 'plugin')
+            ->where(function($q) use ($pluginCategoryIds) {
+                $q->whereIn('category_id', $pluginCategoryIds);
+                if (empty($pluginCategoryIds)) {
+                    $q->orWhere('type', 'plugin');
+                }
+            })
             ->latest('updated_at')
             ->take(5)
             ->get();
 
+        // 2. Temas
         $latestThemes = \App\Models\Product::with('category')
             ->where('is_active', true)
-            ->where('type', 'theme')
+            ->where(function($q) use ($themeCategoryIds) {
+                $q->whereIn('category_id', $themeCategoryIds);
+                if (empty($themeCategoryIds)) {
+                    $q->orWhere('type', 'theme');
+                }
+            })
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        // 3. Kits de Plantillas
+        $templateKits = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->whereIn('category_id', $templateKitCategoryIds)
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        // 4. Otras Categorías (ej. phpscript, traducciones, software, etc.)
+        $otherResources = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->whereNotIn('category_id', $mainCategoryIds)
             ->latest('updated_at')
             ->take(5)
             ->get();
@@ -95,36 +144,6 @@ class HomeController extends Controller
         $latestUpdates = \App\Models\ProductVersion::with('product')
             ->latest()
             ->take(3)
-            ->get();
-
-        $excludedCategoryIds = \App\Models\Category::where(function($query) {
-            $query->where('name', 'like', '%plugin%')
-                  ->orWhere('name', 'like', '%tema%')
-                  ->orWhere('name', 'like', '%theme%');
-        })->pluck('id')->toArray();
-
-        // Obtener categorías de Kits de Plantillas
-        $templateKitCategoryIds = \App\Models\Category::whereNotIn('id', $excludedCategoryIds)
-            ->where(function($query) {
-                $query->where('name', 'like', '%kit%')
-                      ->orWhere('name', 'like', '%template%')
-                      ->orWhere('name', 'like', '%plantilla%');
-            })->pluck('id')->toArray();
-
-        // 1. Kits de Plantillas
-        $templateKits = \App\Models\Product::with('category')
-            ->where('is_active', true)
-            ->whereIn('category_id', $templateKitCategoryIds)
-            ->latest('updated_at')
-            ->take(5)
-            ->get();
-
-        // 2. Otras categorías (que no sean plugins, temas ni kits de plantillas)
-        $otherResources = \App\Models\Product::with('category')
-            ->where('is_active', true)
-            ->whereNotIn('category_id', array_merge($excludedCategoryIds, $templateKitCategoryIds))
-            ->latest('updated_at')
-            ->take(5)
             ->get();
 
         return view('home', compact(
