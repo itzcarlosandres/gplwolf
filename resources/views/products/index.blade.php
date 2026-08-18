@@ -230,7 +230,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60"></div>
                         
                         <!-- Badges -->
-                        <div class="absolute top-3 left-3 flex items-center gap-2">
+                        <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap z-10">
                             <span class="px-2.5 py-1 bg-gray-900/90 backdrop-blur-md border border-white/20 rounded-lg text-[9px] font-black uppercase tracking-wider text-white shadow-md">
                                 {{ $product->type }}
                             </span>
@@ -247,6 +247,9 @@
                                     {{ $product->badge }}
                                 </span>
                             @endif
+                            @if($product->is_recently_updated)
+                                <x-badge-updated size="xs" />
+                            @endif
                         </div>
                         
                         <!-- Hover overlay -->
@@ -260,11 +263,8 @@
                                 <i class="fas fa-code-branch text-[7px]"></i>
                                 v{{ $product->version }}
                             </span>
-                            @if($product->updated_at->gt(now()->subHours(48)))
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#FF2121]/10 border border-[#FF2121]/20 rounded text-[#FF2121] text-[9px] font-bold">
-                                    <i class="fas fa-sync-alt text-[7px]"></i>
-                                    Actualizado
-                                </span>
+                            @if($product->is_recently_updated)
+                                <x-badge-updated size="xs" />
                             @endif
                         </div>
                         

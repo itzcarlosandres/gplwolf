@@ -226,5 +226,25 @@ class Product extends Model
 
         return 'Tamaño: ' . $size;
     }
+
+    /**
+     * Determine if the product was recently updated (within the last 5 days).
+     */
+    public function isRecentlyUpdated(int $days = 5): bool
+    {
+        if (!$this->updated_at) {
+            return false;
+        }
+
+        return $this->updated_at->gt(now()->subDays($days));
+    }
+
+    /**
+     * Get is_recently_updated attribute.
+     */
+    public function getIsRecentlyUpdatedAttribute(): bool
+    {
+        return $this->isRecentlyUpdated(5);
+    }
 }
 

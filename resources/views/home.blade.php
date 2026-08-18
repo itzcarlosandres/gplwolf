@@ -129,11 +129,8 @@
                                             <span class="text-[9px] font-black text-white {{ $badgeBg }} px-2 py-0.5 rounded-md ml-1 shadow-md uppercase tracking-wider border">{{ $product->badge }}</span>
                                         @endif
 
-                                        @if($product->versions()->where('created_at', '>', now()->subHours(48))->exists())
-                                            <span class="relative px-2 py-0.5 bg-[#F51B1B] rounded text-[9px] font-bold text-white overflow-hidden shadow-[0_0_10px_rgba(245,27,27,0.5)] ml-2">
-                                                <div class="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 animate-[shimmer_2s_infinite]"></div>
-                                                <i class="fas fa-sync-alt mr-1 text-[8px] animate-spin-slow"></i> ACTUALIZADO
-                                            </span>
+                                        @if($product->is_recently_updated)
+                                            <x-badge-updated size="xs" class="ml-2" />
                                         @endif
                                     </div>
                                     <a href="{{ route('products.show', $product->slug) }}">
@@ -593,12 +590,8 @@
                                             </span>
                                         @endif
 
-                                        @if($product->versions()->where('created_at', '>', now()->subHours(48))->exists())
-                                            <span class="relative flex items-center gap-1.5 text-[9px] font-black text-white bg-[#F51B1B] px-2.5 py-1 rounded-xl shadow-lg uppercase tracking-wider border border-white/10 shadow-black/30 leading-none overflow-hidden">
-                                                <div class="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 animate-[shimmer_2s_infinite]"></div>
-                                                <i class="fas fa-sync-alt text-[8px] animate-spin-slow"></i> 
-                                                ACTUALIZADO
-                                            </span>
+                                        @if($product->is_recently_updated)
+                                            <x-badge-updated size="sm" />
                                         @endif
 
                                         {{-- Mostrar puntos debajo del badge si el badge es largo (más de 8 caracteres) --}}

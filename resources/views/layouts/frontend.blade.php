@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow"> 
+    @php
+        // Resolve dynamic canonical URL
+        $seoPageNumber = (int) request()->get('page', 1);
+        $defaultCanonicalUrl = $seoPageNumber > 1 ? url()->current() . '?page=' . $seoPageNumber : url()->current();
+        
+        // Resolve dynamic robots meta: prevent indexing internal sort/search duplicate filters while allowing link following
+        $seoFilterParams = ['sort', 'search', 'q', 'filter', 'min_price', 'max_price', 'rating_filter'];
+        $hasSeoFilterParams = false;
+        foreach ($seoFilterParams as $param) {
+            if (request()->filled($param)) {
+                $hasSeoFilterParams = true;
+                break;
+            }
+        }
+        $defaultMetaRobots = $hasSeoFilterParams ? 'noindex, follow' : 'index, follow';
+        $finalCanonicalUrl = trim($__env->yieldContent('canonical', $defaultCanonicalUrl));
+    @endphp
+    <meta name="robots" content="@yield('meta_robots', $defaultMetaRobots)"> 
     
     <!-- Performance Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,11 +34,11 @@
     <title>@yield('meta_title', $globalSettings['home_meta_title'] ?? ($globalSettings['site_name'] ?? 'WP Marketplace'))</title>
     <meta name="description" content="@yield('meta_description', $globalSettings['home_meta_description'] ?? 'Descarga los mejores Themes y Plugins Premium para WordPress.')">
     <meta name="keywords" content="@yield('meta_keywords', $globalSettings['home_meta_keywords'] ?? '')">
-    <link rel="canonical" href="@yield('canonical', url()->current())" />
+    <link rel="canonical" href="{{ $finalCanonicalUrl }}" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ $finalCanonicalUrl }}">
     <meta property="og:site_name" content="{{ $globalSettings['site_name'] ?? 'WP Marketplace' }}">
     <meta property="og:title" content="@yield('meta_title', $globalSettings['home_meta_title'] ?? ($globalSettings['site_name'] ?? 'WP Marketplace'))">
     <meta property="og:description" content="@yield('meta_description', $globalSettings['home_meta_description'] ?? 'Themes y Plugins Premium para WordPress.')">
@@ -29,7 +46,7 @@
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:url" content="{{ $finalCanonicalUrl }}">
     <meta property="twitter:title" content="@yield('meta_title', $globalSettings['home_meta_title'] ?? ($globalSettings['site_name'] ?? 'WP Marketplace'))">
     <meta property="twitter:description" content="@yield('meta_description', $globalSettings['home_meta_description'] ?? 'Themes y Plugins Premium para WordPress.')">
     <meta property="twitter:image" content="@yield('meta_image', isset($globalSettings['site_og_image']) ? (\Illuminate\Support\Str::startsWith($globalSettings['site_og_image'], 'ui/') ? asset($globalSettings['site_og_image']) : asset('storage/' . $globalSettings['site_og_image'])) : asset('ui/og-default.png'))">
@@ -179,6 +196,22 @@
         @keyframes badge-shine {
             0% { background-position: 200% center; }
             100% { background-position: -200% center; }
+        }
+
+        /* Shimmer & Rotating animations for Updated Badge */
+        @keyframes shimmer-sweep {
+            0% { transform: translateX(-100%); }
+            50%, 100% { transform: translateX(200%); }
+        }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-shimmer-sweep {
+            animation: shimmer-sweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .animate-spin-slow {
+            animation: spin-slow 3s linear infinite;
         }
 
         /* Fusion Pro Design System - Optimized */

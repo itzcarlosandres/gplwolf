@@ -32,6 +32,9 @@
                     @endphp
                     <span class="px-2.5 py-1 {{ $badgeBg }} backdrop-blur-md rounded-lg text-[9px] font-black uppercase tracking-wider text-white border shadow-lg">{{ $p->badge }}</span>
                     @endif
+                    @if($p->is_recently_updated)
+                        <x-badge-updated size="xs" />
+                    @endif
                 </div>
             </div>
             <div class="p-5">

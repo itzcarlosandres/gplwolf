@@ -53,12 +53,8 @@
                                     </span>
                                 @endif
 
-                                @if($product->versions()->where('created_at', '>', now()->subHours(48))->exists())
-                                    <span class="relative flex items-center gap-1.5 text-[9px] font-black text-white bg-[#F51B1B] px-2.5 py-1 rounded-xl shadow-lg uppercase tracking-wider border border-white/10 shadow-black/30 leading-none overflow-hidden">
-                                        <div class="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 animate-[shimmer_2s_infinite]"></div>
-                                        <i class="fas fa-sync-alt text-[8px] animate-spin-slow"></i> 
-                                        ACTUALIZADO
-                                    </span>
+                                @if($product->is_recently_updated)
+                                    <x-badge-updated size="xs" />
                                 @endif
                             </div>
                         </div>

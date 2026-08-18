@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'plugin.access' => \App\Http\Middleware\ValidatePluginAccess::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\RedirectFirstPageMiddleware::class,
+        ]);
+
         $middleware->validateCsrfTokens(except: [
             'payment/coinpal/notify',
         ]);

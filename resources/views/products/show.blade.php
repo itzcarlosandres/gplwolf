@@ -146,20 +146,25 @@ $schemaData = [
                     @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
-                    @if($product->badge)
-                        @php
-                            $badgeColor = match($product->badge) {
-                                'Más Vendido' => 'bg-amber-500',
-                                'Trending' => 'bg-rose-500',
-                                'Popular' => 'bg-[#FF2121]',
-                                'Nuevo' => 'bg-emerald-500',
-                                default => 'bg-gray-600',
-                            };
-                        @endphp
-                        <div class="absolute top-4 left-4">
-                            <span class="{{ $badgeColor }} text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
-                                {{ $product->badge }}
-                            </span>
+                    @if($product->badge || $product->is_recently_updated)
+                        <div class="absolute top-4 left-4 flex items-center gap-2 flex-wrap z-10">
+                            @if($product->badge)
+                                @php
+                                    $badgeColor = match($product->badge) {
+                                        'Más Vendido' => 'bg-amber-500',
+                                        'Trending' => 'bg-rose-500',
+                                        'Popular' => 'bg-[#FF2121]',
+                                        'Nuevo' => 'bg-emerald-500',
+                                        default => 'bg-gray-600',
+                                    };
+                                @endphp
+                                <span class="{{ $badgeColor }} text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
+                                    {{ $product->badge }}
+                                </span>
+                            @endif
+                            @if($product->is_recently_updated)
+                                <x-badge-updated size="md" />
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -174,10 +179,8 @@ $schemaData = [
                     <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-500/20">
                         <i class="fas fa-code-branch text-[8px] mr-1"></i> v{{ $product->version }}
                     </span>
-                    @if($product->versions()->where('created_at', '>', now()->subHours(48))->exists())
-                        <span class="px-2.5 py-1 bg-[#F51B1B] text-white text-[10px] font-black uppercase tracking-widest rounded-lg">
-                            <i class="fas fa-sync-alt text-[8px] mr-1"></i> Actualizado
-                        </span>
+                    @if($product->is_recently_updated)
+                        <x-badge-updated size="md" />
                     @endif
                 </div>
 

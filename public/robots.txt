@@ -5,4 +5,7 @@ Disallow: /checkout/
 Disallow: /download/
 Disallow: /profile/
 Disallow: /storage/*.zip
-Sitemap: /sitemap.xml
+Disallow: /*?*sort=*
+Disallow: /*?*search=*
+
+Sitemap: https://gplwolf.com/sitemap.xml

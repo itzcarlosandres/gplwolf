@@ -19,6 +19,7 @@
                     <span class="inline-flex items-center px-2.5 py-1 bg-[#FF2121]/10 text-[#FF2121] text-[10px] font-black uppercase rounded-lg border border-[#FF2121]/20 w-fit mx-auto md:mx-0">
                         v{{ $update->version_number }}
                     </span>
+                    <x-badge-updated size="xs" />
                 </div>
                 
                 <div class="flex flex-wrap justify-center md:justify-start items-center gap-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">

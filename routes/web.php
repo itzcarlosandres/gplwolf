@@ -165,9 +165,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('products/{product}/versions', [ProductController::class, 'addVersion'])->name('products.versions.store');
     Route::post('products/upload-chunk', [ProductController::class, 'uploadChunk'])->name('products.upload.chunk');
     
-    // Bulk Sales
-    Route::get('/bulk-sale', [App\Http\Controllers\Admin\BulkSaleController::class, 'index'])->name('bulk-sale.index');
-    Route::post('/bulk-sale/apply', [App\Http\Controllers\Admin\BulkSaleController::class, 'apply'])->name('bulk-sale.apply');
+    // Bulk Sales (Pending implementation)
+    // Route::get('/bulk-sale', [App\Http\Controllers\Admin\BulkSaleController::class, 'index'])->name('bulk-sale.index');
+    // Route::post('/bulk-sale/apply', [App\Http\Controllers\Admin\BulkSaleController::class, 'apply'])->name('bulk-sale.apply');
 
     // Update Requests
     Route::get('/update-requests', [App\Http\Controllers\Admin\UpdateRequestController::class, 'index'])->name('update-requests.index');
@@ -193,12 +193,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Coupons Management
     Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
 
-    // Blog Management
-    Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
+    // Blog Management (Pending admin CRUD)
+    // Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
     
     // AI Content Generation
-    Route::post('posts/ai/generate', [\App\Http\Controllers\Admin\AIContentController::class, 'generatePost'])->name('posts.ai.generate');
-    Route::post('posts/ai/seo', [\App\Http\Controllers\Admin\AIContentController::class, 'improveSEO'])->name('posts.ai.seo');
+    // Route::post('posts/ai/generate', [\App\Http\Controllers\Admin\AiContentController::class, 'generatePost'])->name('posts.ai.generate');
+    // Route::post('posts/ai/seo', [\App\Http\Controllers\Admin\AiContentController::class, 'improveSEO'])->name('posts.ai.seo');
 
     // User Memberships Management
     Route::resource('memberships', \App\Http\Controllers\Admin\MembershipController::class);
