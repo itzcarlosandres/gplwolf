@@ -24,9 +24,11 @@
                     @if($p->badge)
                     @php
                         $badgeBg = match($p->badge) {
-                            'Más Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
+                            'Más Vendido', 'Mas Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
                             'Trending' => 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30 border-rose-400/40',
                             'Popular' => 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/30 border-blue-400/40',
+                            'Nuevo', 'Nuevo Producto' => 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30 border-emerald-400/40',
+                            'Licencia', 'Licencia (Premium)' => 'bg-gradient-to-r from-yellow-500 to-amber-600 shadow-yellow-500/30 border-amber-300/40',
                             default => 'bg-gradient-to-r from-[#FF2121] to-[#F51B1B] shadow-[#FF2121]/40 border-red-400/40',
                         };
                     @endphp
@@ -67,7 +69,25 @@
                     <img src="{{ asset('storage/' . $p->thumbnail) }}" alt="{{ $p->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 @endif
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0d1425] to-transparent"></div>
-                <div class="absolute top-2 left-2 px-2 py-0.5 bg-gray-900/90 backdrop-blur-md rounded-md text-[8px] font-black uppercase tracking-wider text-white border border-white/20 shadow-md">{{ $p->type }}</div>
+                <div class="absolute top-2 left-2 flex items-center gap-1.5 flex-wrap">
+                    <span class="px-2 py-0.5 bg-gray-900/90 backdrop-blur-md rounded-md text-[8px] font-black uppercase tracking-wider text-white border border-white/20 shadow-md">{{ $p->type }}</span>
+                    @if($p->badge)
+                        @php
+                            $sBadgeBg = match($p->badge) {
+                                'Más Vendido', 'Mas Vendido' => 'bg-amber-500 text-white',
+                                'Trending' => 'bg-rose-500 text-white',
+                                'Popular' => 'bg-blue-500 text-white',
+                                'Nuevo', 'Nuevo Producto' => 'bg-emerald-500 text-white',
+                                'Licencia' => 'bg-yellow-500 text-white',
+                                default => 'bg-[#FF2121] text-white',
+                            };
+                        @endphp
+                        <span class="px-1.5 py-0.5 {{ $sBadgeBg }} rounded text-[7.5px] font-black uppercase tracking-wider shadow-sm">{{ $p->badge }}</span>
+                    @endif
+                    @if($p->is_recently_updated)
+                        <x-badge-updated size="xs" />
+                    @endif
+                </div>
             </div>
             <div class="p-4">
                 <h3 class="text-white font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:text-[#FF2121] transition-colors">{{ $p->name }}</h3>

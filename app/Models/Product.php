@@ -228,14 +228,21 @@ class Product extends Model
     }
 
     /**
-     * Determine if the product was recently updated (within the last 5 days).
+     * Determine if the product was genuinely updated to a new version (not just newly created).
      */
     public function isRecentlyUpdated(int $days = 5): bool
     {
-        if (!$this->updated_at) {
+        if (!$this->updated_at || !$this->created_at) {
             return false;
         }
 
+        // A new product has created_at ≈ updated_at.
+        // Product is only considered updated if updated_at is at least 10 minutes after created_at
+        if (!$this->updated_at->gt($this->created_at->copy()->addMinutes(10))) {
+            return false;
+        }
+
+        // Only mark as updated if updated_at is within the recent window (e.g. 5 days)
         return $this->updated_at->gt(now()->subDays($days));
     }
 

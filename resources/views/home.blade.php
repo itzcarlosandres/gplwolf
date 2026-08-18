@@ -120,9 +120,11 @@
                                         @if($product->badge)
                                             @php
                                                 $badgeBg = match($product->badge) {
-                                                    'Más Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
+                                                    'Más Vendido', 'Mas Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
                                                     'Trending' => 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30 border-rose-400/40',
                                                     'Popular' => 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/30 border-blue-400/40',
+                                                    'Nuevo', 'Nuevo Producto' => 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30 border-emerald-400/40',
+                                                    'Licencia', 'Licencia (Premium)' => 'bg-gradient-to-r from-yellow-500 to-amber-600 shadow-yellow-500/30 border-amber-300/40',
                                                     default => 'bg-gradient-to-r from-[#FF2121] to-[#F51B1B] shadow-[#FF2121]/40 border-red-400/40',
                                                 };
                                             @endphp
@@ -196,9 +198,12 @@
                                     @php
                                         $badges = [
                                             'Más Vendido' => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                                            'Mas Vendido' => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                                             'Trending' => 'bg-rose-500/10 text-rose-400 border-rose-500/20',
                                             'Popular' => 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-                                            'Nuevo' => 'bg-[#FF2121]/10 text-[#FF2121] border-[#FF2121]/20',
+                                            'Nuevo' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                                            'Nuevo Producto' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                                            'Licencia' => 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
                                         ];
                                         $badgeClass = $badges[$product->badge] ?? 'bg-white/5 text-white/50 border-white/10';
                                     @endphp
@@ -305,8 +310,21 @@
                                                 <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-emerald-400 transition-colors truncate block">
                                                     {{ $item->name }}
                                                 </a>
-                                                <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                     <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">v{{ $item->version }}</span>
+                                                    @if($item->badge)
+                                                        @php
+                                                            $itemBadgeBg = match($item->badge) {
+                                                                'Más Vendido', 'Mas Vendido' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                                                                'Trending' => 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+                                                                'Popular' => 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+                                                                'Nuevo', 'Nuevo Producto' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                                                                'Licencia', 'Licencia (Premium)' => 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+                                                                default => 'bg-[#FF2121]/15 text-[#FF2121] border-[#FF2121]/30',
+                                                            };
+                                                        @endphp
+                                                        <span class="text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border {{ $itemBadgeBg }} leading-none">{{ $item->badge }}</span>
+                                                    @endif
                                                     @if($item->is_recently_updated)
                                                         <x-badge-updated size="xs" />
                                                     @endif
@@ -365,8 +383,21 @@
                                                 <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-purple-400 transition-colors truncate block">
                                                     {{ $item->name }}
                                                 </a>
-                                                <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                     <span class="text-[9px] font-black uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">v{{ $item->version }}</span>
+                                                    @if($item->badge)
+                                                        @php
+                                                            $itemBadgeBg = match($item->badge) {
+                                                                'Más Vendido', 'Mas Vendido' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                                                                'Trending' => 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+                                                                'Popular' => 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+                                                                'Nuevo', 'Nuevo Producto' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                                                                'Licencia', 'Licencia (Premium)' => 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+                                                                default => 'bg-[#FF2121]/15 text-[#FF2121] border-[#FF2121]/30',
+                                                            };
+                                                        @endphp
+                                                        <span class="text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border {{ $itemBadgeBg }} leading-none">{{ $item->badge }}</span>
+                                                    @endif
                                                     @if($item->is_recently_updated)
                                                         <x-badge-updated size="xs" />
                                                     @endif
@@ -430,8 +461,21 @@
                                                     <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-amber-400 transition-colors truncate block">
                                                         {{ $item->name }}
                                                     </a>
-                                                    <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">v{{ $item->version }}</span>
+                                                        @if($item->badge)
+                                                            @php
+                                                                $itemBadgeBg = match($item->badge) {
+                                                                    'Más Vendido', 'Mas Vendido' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                                                                    'Trending' => 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+                                                                    'Popular' => 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+                                                                    'Nuevo', 'Nuevo Producto' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                                                                    'Licencia', 'Licencia (Premium)' => 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+                                                                    default => 'bg-[#FF2121]/15 text-[#FF2121] border-[#FF2121]/30',
+                                                                };
+                                                            @endphp
+                                                            <span class="text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border {{ $itemBadgeBg }} leading-none">{{ $item->badge }}</span>
+                                                        @endif
                                                         @if($item->is_recently_updated)
                                                             <x-badge-updated size="xs" />
                                                         @endif
@@ -492,9 +536,22 @@
                                                     <a href="{{ route('products.show', $item->slug) }}" class="text-sm font-bold text-white group-hover/item:text-indigo-400 transition-colors truncate block">
                                                         {{ $item->name }}
                                                     </a>
-                                                    <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 whitespace-nowrap">{{ $item->category->name ?? 'Recurso' }}</span>
                                                         <span class="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">v{{ $item->version }}</span>
+                                                        @if($item->badge)
+                                                            @php
+                                                                $itemBadgeBg = match($item->badge) {
+                                                                    'Más Vendido', 'Mas Vendido' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                                                                    'Trending' => 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+                                                                    'Popular' => 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+                                                                    'Nuevo', 'Nuevo Producto' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                                                                    'Licencia', 'Licencia (Premium)' => 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+                                                                    default => 'bg-[#FF2121]/15 text-[#FF2121] border-[#FF2121]/30',
+                                                                };
+                                                            @endphp
+                                                            <span class="text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border {{ $itemBadgeBg }} leading-none">{{ $item->badge }}</span>
+                                                        @endif
                                                         @if($item->is_recently_updated)
                                                             <x-badge-updated size="xs" />
                                                         @endif
@@ -530,32 +587,39 @@
                             <div>
                                 <div class="flex justify-between items-start mb-6">
                                     <span class="text-[9px] font-black uppercase tracking-widest border-2 border-[#FF2121] px-2.5 py-1 bg-[#FF2121] text-white group-hover:bg-black group-hover:text-[#FF2121] group-hover:border-black transition-colors leading-none">
-                                        {{ $product->type }}
+                                        {{ $product->category->name ?? 'RECURSO' }}
                                     </span>
-                                    <span class="text-xs font-mono font-bold group-hover:text-black">v{{ $product->version }}</span>
+                                    <div class="flex items-center gap-2">
+                                        @if($product->badge)
+                                            <span class="text-[9px] font-black uppercase tracking-widest border-2 border-white px-2 py-0.5 text-white group-hover:border-black group-hover:text-black transition-colors leading-none">
+                                                {{ $product->badge }}
+                                            </span>
+                                        @endif
+                                        @if($product->is_recently_updated)
+                                            <x-badge-updated size="xs" />
+                                        @endif
+                                        <span class="text-xs font-mono font-bold text-gray-400 group-hover:text-black transition-colors">v{{ $product->version }}</span>
+                                    </div>
                                 </div>
-
-                                <h3 class="font-black text-xl leading-none tracking-tight mb-2 uppercase break-words group-hover:text-black font-sans">
-                                    {{ $product->name }}
-                                </h3>
+                                <h3 class="text-xl font-black tracking-tight leading-tight line-clamp-2 uppercase font-mono">{{ $product->name }}</h3>
+                                <p class="text-xs text-gray-400 mt-2 line-clamp-2 group-hover:text-black/80 transition-colors font-sans">{{ $product->short_description ?? '' }}</p>
                             </div>
-
-                            <div class="flex items-end justify-between border-t-2 border-[#FF2121] group-hover:border-black pt-4 mt-6">
-                                <span class="text-2xl font-black group-hover:text-black">${{ number_format($product->price, 2) }}</span>
-                                <span class="bg-[#FF2121] text-white px-4 py-2 text-xs font-black uppercase tracking-widest hover:bg-white hover:text-black group-hover:bg-black group-hover:text-[#FF2121] border-2 border-[#FF2121] group-hover:border-black transition-colors">
-                                    COMPRAR
+                            <div class="flex justify-between items-end border-t-2 border-[#FF2121] pt-4 mt-6">
+                                <span class="text-2xl font-black font-mono tracking-tighter">{{ $product->formatted_price }}</span>
+                                <span class="text-xs font-black uppercase tracking-widest underline decoration-2 underline-offset-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                    OBTENER <i class="fas fa-arrow-right text-[10px]"></i>
                                 </span>
                             </div>
                         </a>
                         @empty
-                            <div class="col-span-full py-12 text-center text-gray-500">
-                                No hay productos.
-                            </div>
+                        <div class="col-span-full py-12 text-center text-gray-500">
+                            No hay productos.
+                        </div>
                         @endforelse
                     </div>
                 @else
-                    {{-- Grid Compacto --}}
-                    <div class="grid grid-cols-2 sm:grid-cols-{{ min(($homeGridColumns ?? 4) - 2, 3) }} md:grid-cols-{{ min(($homeGridColumns ?? 4) - 1, 4) }} lg:grid-cols-{{ $homeGridColumns ?? 4 }} gap-6">
+                    {{-- Default Grid --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-{{ min(($homeGridColumns ?? 6) - 2, 3) }} md:grid-cols-{{ min(($homeGridColumns ?? 6) - 1, 4) }} lg:grid-cols-{{ $homeGridColumns ?? 6 }} gap-6">
                         @forelse($products as $index => $product)
                         <div class="bg-gray-800/60 rounded-xl overflow-hidden border border-white/10 hover:border-[#FF2121]/50 transition-all group cursor-pointer">
                             <!-- Imagen Compacta Centrada -->
@@ -578,11 +642,15 @@
                                             @php
                                                 $badges = [
                                                     'Más Vendido' => ['bg' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40', 'icon' => 'fa-crown'],
+                                                    'Mas Vendido' => ['bg' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40', 'icon' => 'fa-crown'],
                                                     'Trending' => ['bg' => 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30 border-rose-400/40', 'icon' => 'fa-fire'],
                                                     'Popular' => ['bg' => 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/30 border-blue-400/40', 'icon' => 'fa-star'],
-                                                    'Nuevo' => ['bg' => 'bg-gradient-to-r from-[#FF2121] to-[#F51B1B] shadow-[#FF2121]/40 border-red-400/40', 'icon' => 'fa-bolt'],
+                                                    'Nuevo' => ['bg' => 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30 border-emerald-400/40', 'icon' => 'fa-bolt'],
+                                                    'Nuevo Producto' => ['bg' => 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30 border-emerald-400/40', 'icon' => 'fa-bolt'],
+                                                    'Licencia' => ['bg' => 'bg-gradient-to-r from-yellow-500 to-amber-600 shadow-yellow-500/30 border-amber-300/40', 'icon' => 'fa-key'],
+                                                    'Licencia (Premium)' => ['bg' => 'bg-gradient-to-r from-yellow-500 to-amber-600 shadow-yellow-500/30 border-amber-300/40', 'icon' => 'fa-key'],
                                                 ];
-                                                $badgeData = $badges[$product->badge] ?? ['bg' => 'bg-gray-800 border-gray-600', 'icon' => 'fa-tag'];
+                                                $badgeData = $badges[$product->badge] ?? ['bg' => 'bg-gradient-to-r from-[#FF2121] to-[#F51B1B] shadow-[#FF2121]/40 border-red-400/40', 'icon' => 'fa-tag'];
                                                 $icon = $badgeData['icon'];
                                                 $bg = $badgeData['bg'];
                                             @endphp

@@ -39,9 +39,12 @@
                                     @php
                                         $badges = [
                                             'Más Vendido' => ['color' => 'amber', 'icon' => 'fa-crown'],
+                                            'Mas Vendido' => ['color' => 'amber', 'icon' => 'fa-crown'],
                                             'Trending' => ['color' => 'rose', 'icon' => 'fa-fire'],
                                             'Popular' => ['color' => 'blue', 'icon' => 'fa-star'],
                                             'Nuevo' => ['color' => 'emerald', 'icon' => 'fa-bolt'],
+                                            'Nuevo Producto' => ['color' => 'emerald', 'icon' => 'fa-bolt'],
+                                            'Licencia' => ['color' => 'yellow', 'icon' => 'fa-key'],
                                         ];
                                         $badgeData = $badges[$product->badge] ?? ['color' => 'gray', 'icon' => 'fa-tag'];
                                         $color = $badgeData['color'];

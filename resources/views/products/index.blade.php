@@ -237,9 +237,11 @@
                             @if($product->badge)
                                 @php
                                     $badgeBg = match($product->badge) {
-                                        'Más Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
+                                        'Más Vendido', 'Mas Vendido' => 'bg-gradient-to-r from-amber-500 to-amber-600 shadow-amber-500/30 border-amber-300/40',
                                         'Trending' => 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30 border-rose-400/40',
                                         'Popular' => 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/30 border-blue-400/40',
+                                        'Nuevo', 'Nuevo Producto' => 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30 border-emerald-400/40',
+                                        'Licencia', 'Licencia (Premium)' => 'bg-gradient-to-r from-yellow-500 to-amber-600 shadow-yellow-500/30 border-amber-300/40',
                                         default => 'bg-gradient-to-r from-[#FF2121] to-[#F51B1B] shadow-[#FF2121]/40 border-red-400/40',
                                     };
                                 @endphp
