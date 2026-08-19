@@ -67,12 +67,25 @@
                         <div class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                             {{ $hasUpdate ? 'Descargar Actualización' : 'Última versión' }}
                         </div>
-                        <a href="{{ route('product.download', $product) }}" class="w-12 h-12 gradient-bg rounded-2xl flex items-center justify-center text-white shadow-xl shadow-[#F51B1B]/20 hover:scale-110 active:scale-95 transition-all relative">
-                            <i class="fas fa-download {{ $hasUpdate ? 'animate-bounce' : '' }}"></i>
-                            @if($hasUpdate)
-                                <span class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center border-2 border-[#030712] font-bold">1</span>
-                            @endif
-                        </a>
+                        @if($product->hasMultipleFiles())
+                            <button type="button" 
+                                    @click="$dispatch('open-download-modal-{{ $product->id }}')" 
+                                    class="w-12 h-12 gradient-bg rounded-2xl flex items-center justify-center text-white shadow-xl shadow-[#F51B1B]/20 hover:scale-110 active:scale-95 transition-all relative cursor-pointer"
+                                    title="Descargar">
+                                <i class="fas fa-download {{ $hasUpdate ? 'animate-bounce' : '' }}"></i>
+                                @if($hasUpdate)
+                                    <span class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center border-2 border-[#030712] font-bold">1</span>
+                                @endif
+                            </button>
+                            <x-product-download-modal :product="$product" />
+                        @else
+                            <a href="{{ route('product.download', $product) }}" class="w-12 h-12 gradient-bg rounded-2xl flex items-center justify-center text-white shadow-xl shadow-[#F51B1B]/20 hover:scale-110 active:scale-95 transition-all relative" title="Descargar">
+                                <i class="fas fa-download {{ $hasUpdate ? 'animate-bounce' : '' }}"></i>
+                                @if($hasUpdate)
+                                    <span class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center border-2 border-[#030712] font-bold">1</span>
+                                @endif
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

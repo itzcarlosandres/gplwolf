@@ -99,6 +99,8 @@ class ProductController extends Controller
             'meta_description' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255|unique:products,slug',
+            'update_package_file' => 'nullable|file|max:512000',
+            'extra_file_name' => 'nullable|string|max:255',
         ]);
         
         // Handle thumbnail upload optimized
@@ -142,6 +144,19 @@ class ProductController extends Controller
                 Log::error("R2 upload failed", ['disk' => $targetDisk]);
             }
         }
+
+        // Handle update package file (second .ZIP)
+        if ($request->filled('uploaded_update_package_file')) {
+            $validated['update_package_file'] = $request->input('uploaded_update_package_file');
+        } elseif ($request->hasFile('update_package_file')) {
+            $file2 = $request->file('update_package_file');
+            $disk = config('filesystems.default');
+            $targetDisk = in_array($disk, ['r2', 's3', 'bunnycdn']) ? $disk : 'public';
+            $path2 = Storage::disk($targetDisk)->putFile('products/files', $file2);
+            if ($path2) {
+                $validated['update_package_file'] = $path2;
+            }
+        }
         
         // Generate unique slug logic
         if (!empty($validated['slug'])) {
@@ -158,6 +173,29 @@ class ProductController extends Controller
         
         $product = Product::create($validated);
         
+        // Create initial version record if file exists
+        if (!empty($product->product_file)) {
+            $disk = config('filesystems.default');
+            $targetDisk = in_array($disk, ['r2', 's3', 'bunnycdn']) ? $disk : 'public';
+            $size = 0;
+            try {
+                if (Storage::disk($targetDisk)->exists($product->product_file)) {
+                    $size = Storage::disk($targetDisk)->size($product->product_file);
+                }
+            } catch (\Exception $e) {}
+
+            ProductVersion::create([
+                'product_id' => $product->id,
+                'version_number' => $product->version,
+                'changelog' => 'Lanzamiento Inicial',
+                'file_path' => $product->product_file,
+                'update_package_file' => $product->update_package_file,
+                'extra_file_name' => $product->extra_file_name,
+                'file_size' => $size,
+                'released_at' => now(),
+            ]);
+        }
+        
         return redirect()->route('admin.products.index')
             ->with('success', 'Producto creado exitosamente.');
     }
@@ -167,12 +205,11 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load(['category', 'versions', 'downloads', 'licenses', 'orderItems']);
+        $product->load(['category', 'versions' => function($q) {
+            $q->orderBy('created_at', 'desc');
+        }]);
         
-        // Productos relacionados vacíos para evitar errores en la vista
-        $relatedProducts = collect();
-        
-        return view('admin.products.show', compact('product', 'relatedProducts'));
+        return view('admin.products.show', compact('product'));
     }
 
     /**
@@ -211,6 +248,8 @@ class ProductController extends Controller
             'meta_description' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255|unique:products,slug,' . $product->id,
+            'update_package_file' => 'nullable|file|max:512000',
+            'extra_file_name' => 'nullable|string|max:255',
         ]);
         
         // Handle thumbnail upload optimized
@@ -251,6 +290,19 @@ class ProductController extends Controller
             if ($path) {
                 // No eliminamos el archivo anterior para mantener el historial de versiones en ProductVersion
                 $validated['product_file'] = $path;
+            }
+        }
+
+        // Handle update package file (second .ZIP)
+        if ($request->filled('uploaded_update_package_file')) {
+            $validated['update_package_file'] = $request->input('uploaded_update_package_file');
+        } elseif ($request->hasFile('update_package_file')) {
+            $file2 = $request->file('update_package_file');
+            $disk = config('filesystems.default');
+            $targetDisk = in_array($disk, ['r2', 's3', 'bunnycdn']) ? $disk : 'public';
+            $path2 = Storage::disk($targetDisk)->putFile('products/files', $file2);
+            if ($path2) {
+                $validated['update_package_file'] = $path2;
             }
         }
         
@@ -301,7 +353,9 @@ class ProductController extends Controller
         $validated = $request->validate([
             'version_number' => 'required|string|max:50',
             'changelog' => 'nullable|string',
-            'version_file' => 'required|max:512000', // Validation relaxed
+            'version_file' => 'required|max:512000',
+            'update_package_file' => 'nullable|file|max:512000',
+            'extra_file_name' => 'nullable|string|max:255',
             'released_at' => 'required|date',
         ]);
         
@@ -322,12 +376,14 @@ class ProductController extends Controller
                 'version_number' => $product->version,
                 'changelog' => 'Versión anterior preservada automáticamente',
                 'file_path' => $product->product_file,
+                'update_package_file' => $product->update_package_file,
+                'extra_file_name' => $product->extra_file_name,
                 'file_size' => $size,
                 'released_at' => $product->updated_at ?? now(),
              ]);
         }
         
-        // Handle file upload
+        // Handle main file upload
         if ($request->hasFile('version_file')) {
             $file = $request->file('version_file');
             $disk = config('filesystems.default');
@@ -338,19 +394,37 @@ class ProductController extends Controller
             $validated['file_path'] = $path;
             $validated['file_size'] = $file->getSize();
         }
+
+        // Handle update package file (second .ZIP)
+        if ($request->hasFile('update_package_file')) {
+            $file2 = $request->file('update_package_file');
+            $disk = config('filesystems.default');
+            $targetDisk = in_array($disk, ['r2', 's3', 'bunnycdn']) ? $disk : 'public';
+
+            $path2 = Storage::disk($targetDisk)->putFile('products/versions', $file2);
+            $validated['update_package_file'] = $path2;
+        }
         
         $validated['product_id'] = $product->id;
         
         ProductVersion::create($validated);
         
-        // Update product main version and main file
+        // Update product main version and files
         $oldVersion = $product->version;
         $newVersion = $validated['version_number'];
         
-        $product->update([
+        $productDataToUpdate = [
             'version' => $newVersion,
             'product_file' => $validated['file_path']
-        ]);
+        ];
+        if (isset($validated['update_package_file'])) {
+            $productDataToUpdate['update_package_file'] = $validated['update_package_file'];
+        }
+        if (!empty($validated['extra_file_name'])) {
+            $productDataToUpdate['extra_file_name'] = $validated['extra_file_name'];
+        }
+        
+        $product->update($productDataToUpdate);
 
         // Send notifications to buyers
         if ($oldVersion !== $newVersion) {

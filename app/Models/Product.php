@@ -32,6 +32,8 @@ class Product extends Model
         'rating',
         'reviews_count',
         'product_file',
+        'update_package_file',
+        'extra_file_name',
         'category_id',
         'badge',
         'reward_points',
@@ -252,6 +254,55 @@ class Product extends Model
     public function getIsRecentlyUpdatedAttribute(): bool
     {
         return $this->isRecentlyUpdated(5);
+    }
+
+    /**
+     * Get all available download files for this product (main file and update package/extras).
+     */
+    public function getDownloadFiles(): array
+    {
+        $files = [];
+        $latestVersion = $this->latestVersion;
+
+        // 1. Archivo Principal (.ZIP)
+        $mainPath = ($latestVersion && $latestVersion->file_path) ? $latestVersion->file_path : $this->product_file;
+        if (!empty($mainPath)) {
+            $files[] = [
+                'type' => 'main',
+                'title' => 'Archivo del Producto (.ZIP)',
+                'subtitle' => 'Paquete completo del recurso v' . ($this->version ?? '1.0.0'),
+                'icon' => 'fa-box-open',
+                'badge' => 'Archivo Principal',
+                'badge_color' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                'download_url' => route('product.download', ['product' => $this->id, 'type' => 'main']),
+            ];
+        }
+
+        // 2. Paquete de Actualización / Archivo Secundario (.ZIP)
+        $extraPath = ($latestVersion && $latestVersion->update_package_file) ? $latestVersion->update_package_file : $this->update_package_file;
+        $extraName = ($latestVersion && $latestVersion->extra_file_name) ? $latestVersion->extra_file_name : ($this->extra_file_name ?: 'Paquete de Actualización (.ZIP)');
+
+        if (!empty($extraPath)) {
+            $files[] = [
+                'type' => 'extra',
+                'title' => $extraName,
+                'subtitle' => 'Archivos de actualización / Complementos adicionales v' . ($this->version ?? '1.0.0'),
+                'icon' => 'fa-file-zipper',
+                'badge' => 'Paquete Adicional',
+                'badge_color' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+                'download_url' => route('product.download', ['product' => $this->id, 'type' => 'extra']),
+            ];
+        }
+
+        return $files;
+    }
+
+    /**
+     * Check if product has multiple download files available.
+     */
+    public function hasMultipleFiles(): bool
+    {
+        return count($this->getDownloadFiles()) > 1;
     }
 }
 

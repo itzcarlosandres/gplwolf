@@ -99,15 +99,16 @@ class DownloadController extends Controller
         return Storage::disk('public')->download($fileToDownload);
     }
 
-    public function download(Product $product)
+    public function download(Request $request, Product $product)
     {
         $user = auth()->user();
+        $fileType = $request->query('type', 'main');
 
         // 1. Check if user purchased the product
         $hasPurchased = $user->hasPurchased($product->id);
 
         if ($hasPurchased) {
-            return $this->processDownload($product, $user);
+            return $this->processDownload($product, $user, $fileType);
         }
 
         // 2. Check Membership Access
@@ -138,7 +139,7 @@ class DownloadController extends Controller
                     return back()->with('error', 'Has superado el límite de re-descargas para este archivo hoy (Máx 5). Intenta mañana.');
                 }
                 // Allow re-download without checking daily total limit
-                return $this->processDownload($product, $user);
+                return $this->processDownload($product, $user, $fileType);
             }
 
             // If it's a NEW product for today, check total daily limit
@@ -152,18 +153,28 @@ class DownloadController extends Controller
             }
         }
 
-        return $this->processDownload($product, $user);
+        return $this->processDownload($product, $user, $fileType);
     }
 
-    protected function processDownload(Product $product, $user)
+    protected function processDownload(Product $product, $user, string $fileType = 'main')
     {
         $disk = config('filesystems.default');
-        
-        // 1. Determine which file to download
         $latestVersion = $product->latestVersion;
-        $fileToDownload = ($latestVersion && $latestVersion->file_path) 
-            ? $latestVersion->file_path 
-            : $product->product_file;
+        
+        // 1. Determine which file to download according to fileType
+        if ($fileType === 'extra') {
+            $fileToDownload = ($latestVersion && $latestVersion->update_package_file) 
+                ? $latestVersion->update_package_file 
+                : $product->update_package_file;
+
+            if (empty($fileToDownload)) {
+                return back()->with('error', 'El paquete de actualización o archivo adicional no está disponible para este producto.');
+            }
+        } else {
+            $fileToDownload = ($latestVersion && $latestVersion->file_path) 
+                ? $latestVersion->file_path 
+                : $product->product_file;
+        }
 
         // Limpieza profunda de rutas para R2 (Evita NoSuchKey)
         $fileToDownload = str_replace('\\', '/', $fileToDownload);

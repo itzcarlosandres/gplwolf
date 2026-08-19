@@ -15,6 +15,8 @@ class ProductVersion extends Model
         'changelog',
         'file_path',
         'file_size',
+        'update_package_file',
+        'extra_file_name',
         'released_at',
     ];
 

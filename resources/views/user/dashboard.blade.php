@@ -186,9 +186,19 @@
                                 <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest mt-1">v{{ $download->product->version }}</p>
                             </div>
                             
-                            <a href="{{ route('product.download', $download->product) }}" class="w-9 h-9 bg-[#FF2121]/10 hover:bg-[#F51B1B] text-[#FF2121] hover:text-white rounded-xl flex items-center justify-center transition-all shadow-md active:scale-95 flex-shrink-0" title="Descargar de nuevo">
-                                <i class="fas fa-download text-xs"></i>
-                            </a>
+                            @if($download->product->hasMultipleFiles())
+                                <button type="button" 
+                                        @click="$dispatch('open-download-modal-{{ $download->product->id }}')" 
+                                        class="w-9 h-9 bg-[#FF2121]/10 hover:bg-[#F51B1B] text-[#FF2121] hover:text-white rounded-xl flex items-center justify-center transition-all shadow-md active:scale-95 flex-shrink-0 cursor-pointer" 
+                                        title="Descargar de nuevo">
+                                    <i class="fas fa-download text-xs"></i>
+                                </button>
+                                <x-product-download-modal :product="$download->product" />
+                            @else
+                                <a href="{{ route('product.download', $download->product) }}" class="w-9 h-9 bg-[#FF2121]/10 hover:bg-[#F51B1B] text-[#FF2121] hover:text-white rounded-xl flex items-center justify-center transition-all shadow-md active:scale-95 flex-shrink-0" title="Descargar de nuevo">
+                                    <i class="fas fa-download text-xs"></i>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @empty

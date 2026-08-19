@@ -82,6 +82,8 @@ class UpdateManagerController extends Controller
                 'version_number' => 'required|string|max:50',
                 'released_at' => 'required|date',
                 'version_file' => 'required|max:512000',
+                'update_package_file' => 'nullable|max:512000',
+                'extra_file_name' => 'nullable|string|max:255',
                 'changelog' => 'nullable|string'
             ]);
 
@@ -101,12 +103,24 @@ class UpdateManagerController extends Controller
             $stream = fopen($file->getRealPath(), 'r+');
             Storage::disk($targetDisk)->writeStream($path, $stream);
             fclose($stream);
+
+            $updatePackagePath = null;
+            if ($request->hasFile('update_package_file')) {
+                $file2 = $request->file('update_package_file');
+                $filename2 = Str::random(40) . '.zip';
+                $updatePackagePath = 'products/versions/' . $filename2;
+                $stream2 = fopen($file2->getRealPath(), 'r+');
+                Storage::disk($targetDisk)->writeStream($updatePackagePath, $stream2);
+                fclose($stream2);
+            }
             
             // Create Version Record
             ProductVersion::create([
                 'product_id' => $product->id,
                 'version_number' => $request->version_number,
                 'file_path' => $path,
+                'update_package_file' => $updatePackagePath ?: $product->update_package_file,
+                'extra_file_name' => $request->extra_file_name ?: $product->extra_file_name,
                 'file_size' => $file->getSize(),
                 'changelog' => $request->changelog,
                 'released_at' => $request->released_at
@@ -114,10 +128,17 @@ class UpdateManagerController extends Controller
 
             // Update Main Product
             $oldVersion = $product->version;
-            $product->update([
+            $productData = [
                 'version' => $request->version_number,
                 'product_file' => $path
-            ]);
+            ];
+            if ($updatePackagePath) {
+                $productData['update_package_file'] = $updatePackagePath;
+            }
+            if ($request->filled('extra_file_name')) {
+                $productData['extra_file_name'] = $request->extra_file_name;
+            }
+            $product->update($productData);
 
             // Notifications logic (Safe wrapped)
             if ($oldVersion !== $request->version_number) {

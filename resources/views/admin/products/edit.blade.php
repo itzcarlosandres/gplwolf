@@ -80,7 +80,7 @@
                     @endif
                 </div>
                 <div class="group relative">
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 ml-1">Nuevo Archivo .ZIP (Opcional)</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 ml-1">Archivo Principal .ZIP (Opcional)</label>
                     <div class="relative bg-gray-900/50 border-2 border-dashed border-white/5 rounded-2xl p-8 text-center group-hover:border-emerald-500/40 transition-all">
                         <i class="fas fa-cloud-upload-alt text-3xl text-gray-600 mb-2 group-hover:text-emerald-400 transition-colors"></i>
                         <input type="file" name="product_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
@@ -89,9 +89,42 @@
                     @if($product->product_file)
                         <div class="mt-4 flex items-center gap-3 bg-emerald-500/5 p-3 rounded-xl border border-emerald-500/10">
                             <i class="fas fa-file-archive text-emerald-500"></i>
-                            <span class="text-[10px] text-emerald-500 uppercase font-black">Archivo cargado</span>
+                            <span class="text-[10px] text-emerald-500 uppercase font-black">Archivo Principal Cargado</span>
                         </div>
                     @endif
+                </div>
+            </div>
+
+            <!-- Second Extra File (.ZIP) & Label -->
+            <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="group relative">
+                    <label class="block text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-1.5">
+                        <i class="fas fa-file-zipper"></i>
+                        Paquete de Actualización / Archivo Adicional (.ZIP) (Opcional)
+                    </label>
+                    <div class="relative bg-gray-900/50 border-2 border-dashed border-white/5 rounded-2xl p-6 text-center group-hover:border-amber-500/40 transition-all">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-600 mb-1 group-hover:text-amber-400 transition-colors"></i>
+                        <input type="file" name="update_package_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <p class="text-xs text-gray-500">Subir nuevo paquete adicional</p>
+                    </div>
+                    @if($product->update_package_file)
+                        <div class="mt-3 flex items-center gap-3 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
+                            <i class="fas fa-file-zipper text-amber-500"></i>
+                            <span class="text-[10px] text-amber-400 uppercase font-black">Paquete Adicional Cargado</span>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">
+                        Nombre / Etiqueta del Archivo Adicional
+                    </label>
+                    <input type="text" 
+                           name="extra_file_name" 
+                           value="{{ old('extra_file_name', $product->extra_file_name ?: 'Paquete de Actualización (.ZIP)') }}"
+                           placeholder="Ej: Paquete de Actualización, Templates & Addons, Child Theme"
+                           class="w-full bg-gray-900/50 border border-white/10 rounded-xl px-4 py-3 text-white text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
+                    <p class="text-[9px] text-gray-500 ml-1">Si existen 2 archivos, al hacer clic en "Descargar" se desplegará el popup con ambas opciones.</p>
                 </div>
             </div>
         </div>

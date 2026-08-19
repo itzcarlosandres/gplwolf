@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->boolean('is_best_seller')->default(false)->after('is_active');
-            $table->boolean('is_popular')->default(false)->after('is_best_seller');
+            if (!Schema::hasColumn('products', 'is_best_seller')) {
+                $table->boolean('is_best_seller')->default(false)->after('is_active');
+            }
+            if (!Schema::hasColumn('products', 'is_popular')) {
+                $table->boolean('is_popular')->default(false)->after('is_best_seller');
+            }
         });
     }
 

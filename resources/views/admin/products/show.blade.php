@@ -149,13 +149,33 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Archivo de la Versión (.ZIP)</label>
+                                <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Archivo Principal de la Versión (.ZIP)</label>
                                 <div class="relative group">
                                     <div class="relative bg-gray-900 border-2 border-dashed border-white/10 rounded-2xl p-6 text-center group-hover:border-[#FF2121]/40 transition-all">
                                         <i class="fas fa-cloud-upload-alt text-2xl text-gray-600 mb-2"></i>
                                         <input type="file" name="version_file" accept=".zip" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                         <p class="text-xs text-gray-500">Únicamente formato .ZIP</p>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2 ml-1 flex items-center gap-1.5">
+                                        <i class="fas fa-file-zipper"></i>
+                                        Paquete Adicional (.ZIP) (Opcional)
+                                    </label>
+                                    <div class="relative bg-gray-900 border-2 border-dashed border-white/10 rounded-2xl p-4 text-center group-hover:border-amber-500/40 transition-all">
+                                        <i class="fas fa-file-archive text-xl text-gray-600 mb-1"></i>
+                                        <input type="file" name="update_package_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                        <p class="text-[10px] text-gray-500">Subir 2do .ZIP</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Etiqueta del Archivo Adicional</label>
+                                    <input type="text" name="extra_file_name" value="{{ $product->extra_file_name ?: 'Paquete de Actualización (.ZIP)' }}"
+                                        class="w-full bg-gray-900 border border-white/10 rounded-2xl px-4 py-3.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all"
+                                        placeholder="Ej: Paquete de Actualización (.ZIP)">
                                 </div>
                             </div>
 

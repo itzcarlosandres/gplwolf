@@ -215,14 +215,14 @@
                 
                 <!-- ZIP Dropzone -->
                 <div class="group relative flex flex-col">
-                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Archivo del Producto (.ZIP)</label>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 ml-1">Archivo Principal (.ZIP)</label>
                     <div id="resumable-drop" class="relative dropzone-animated-zip bg-gray-950/60 rounded-2xl p-8 text-center h-44 flex flex-col items-center justify-center cursor-pointer transition-all border border-transparent">
                         <div id="file-wrapper" class="pointer-events-none flex flex-col items-center justify-center w-full">
                             <div class="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                                 <i id="file-icon" class="fas fa-file-archive text-gray-500 group-hover:text-emerald-400 transition-colors"></i>
                             </div>
                             <div id="file-info" class="w-full">
-                                <p class="text-xs font-bold text-white">Subir Archivo ZIP</p>
+                                <p class="text-xs font-bold text-white">Subir Archivo ZIP Principal</p>
                                 <p class="text-[9px] text-gray-500 mt-1">Arrastra aquí tu zip o haz click</p>
                                 <p class="text-[8px] text-emerald-500/80 font-bold uppercase tracking-wider mt-1.5">Soporta +10GB (Fragmentado)</p>
                             </div>
@@ -245,6 +245,34 @@
 
                     <!-- Hidden input to store the final backend path -->
                     <input type="hidden" name="uploaded_file_path" id="uploaded_file_path">
+                </div>
+            </div>
+
+            <!-- Second Extra File (.ZIP) & Label -->
+            <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="group relative flex flex-col">
+                    <label class="block text-[10px] font-black text-amber-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-1.5">
+                        <i class="fas fa-file-zipper"></i>
+                        Paquete de Actualización / Archivo Adicional (.ZIP) (Opcional)
+                    </label>
+                    <div class="relative bg-gray-950/60 border-2 border-dashed border-white/10 hover:border-amber-500/40 rounded-2xl p-6 text-center h-36 flex flex-col items-center justify-center cursor-pointer transition-all">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-600 group-hover:text-amber-400 mb-2 transition-colors"></i>
+                        <p class="text-xs font-bold text-white">Subir Paquete Adicional</p>
+                        <p class="text-[9px] text-gray-500 mt-0.5">Únicamente formato .ZIP</p>
+                        <input type="file" name="update_package_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                        Nombre / Etiqueta del Archivo Adicional
+                    </label>
+                    <input type="text" 
+                           name="extra_file_name" 
+                           value="{{ old('extra_file_name', 'Paquete de Actualización (.ZIP)') }}"
+                           placeholder="Ej: Paquete de Actualización, Templates & Addons, Child Theme"
+                           class="w-full modern-input rounded-2xl px-5 py-4 text-xs text-white focus:outline-none placeholder:text-gray-700 shadow-inner">
+                    <p class="text-[9px] text-gray-500 ml-1">Si subes este 2do archivo, al hacer clic en "Descargar" se desplegará el popup con ambas opciones para el usuario.</p>
                 </div>
             </div>
         </div>

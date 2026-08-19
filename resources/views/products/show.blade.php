@@ -227,9 +227,18 @@ $schemaData = [
                     <div class="flex-1 sm:flex-none">
                         @auth
                             @if(auth()->user()->canDownload($product))
-                                <a href="{{ route('product.download', $product) }}" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-2">
-                                    <i class="fas fa-download"></i> Descargar
-                                </a>
+                                @if($product->hasMultipleFiles())
+                                    <button type="button" 
+                                            @click="$dispatch('open-download-modal-{{ $product->id }}')" 
+                                            class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+                                        <i class="fas fa-download"></i> Descargar
+                                    </button>
+                                    <x-product-download-modal :product="$product" />
+                                @else
+                                    <a href="{{ route('product.download', $product) }}" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-2">
+                                        <i class="fas fa-download"></i> Descargar
+                                    </a>
+                                @endif
                             @else
                                 <form action="{{ route('cart.add', $product) }}" method="POST">
                                     @csrf
@@ -508,9 +517,17 @@ $schemaData = [
         <div class="flex-1">
             @auth
                 @if(auth()->user()->canDownload($product))
-                    <a href="{{ route('product.download', $product) }}" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg uppercase tracking-wider flex items-center justify-center gap-2">
-                        <i class="fas fa-download"></i> Descargar
-                    </a>
+                    @if($product->hasMultipleFiles())
+                        <button type="button" 
+                                @click="$dispatch('open-download-modal-{{ $product->id }}')" 
+                                class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fas fa-download"></i> Descargar
+                        </button>
+                    @else
+                        <a href="{{ route('product.download', $product) }}" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm rounded-xl transition-all shadow-lg uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                    @endif
                 @else
                     <form action="{{ route('cart.add', $product) }}" method="POST">
                         @csrf
