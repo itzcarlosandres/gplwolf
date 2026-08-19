@@ -263,34 +263,74 @@
                     </div>
                 </div>
 
-                <!-- Dropzone File Upload -->
-                <div class="space-y-2">
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Paquete de Actualización (.ZIP)</label>
-                    <div class="relative w-full h-44 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all duration-300 cursor-pointer overflow-hidden group"
-                         :class="fileSelected ? 'border-emerald-500 bg-emerald-500/5' : 'border-white/10 bg-[#1a1a1a]/40 hover:border-[#FF2121]/50 hover:bg-[#1a1a1a]'"
-                         @click="$refs.fileInput.click()">
-                        
-                        <input x-ref="fileInput" type="file" class="hidden" accept=".zip" @change="handleFileSelect">
-                        
-                        <div x-show="!fileSelected && !uploading" class="text-center p-6">
-                            <div class="w-12 h-12 mx-auto rounded-xl bg-[#FF2121]/10 text-[#FF2121] group-hover:bg-[#FF2121] group-hover:text-white flex items-center justify-center mb-3 transition-all">
-                                <i class="fas fa-file-archive text-xl"></i>
+                <!-- Dropzone File Upload (Main + Optional Extra) -->
+                <div class="space-y-4">
+                    <!-- Main Version ZIP -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Archivo Principal de la Versión (.ZIP)</label>
+                        <div class="relative w-full h-36 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all duration-300 cursor-pointer overflow-hidden group"
+                             :class="fileSelected ? 'border-emerald-500 bg-emerald-500/5' : 'border-white/10 bg-[#1a1a1a]/40 hover:border-[#FF2121]/50 hover:bg-[#1a1a1a]'"
+                             @click="$refs.fileInput.click()">
+                            
+                            <input x-ref="fileInput" type="file" class="hidden" accept=".zip" @change="handleFileSelect">
+                            
+                            <div x-show="!fileSelected && !uploading" class="text-center p-4">
+                                <div class="w-10 h-10 mx-auto rounded-xl bg-[#FF2121]/10 text-[#FF2121] group-hover:bg-[#FF2121] group-hover:text-white flex items-center justify-center mb-2 transition-all">
+                                    <i class="fas fa-file-archive text-lg"></i>
+                                </div>
+                                <p class="text-xs font-bold text-white">Haz clic o arrastra tu archivo .ZIP Principal aquí</p>
+                                <p class="text-[10px] text-gray-500 mt-0.5">Soporta archivos de hasta 500 MB</p>
                             </div>
-                            <p class="text-sm font-bold text-white">Haz clic o arrastra tu archivo .ZIP aquí</p>
-                            <p class="text-[11px] text-gray-500 mt-1">Soporta archivos de hasta 500 MB</p>
-                        </div>
 
-                        <div x-show="fileSelected && !uploading" class="text-center p-6">
-                            <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-500 text-white flex items-center justify-center mb-3 shadow-lg shadow-emerald-500/20">
-                                <i class="fas fa-check text-xl"></i>
+                            <div x-show="fileSelected && !uploading" class="text-center p-4">
+                                <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-500 text-white flex items-center justify-center mb-2 shadow-lg shadow-emerald-500/20">
+                                    <i class="fas fa-check text-lg"></i>
+                                </div>
+                                <p class="text-xs font-bold text-white" x-text="fileName"></p>
+                                <p class="text-[10px] text-emerald-400 font-bold mt-0.5">Archivo principal listo para subir</p>
                             </div>
-                            <p class="text-sm font-bold text-white" x-text="fileName"></p>
-                            <p class="text-[11px] text-emerald-400 font-bold mt-1">Archivo listo para ser subido</p>
+                        </div>
+                    </div>
+
+                    <!-- Second Extra File (.ZIP) & Label (Optional) -->
+                    <div class="p-4 bg-[#141416] border border-white/5 rounded-2xl space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                            <!-- Extra ZIP Upload -->
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] uppercase font-black tracking-widest text-amber-400 flex items-center gap-1.5">
+                                    <i class="fas fa-file-zipper"></i>
+                                    Paquete Adicional (.ZIP) (Opcional)
+                                </label>
+                                <div class="relative w-full h-24 border-2 border-dashed rounded-xl flex flex-col items-center justify-center transition-all duration-300 cursor-pointer overflow-hidden group"
+                                     :class="extraFileSelected ? 'border-amber-500 bg-amber-500/5' : 'border-white/10 bg-[#1a1a1a]/40 hover:border-amber-500/50'"
+                                     @click="$refs.extraFileInput.click()">
+                                    
+                                    <input x-ref="extraFileInput" type="file" class="hidden" accept=".zip" @change="handleExtraFileSelect">
+                                    
+                                    <div x-show="!extraFileSelected" class="text-center p-2">
+                                        <i class="fas fa-cloud-arrow-up text-gray-500 group-hover:text-amber-400 text-base mb-1 transition-colors"></i>
+                                        <p class="text-[11px] font-bold text-gray-300">Subir 2do .ZIP</p>
+                                    </div>
+
+                                    <div x-show="extraFileSelected" class="text-center p-2">
+                                        <i class="fas fa-check-circle text-amber-400 text-base mb-1"></i>
+                                        <p class="text-[11px] font-bold text-white truncate max-w-[160px]" x-text="extraFileName"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Extra File Label -->
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Nombre / Etiqueta del 2do Archivo</label>
+                                <input type="text" 
+                                       x-model="form.extra_file_name" 
+                                       placeholder="Ej: Paquete de Actualización (.ZIP)" 
+                                       class="w-full bg-[#1a1a1a] border border-white/10 focus:border-amber-500 rounded-xl py-3 px-3 text-xs text-white focus:outline-none transition-all">
+                                <p class="text-[9px] text-gray-500">Si se sube, el cliente verá un popup interactivo para elegir qué archivo descargar.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
 
                 <!-- Submit Button -->
                 <div class="pt-4">
@@ -332,10 +372,14 @@
             fileSelected: false,
             fileName: '',
             file: null,
+            extraFileSelected: false,
+            extraFileName: '',
+            extraFile: null,
             form: {
                 version_number: '',
                 released_at: new Date().toISOString().split('T')[0],
-                changelog: '- NEW: '
+                changelog: '- NEW: ',
+                extra_file_name: 'Paquete de Actualización (.ZIP)'
             },
 
             performSearch() {
@@ -375,6 +419,12 @@
                 } else {
                     this.form.version_number = '1.0.0';
                 }
+
+                if (item.extra_file_name) {
+                    this.form.extra_file_name = item.extra_file_name;
+                } else {
+                    this.form.extra_file_name = 'Paquete de Actualización (.ZIP)';
+                }
                 
                 this.step = 'form';
                 this.searchQuery = '';
@@ -391,6 +441,9 @@
                 this.fileSelected = false;
                 this.fileName = '';
                 this.file = null;
+                this.extraFileSelected = false;
+                this.extraFileName = '';
+                this.extraFile = null;
                 this.uploading = false;
                 this.uploadComplete = false;
                 this.progress = 0;
@@ -402,6 +455,15 @@
                     this.file = file;
                     this.fileSelected = true;
                     this.fileName = file.name;
+                }
+            },
+
+            handleExtraFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.extraFile = file;
+                    this.extraFileSelected = true;
+                    this.extraFileName = file.name;
                 }
             },
 
@@ -432,6 +494,12 @@
                 formData.append('released_at', this.form.released_at);
                 formData.append('changelog', this.form.changelog);
                 formData.append('version_file', this.file);
+                if (this.extraFile) {
+                    formData.append('update_package_file', this.extraFile);
+                }
+                if (this.form.extra_file_name) {
+                    formData.append('extra_file_name', this.form.extra_file_name);
+                }
                 formData.append('_token', '{{ csrf_token() }}');
 
                 const xhr = new XMLHttpRequest();

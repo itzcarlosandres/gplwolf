@@ -39,6 +39,7 @@ class UpdateManagerController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'version' => $product->version,
+                    'extra_file_name' => $product->extra_file_name ?: 'Paquete de Actualización (.ZIP)',
                     'category' => $product->category->name ?? 'General',
                     'image' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                 ];
@@ -53,7 +54,7 @@ class UpdateManagerController extends Controller
             $query = $request->get('q');
             
             $products = Product::where('name', 'like', "%{$query}%")
-                ->select('id', 'name', 'version', 'thumbnail', 'category_id')
+                ->select('id', 'name', 'version', 'thumbnail', 'category_id', 'extra_file_name')
                 ->with('category')
                 ->limit(10)
                 ->get()
@@ -62,6 +63,7 @@ class UpdateManagerController extends Controller
                         'id' => $product->id,
                         'name' => $product->name,
                         'version' => $product->version,
+                        'extra_file_name' => $product->extra_file_name ?: 'Paquete de Actualización (.ZIP)',
                         'category' => $product->category->name ?? 'General',
                         'image' => $product->thumbnail ? asset('storage/' . $product->thumbnail) : null,
                     ];
