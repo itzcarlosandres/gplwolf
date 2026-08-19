@@ -99,8 +99,12 @@ class DownloadController extends Controller
         return Storage::disk('public')->download($fileToDownload);
     }
 
-    public function download(Request $request, Product $product)
+    public function download(Request $request, $product)
     {
+        if (!$product instanceof Product) {
+            $product = Product::where('id', $product)->orWhere('slug', $product)->firstOrFail();
+        }
+
         $user = auth()->user();
         $fileType = $request->query('type', 'main');
 

@@ -101,7 +101,7 @@ Route::middleware('auth')->group(function () {
 
 // Download Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/download/{product:slug}', [\App\Http\Controllers\DownloadController::class, 'download'])->name('product.download');
+    Route::get('/download/{product}', [\App\Http\Controllers\DownloadController::class, 'download'])->name('product.download');
     Route::get('/download-version/{version}', [\App\Http\Controllers\DownloadController::class, 'downloadVersion'])->name('version.download');
     Route::post('/products/{product}/request-update', [\App\Http\Controllers\UpdateRequestController::class, 'store'])->name('product.request-update');
 });

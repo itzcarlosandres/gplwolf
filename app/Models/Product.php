@@ -274,7 +274,7 @@ class Product extends Model
                 'icon' => 'fa-box-open',
                 'badge' => 'Archivo Principal',
                 'badge_color' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-                'download_url' => route('product.download', ['product' => $this->id, 'type' => 'main']),
+                'download_url' => route('product.download', ['product' => $this->slug ?: $this->id, 'type' => 'main']),
             ];
         }
 
@@ -290,7 +290,7 @@ class Product extends Model
                 'icon' => 'fa-file-zipper',
                 'badge' => 'Paquete Adicional',
                 'badge_color' => 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-                'download_url' => route('product.download', ['product' => $this->id, 'type' => 'extra']),
+                'download_url' => route('product.download', ['product' => $this->slug ?: $this->id, 'type' => 'extra']),
             ];
         }
 
