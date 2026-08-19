@@ -140,11 +140,15 @@ class Product extends Model
 
 
     /**
-     * Increment the download count.
+     * Increment the download count without altering updated_at timestamp.
      */
     public function incrementDownloads()
     {
-        $this->increment('downloads_count');
+        \Illuminate\Support\Facades\DB::table('products')
+            ->where('id', $this->id)
+            ->increment('downloads_count');
+        
+        $this->downloads_count = ($this->downloads_count ?? 0) + 1;
     }
 
     /**
