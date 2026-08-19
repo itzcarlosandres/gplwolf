@@ -328,17 +328,19 @@
                                                     @if($item->is_recently_updated)
                                                         <x-badge-updated size="xs" />
                                                     @endif
-                                                    <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
-                                            @csrf
-                                            <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-emerald-500 text-gray-300 hover:text-white border border-white/10 hover:border-emerald-500 transition-all flex items-center justify-center shadow-sm">
-                                                <i class="fas fa-cart-plus text-xs"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center gap-3 shrink-0 ml-4">
+                                            <span class="text-xs font-black text-white font-mono shrink-0">${{ number_format($item->price, 2) }}</span>
+                                            <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0">
+                                                @csrf
+                                                <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-emerald-500 text-gray-300 hover:text-white border border-white/10 hover:border-emerald-500 transition-all flex items-center justify-center shadow-sm">
+                                                    <i class="fas fa-cart-plus text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @empty
                                     <p class="text-xs text-gray-500 text-center py-4">No hay plugins recientes.</p>
@@ -401,17 +403,19 @@
                                                     @if($item->is_recently_updated)
                                                         <x-badge-updated size="xs" />
                                                     @endif
-                                                    <span class="text-xs font-black text-white font-mono">${{ number_format($item->price, 2) }}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0 ml-2">
-                                            @csrf
-                                            <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-purple-500 text-gray-300 hover:text-white border border-white/10 hover:border-purple-500 transition-all flex items-center justify-center shadow-sm">
-                                                <i class="fas fa-cart-plus text-xs"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center gap-3 shrink-0 ml-4">
+                                            <span class="text-xs font-black text-white font-mono shrink-0">${{ number_format($item->price, 2) }}</span>
+                                            <form action="{{ route('cart.add', $item) }}" method="POST" class="shrink-0">
+                                                @csrf
+                                                <button type="submit" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-purple-500 text-gray-300 hover:text-white border border-white/10 hover:border-purple-500 transition-all flex items-center justify-center shadow-sm">
+                                                    <i class="fas fa-cart-plus text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @empty
                                     <p class="text-xs text-gray-500 text-center py-4">No hay temas recientes.</p>
