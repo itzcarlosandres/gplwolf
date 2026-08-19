@@ -97,20 +97,62 @@
 
             <!-- Second Extra File (.ZIP) & Label -->
             <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div class="group relative">
+                <div x-data="{ extraSelected: false, extraName: '', extraSize: '' }" class="group relative">
                     <label class="block text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-1.5">
                         <i class="fas fa-file-zipper"></i>
                         Paquete de Actualización / Archivo Adicional (.ZIP) (Opcional)
                     </label>
-                    <div class="relative bg-gray-900/50 border-2 border-dashed border-white/5 rounded-2xl p-6 text-center group-hover:border-amber-500/40 transition-all">
-                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-600 mb-1 group-hover:text-amber-400 transition-colors"></i>
-                        <input type="file" name="update_package_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <p class="text-xs text-gray-500">Subir nuevo paquete adicional</p>
+
+                    <div class="relative rounded-2xl h-36 flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden border-2 border-dashed"
+                         :class="extraSelected
+                             ? 'border-amber-500 bg-amber-500/5'
+                             : 'border-white/5 bg-gray-900/50 hover:border-amber-500/40'"
+                         @click="$refs.extraInput.click()">
+
+                        <!-- Idle -->
+                        <div x-show="!extraSelected" class="flex flex-col items-center pointer-events-none">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                                <i class="fas fa-cloud-arrow-up text-lg"></i>
+                            </div>
+                            <p class="text-xs font-bold text-white">Subir nuevo paquete adicional</p>
+                            <p class="text-[9px] text-gray-500 mt-0.5">Únicamente formato .ZIP</p>
+                        </div>
+
+                        <!-- Selected -->
+                        <div x-show="extraSelected" class="flex flex-col items-center pointer-events-none px-4 text-center">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500 text-gray-900 flex items-center justify-center mb-2 shadow-lg shadow-amber-500/30">
+                                <i class="fas fa-check text-lg font-black"></i>
+                            </div>
+                            <p class="text-xs font-black text-white truncate max-w-[200px]" x-text="extraName"></p>
+                            <p class="text-[9px] text-amber-400 font-bold mt-0.5" x-text="extraSize"></p>
+                            <p class="text-[8px] text-gray-500 mt-0.5">Clic para cambiar archivo</p>
+                        </div>
+
+                        <input x-ref="extraInput"
+                               type="file" name="update_package_file" accept=".zip"
+                               class="hidden"
+                               @change="
+                                   const f = $event.target.files[0];
+                                   if (f) {
+                                       extraSelected = true;
+                                       extraName = f.name;
+                                       const mb = f.size / (1024*1024);
+                                       extraSize = mb >= 1 ? mb.toFixed(1) + ' MB' : (f.size/1024).toFixed(0) + ' KB';
+                                   }
+                               ">
                     </div>
+
+                    <!-- Badge: new file selected -->
+                    <div x-show="extraSelected" class="mt-2 flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                        <i class="fas fa-file-zipper text-amber-400 text-[10px]"></i>
+                        <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider">Archivo listo para subir</span>
+                    </div>
+
+                    <!-- Badge: existing file loaded (only when no new file chosen) -->
                     @if($product->update_package_file)
-                        <div class="mt-3 flex items-center gap-3 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                            <i class="fas fa-file-zipper text-amber-500"></i>
-                            <span class="text-[10px] text-amber-400 uppercase font-black">Paquete Adicional Cargado</span>
+                        <div x-show="!extraSelected" class="mt-2 flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                            <i class="fas fa-file-zipper text-emerald-400 text-[10px]"></i>
+                            <span class="text-[10px] font-black text-emerald-400 uppercase tracking-wider">Paquete Adicional ya cargado — dejar vacío para mantener</span>
                         </div>
                     @endif
                 </div>

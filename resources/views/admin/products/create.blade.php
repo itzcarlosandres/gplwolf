@@ -250,16 +250,56 @@
 
             <!-- Second Extra File (.ZIP) & Label -->
             <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div class="group relative flex flex-col">
+                <div x-data="{ extraSelected: false, extraName: '', extraSize: '' }" class="group relative flex flex-col">
                     <label class="block text-[10px] font-black text-amber-500 uppercase tracking-widest mb-3 ml-1 flex items-center gap-1.5">
                         <i class="fas fa-file-zipper"></i>
                         Paquete de Actualización / Archivo Adicional (.ZIP) (Opcional)
                     </label>
-                    <div class="relative bg-gray-950/60 border-2 border-dashed border-white/10 hover:border-amber-500/40 rounded-2xl p-6 text-center h-36 flex flex-col items-center justify-center cursor-pointer transition-all">
-                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-600 group-hover:text-amber-400 mb-2 transition-colors"></i>
-                        <p class="text-xs font-bold text-white">Subir Paquete Adicional</p>
-                        <p class="text-[9px] text-gray-500 mt-0.5">Únicamente formato .ZIP</p>
-                        <input type="file" name="update_package_file" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                    <!-- Dropzone: idle state -->
+                    <div class="relative rounded-2xl h-36 flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden border-2 border-dashed"
+                         :class="extraSelected
+                             ? 'border-amber-500 bg-amber-500/5'
+                             : 'border-white/10 bg-gray-950/60 hover:border-amber-500/40'"
+                         @click="$refs.extraInput.click()">
+
+                        <!-- Idle icon & text -->
+                        <div x-show="!extraSelected" class="flex flex-col items-center pointer-events-none">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                                <i class="fas fa-cloud-arrow-up text-lg"></i>
+                            </div>
+                            <p class="text-xs font-bold text-white">Subir Paquete Adicional</p>
+                            <p class="text-[9px] text-gray-500 mt-0.5">Únicamente formato .ZIP</p>
+                        </div>
+
+                        <!-- Selected state -->
+                        <div x-show="extraSelected" class="flex flex-col items-center pointer-events-none px-4 text-center">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500 text-gray-900 flex items-center justify-center mb-2 shadow-lg shadow-amber-500/30">
+                                <i class="fas fa-check text-lg font-black"></i>
+                            </div>
+                            <p class="text-xs font-black text-white truncate max-w-[200px]" x-text="extraName"></p>
+                            <p class="text-[9px] text-amber-400 font-bold mt-0.5" x-text="extraSize"></p>
+                            <p class="text-[8px] text-gray-500 mt-0.5">Clic para cambiar archivo</p>
+                        </div>
+
+                        <input x-ref="extraInput"
+                               type="file" name="update_package_file" accept=".zip"
+                               class="hidden"
+                               @change="
+                                   const f = $event.target.files[0];
+                                   if (f) {
+                                       extraSelected = true;
+                                       extraName = f.name;
+                                       const mb = f.size / (1024*1024);
+                                       extraSize = mb >= 1 ? mb.toFixed(1) + ' MB' : (f.size/1024).toFixed(0) + ' KB';
+                                   }
+                               ">
+                    </div>
+
+                    <!-- Badge confirmed -->
+                    <div x-show="extraSelected" class="mt-2 flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                        <i class="fas fa-file-zipper text-amber-400 text-[10px]"></i>
+                        <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider">Archivo listo para subir</span>
                     </div>
                 </div>
 
