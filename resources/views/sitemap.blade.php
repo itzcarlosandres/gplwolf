@@ -39,4 +39,22 @@
             <priority>0.9</priority>
         </url>
     @endforeach
-</urlset>
+
+    {{-- Blog index --}}
+    <url>
+        <loc>{{ route('blog.index') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    {{-- Blog posts --}}
+    @foreach ($posts as $post)
+        <url>
+            <loc>{{ route('blog.show', $post->slug) }}</loc>
+            <lastmod>{{ $post->updated_at->toAtomString() }}</lastmod>
+            <changefreq>monthly</changefreq>
+            <priority>0.7</priority>
+        </url>
+    @endforeach
+</urlset>

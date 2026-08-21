@@ -570,7 +570,10 @@
                         <i class="fas fa-crown text-[11px] mr-1.5 text-gray-500 group-hover:text-gray-200 transition-colors"></i>
                         Planes
                     </a>
-
+                    <a href="{{ route('blog.index') }}" class="group flex items-center px-3 py-2 text-xs font-bold text-gray-400 hover:text-white transition-all rounded-xl hover:bg-white/5 {{ request()->routeIs('blog.*') ? 'text-white bg-white/5' : '' }}">
+                        <i class="fas fa-newspaper text-[11px] mr-1.5 text-gray-500 group-hover:text-gray-200 transition-colors"></i>
+                        Blog
+                    </a>
                 </div>
 
                 <!-- Actions -->
@@ -698,6 +701,10 @@
                 <i class="fas fa-crown text-yellow-500/50 group-active:text-yellow-500"></i>
                 Membresías
             </a>
+            <a href="{{ route('blog.index') }}" class="flex items-center gap-4 text-base font-black uppercase tracking-[0.2em] {{ request()->routeIs('blog.*') ? 'text-white' : 'text-gray-400' }} active:text-white transition-colors group">
+                <i class="fas fa-newspaper text-[#FF2121]/50 group-active:text-[#FF2121]"></i>
+                Blog
+            </a>
 
             <a href="{{ route('cart.index') }}" class="flex items-center justify-between text-base font-black uppercase tracking-[0.2em] text-gray-400 active:text-white transition-colors group">
                 <div class="flex items-center gap-4">
@@ -806,6 +813,7 @@
                         <h4 class="text-xs font-black uppercase tracking-widest text-white mb-5">Navegación</h4>
                         <ul class="space-y-3">
                             <li><a href="{{ route('products.index') }}" class="text-sm text-gray-400 hover:text-white transition flex items-center gap-3 group/item"><i class="fas fa-box-open text-xs text-gray-600 group-hover/item:text-[#FF2121] transition"></i> Productos</a></li>
+                            <li><a href="{{ route('blog.index') }}" class="text-sm text-gray-400 hover:text-white transition flex items-center gap-3 group/item"><i class="fas fa-newspaper text-xs text-gray-600 group-hover/item:text-[#FF2121] transition"></i> Blog & Artículos</a></li>
                             <li><a href="{{ route('pages.rewards') }}" class="text-sm text-gray-400 hover:text-white transition flex items-center gap-3 group/item"><i class="fas fa-crown text-xs text-gray-600 group-hover/item:text-[#FF2121] transition"></i> Programa VIP</a></li>
                             <li><a href="{{ route('pages.plugin') }}" class="text-sm text-gray-400 hover:text-white transition flex items-center gap-3 group/item"><i class="fas fa-plug text-xs text-gray-600 group-hover/item:text-[#FF2121] transition"></i> Plugin Oficial</a></li>
                         </ul>

@@ -193,12 +193,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Coupons Management
     Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
 
-    // Blog Management (Pending admin CRUD)
-    // Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
-    
-    // AI Content Generation
-    // Route::post('posts/ai/generate', [\App\Http\Controllers\Admin\AiContentController::class, 'generatePost'])->name('posts.ai.generate');
-    // Route::post('posts/ai/seo', [\App\Http\Controllers\Admin\AiContentController::class, 'improveSEO'])->name('posts.ai.seo');
+    // Blog Management
+    Route::get('blog', [\App\Http\Controllers\Admin\BlogController::class, 'index'])->name('blog.index');
+    Route::get('blog/create', [\App\Http\Controllers\Admin\BlogController::class, 'create'])->name('blog.create');
+    Route::post('blog', [\App\Http\Controllers\Admin\BlogController::class, 'store'])->name('blog.store');
+    Route::get('blog/{post}/edit', [\App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('blog.edit');
+    Route::put('blog/{post}', [\App\Http\Controllers\Admin\BlogController::class, 'update'])->name('blog.update');
+    Route::delete('blog/{post}', [\App\Http\Controllers\Admin\BlogController::class, 'destroy'])->name('blog.destroy');
+    Route::post('blog/{post}/publish', [\App\Http\Controllers\Admin\BlogController::class, 'publish'])->name('blog.publish');
+    Route::post('blog/ai-generate', [\App\Http\Controllers\Admin\BlogController::class, 'generateAiContent'])
+        ->name('blog.ai.generate')
+        ->middleware('throttle:10,1');
 
     // User Memberships Management
     Route::resource('memberships', \App\Http\Controllers\Admin\MembershipController::class);

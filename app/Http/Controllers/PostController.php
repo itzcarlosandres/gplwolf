@@ -7,57 +7,52 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function stylesDemo()
+    public function index(Request $request)
     {
-        // Fake posts for demo
-        $posts = collect(range(1, 6))->map(function($i) {
-            return (object)[
-                'title' => 'El Futuro del Diseño Web en 2026: Tendencias Revolucionarias ' . $i,
-                'excerpt' => 'Descubre las nuevas tecnologías de IA y diseño generativo que están cambiando la forma en que construimos la web. Un análisis profundo de lo que viene.',
-                'slug' => 'demo-post-' . $i,
-                'published_at' => now()->subDays($i),
-                'author' => (object)['name' => 'Alex Design'],
-                'image' => null // Placeholder in view
-            ];
-        });
-        return view('posts.demo-styles', compact('posts'));
-    }
+        $category = $request->get('categoria');
+        $tag      = $request->get('tag');
+        $search   = $request->get('q');
 
-    public function index()
-    {
-        $posts = Post::published()
-            ->latest('published_at')
-            ->paginate(12);
+        $query = Post::published()->latest('published_at');
 
-        return view('posts.index', compact('posts'));
-    }
-
-    public function show($slug)
-    {
-        $post = Post::published()
-            ->where('slug', $slug)
-            ->firstOrFail();
-
-        // Get related posts (same author or recent)
-        $relatedPosts = Post::published()
-            ->where('id', '!=', $post->id)
-            ->where('user_id', $post->user_id)
-            ->latest('published_at')
-            ->take(3)
-            ->get();
-
-        // If not enough related posts, fill with recent ones
-        if ($relatedPosts->count() < 3) {
-            $additionalPosts = Post::published()
-                ->where('id', '!=', $post->id)
-                ->whereNotIn('id', $relatedPosts->pluck('id'))
-                ->latest('published_at')
-                ->take(3 - $relatedPosts->count())
-                ->get();
-
-            $relatedPosts = $relatedPosts->merge($additionalPosts);
+        if ($category) {
+            $query->byCategory($category);
         }
 
-        return view('posts.show', compact('post', 'relatedPosts'));
+        if ($tag) {
+            $query->whereJsonContains('tags', $tag);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('excerpt', 'like', "%{$search}%");
+            });
+        }
+
+        $featuredId = null;
+        $featured   = null;
+
+        if (!$category && !$tag && !$search) {
+            $featured   = Post::published()->featured()->latest('published_at')->first();
+            $featuredId = optional($featured)->id ?? 0;
+        }
+
+        $posts      = $query->when($featuredId, fn($q) => $q->where('id', '!=', $featuredId))->paginate(9);
+        $categories = Post::publishedCategories();
+
+        return view('blog.index', compact('posts', 'featured', 'categories', 'category', 'search'));
+    }
+
+    public function show(string $slug)
+    {
+        $post = Post::published()->where('slug', $slug)->firstOrFail();
+
+        // Increment views without touching updated_at
+        $post->incrementViews();
+
+        $related = $post->related(3);
+
+        return view('blog.show', compact('post', 'related'));
     }
 }

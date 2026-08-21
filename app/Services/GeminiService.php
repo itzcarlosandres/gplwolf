@@ -106,7 +106,7 @@ class GeminiService
                 }
                 
                 $lastTagPos = false;
-                $closingTags = ['</p>', '</h2>', '</h3>', '</ul>', '</div>'];
+                $closingTags = ['</p>', '</h2>', '</h3>', '</ul>', '</ol>', '</blockquote>', '</div>'];
                 foreach ($closingTags as $tag) {
                     $pos = strripos($text, $tag);
                     if ($pos !== false) {
@@ -315,4 +315,91 @@ PROMPT;
             throw $e;
         }
     }
-}
+
+    /**
+     * Generate a complete blog article with SEO optimization.
+     *
+     * @param  string $topic       Main topic/title idea
+     * @param  array  $keywords    Target SEO keywords
+     * @param  string $tone        Writing tone: informativo|tutorial|comparativa|opinion
+     * @param  int    $wordCount   Approximate target word count (400–1500)
+     * @return array{title, slug, excerpt, body, meta_title, meta_description, meta_keywords, category, tags}
+     */
+    public function generateBlogContent(string $topic, array $keywords = [], string $tone = 'informativo', int $wordCount = 800): array
+    {
+        if (!$this->enabled || !$this->apiKey) {
+            throw new \Exception('Gemini AI no está configurado. Por favor agrega tu API key en el archivo .env');
+        }
+
+        $keywordsStr  = implode(', ', $keywords);
+        $toneLabel    = match($tone) {
+            'tutorial'    => 'tutorial paso a paso práctico',
+            'comparativa' => 'comparativa objetiva y analítica',
+            'opinion'     => 'opinión experta y reflexiva',
+            default       => 'informativo y educativo',
+        };
+
+        // ── Prompt principal: HTML del artículo ──────────────────────────
+        $bodyPrompt = "Eres un experto en WordPress, plugins y temas GPL. Escribe un artículo de blog en ESPAÑOL, en tono {$toneLabel}, de aproximadamente {$wordCount} palabras, sobre el siguiente tema: \"{$topic}\".
+
+" . (!empty($keywords) ? "Palabras clave objetivo (úsalas de forma natural): {$keywordsStr}.\n\n" : "") . "
+REGLAS ESTRICTAS DE FORMATO — devuelve ÚNICAMENTE HTML sin bloques de código markdown:
+- NO uses <h1> (el título va separado).
+- Usa <h2> para las secciones principales (mínimo 3 h2).
+- Usa <h3> para subsecciones.
+- Usa <strong> para resaltar términos importantes (entre 5 y 10 veces).
+- Usa <ul><li> para listas (al menos 2 listas).
+- Usa <blockquote> para citas o tips destacados (al menos 1).
+- Usa <p> para párrafos.
+- El contenido debe ser útil, original y enfocado en SEO.
+- NO incluyas texto introductorio, solo el HTML puro del artículo.";
+
+        // ── Prompts secundarios ───────────────────────────────────────────
+        $titlePrompt = "Genera un título SEO atractivo en ESPAÑOL para un artículo de blog sobre: \"{$topic}\"." .
+            (!empty($keywords) ? " Keywords: {$keywordsStr}." : '') .
+            " El título debe tener entre 50 y 65 caracteres, ser llamativo y contener la keyword principal. Devuelve SOLO el título, sin comillas ni explicaciones.";
+
+        $excerptPrompt = "Escribe un extracto/resumen en ESPAÑOL de máximo 155 caracteres para un artículo sobre: \"{$topic}\". Debe ser persuasivo y contener la keyword principal. Devuelve SOLO el texto, sin comillas.";
+
+        $metaDescPrompt = "Escribe una meta description en ESPAÑOL de entre 140 y 155 caracteres para SEO, para un artículo sobre: \"{$topic}\"." .
+            (!empty($keywords) ? " Incluye la keyword: {$keywordsStr}." : '') .
+            " Devuelve SOLO la meta description, sin comillas.";
+
+        $tagsPrompt = "Genera 5 tags relevantes en ESPAÑOL para un artículo sobre: \"{$topic}\". Devuelve SOLO los tags separados por comas, sin explicaciones. Ejemplo: WordPress, Plugins, SEO, Tutorial, Elementor";
+
+        $categoryPrompt = "Clasifica el artículo sobre \"{$topic}\" en UNA de estas categorías: WordPress, SEO, Tutoriales, Plugins, Temas, WooCommerce, Elementor, Seguridad, Rendimiento, Noticias. Devuelve SOLO el nombre de la categoría, sin más texto.";
+
+        // ── Llamadas secuenciales a la API ────────────────────────────────
+        $bodyResponse     = Http::timeout(120)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($bodyPrompt, 6000));
+        $titleResponse    = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($titlePrompt, 100));
+        $excerptResponse  = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($excerptPrompt, 100));
+        $metaDescResponse = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($metaDescPrompt, 100));
+        $tagsResponse     = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($tagsPrompt, 80));
+        $categoryResponse = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($categoryPrompt, 20));
+
+        $title    = trim($this->parseResponse($titleResponse));
+        $excerpt  = trim($this->parseResponse($excerptResponse));
+        $body     = trim($this->parseResponse($bodyResponse));
+        $metaDesc = trim($this->parseResponse($metaDescResponse));
+        $tagsRaw  = trim($this->parseResponse($tagsResponse));
+        $category = trim($this->parseResponse($categoryResponse));
+
+        // Clean possible markdown code fences from body
+        $body = preg_replace('/^```html?\s*/i', '', $body);
+        $body = preg_replace('/```\s*$/', '', $body);
+
+        $tags = array_map('trim', explode(',', $tagsRaw));
+
+        return [
+            'title'             => $title ?: $topic,
+            'slug'              => \Illuminate\Support\Str::slug($title ?: $topic),
+            'excerpt'           => $excerpt,
+            'body'              => $body,
+            'meta_title'        => $title ?: $topic,
+            'meta_description'  => $metaDesc ?: $excerpt,
+            'meta_keywords'     => $tagsRaw,
+            'category'          => $category,
+            'tags'              => $tags,
+        ];
+    }
+}

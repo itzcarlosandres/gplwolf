@@ -173,6 +173,10 @@
                         <i class="fas fa-paper-plane w-6 {{ request()->routeIs('admin.newsletter.*') ? 'text-[#FF2121]' : 'group-hover:text-[#FF2121]' }}"></i>
                         <span x-show="sidebarOpen" class="ml-3 font-medium">Newsletter</span>
                     </a>
+                    <a href="{{ route('admin.blog.index') }}" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/5 group {{ request()->routeIs('admin.blog.*') ? 'active-link' : 'text-gray-400 hover:text-white' }}">
+                        <i class="fas fa-newspaper w-6 {{ request()->routeIs('admin.blog.*') ? 'text-[#FF2121]' : 'group-hover:text-[#FF2121]' }}"></i>
+                        <span x-show="sidebarOpen" class="ml-3 font-medium">Blog</span>
+                    </a>
                 </div>
 
                 <!-- Usuarios -->
