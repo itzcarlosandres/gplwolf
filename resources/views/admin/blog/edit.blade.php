@@ -63,19 +63,23 @@
 
         {{-- IA Panel --}}
         <div class="bg-gradient-to-br from-[#FF2121]/[0.05] to-transparent border border-[#FF2121]/15 rounded-2xl p-5">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between cursor-pointer" @click="aiOpen = !aiOpen">
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 bg-[#FF2121] rounded-lg flex items-center justify-center">
                         <i class="fas fa-magic text-white text-[10px]"></i>
                     </div>
-                    <p class="text-white font-black text-sm">Regenerar con IA</p>
+                    <div>
+                        <p class="text-white font-black text-sm">Regenerar con IA</p>
+                        <p class="text-gray-600 text-[10px]">Gemini genera el artículo completo + SEO</p>
+                    </div>
                 </div>
-                <button type="button" @click="aiOpen = !aiOpen"
-                        class="text-[10px] font-black text-[#FF2121]">
-                    <i class="fas fa-chevron-down" :class="aiOpen ? 'rotate-180' : ''"></i>
+                <button type="button"
+                        class="text-[10px] font-black text-[#FF2121] flex items-center gap-1.5 bg-[#FF2121]/10 px-2.5 py-1 rounded-lg border border-[#FF2121]/20">
+                    <span x-text="aiOpen ? 'Ocultar' : 'Abrir Asistente'"></span>
+                    <i class="fas fa-chevron-down transition-transform" :class="aiOpen ? 'rotate-180' : ''"></i>
                 </button>
             </div>
-            <div x-show="aiOpen" x-collapse class="mt-4 space-y-3">
+            <div x-show="aiOpen" x-transition class="mt-4 pt-4 border-t border-[#FF2121]/10 space-y-3">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-[9px] font-black text-gray-600 uppercase mb-1 block">Tema</label>
@@ -106,13 +110,13 @@
                         </select>
                     </div>
                 </div>
-                <button type="button" @click="generateAi()" :disabled="aiLoading"
-                        class="w-full bg-[#FF2121] text-white font-black text-xs py-2.5 rounded-xl hover:bg-[#e01d1d] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                <button type="button" @click="generateAi()" :disabled="aiLoading || (!ai.topic && !titleVal)"
+                        class="w-full bg-[#FF2121] text-white font-black text-xs py-2.5 rounded-xl hover:bg-[#e01d1d] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#FF2121]/20">
                     <i class="fas fa-magic" :class="aiLoading?'animate-spin':''"></i>
-                    <span x-text="aiLoading ? 'Generando...' : 'Regenerar Contenido'"></span>
+                    <span x-text="aiLoading ? 'Generando con Gemini AI...' : 'Regenerar Contenido con IA'"></span>
                 </button>
-                <div x-show="aiError" class="text-rose-400 text-xs" x-text="aiError"></div>
-                <div x-show="aiSuccess" class="text-emerald-400 text-xs"><i class="fas fa-check mr-1"></i> Contenido regenerado.</div>
+                <div x-show="aiError" class="text-rose-400 text-xs bg-rose-500/10 border border-rose-500/20 rounded-xl p-3" x-text="aiError"></div>
+                <div x-show="aiSuccess" class="text-emerald-400 text-xs bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3"><i class="fas fa-check mr-1"></i> Contenido regenerado con IA.</div>
             </div>
         </div>
 
@@ -273,9 +277,8 @@
 .blog-prose-editor blockquote { border-left:3px solid #FF2121; padding:.75rem 1rem; background:rgba(255,33,33,.06); margin:1rem 0; color:rgba(255,255,255,.8); font-style:italic; border-radius:0 .5rem .5rem 0; }
 </style>
 
-@push('scripts')
 <script>
-function blogEditor() {
+window.blogEditor = function() {
     return {
         titleVal: @js(old('title', $post->title)),
         slugPreview: @js(old('slug', $post->slug)),
@@ -300,14 +303,17 @@ function blogEditor() {
         ],
         init() {
             this.$nextTick(() => {
-                this.$refs.bodyInput.value = this.$refs.editor.innerHTML;
-                this.calcSeoScore();
+                if (this.$refs.editor) {
+                    this.$refs.bodyInput.value = this.$refs.editor.innerHTML;
+                    this.calcSeoScore();
+                }
             });
         },
         updateSlug() {
             if (!this.slugEdited) this.slugPreview = this.toSlug(this.titleVal);
         },
         toSlug(str) {
+            if (!str) return '';
             return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
         },
         execCmd(cmd, val) {
@@ -320,8 +326,8 @@ function blogEditor() {
             this.calcSeoScore();
         },
         calcSeoScore() {
-            const html = this.$refs.editor.innerHTML;
-            const text = this.$refs.editor.innerText || '';
+            const html = this.$refs.editor ? this.$refs.editor.innerHTML : '';
+            const text = this.$refs.editor ? (this.$refs.editor.innerText || '') : '';
             const wc = text.trim().split(/\s+/).filter(w=>w).length;
             const c = {};
             let t = 0;
@@ -334,18 +340,27 @@ function blogEditor() {
             c.lists={passed:l>=1,message:l+' lista(s)',points:l>=2?20:l>=1?10:0}; t+=c.lists.points;
             const bq=(html.match(/<blockquote/gi)||[]).length;
             c.blockquote={passed:bq>=1,message:bq+' cita(s)',points:bq>=1?10:0}; t+=c.blockquote.points;
-            c.metaDesc={passed:this.metaDescVal.length>=120&&this.metaDescVal.length<=160,message:'Meta: '+this.metaDescVal.length+' ch',points:this.metaDescVal.length>=120&&this.metaDescVal.length<=160?10:5}; t+=c.metaDesc.points;
+            const mdLen = this.metaDescVal ? this.metaDescVal.length : 0;
+            c.metaDesc={passed:mdLen>=120&&mdLen<=160,message:'Meta: '+mdLen+' ch',points:mdLen>=120&&mdLen<=160?10:5}; t+=c.metaDesc.points;
             this.seoChecks=c; this.seoScore=Math.min(100,t);
         },
         async generateAi() {
             const topic = this.ai.topic || this.titleVal;
-            if (!topic) return;
+            if (!topic) {
+                this.aiError = 'Por favor escribe el tema o título del artículo primero.';
+                return;
+            }
             this.aiLoading=true; this.aiError=''; this.aiSuccess=false;
             try {
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
                 const res = await fetch('{{ route("admin.blog.ai.generate") }}', {
                     method:'POST',
-                    headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},
-                    body:JSON.stringify({topic,keywords:this.ai.keywords,tone:this.ai.tone,word_count:parseInt(this.ai.wordCount)})
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json',
+                        'X-CSRF-TOKEN':token
+                    },
+                    body:JSON.stringify({topic,keywords:this.ai.keywords,tone:this.ai.tone,word_count:parseInt(this.ai.wordCount || 700)})
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -355,13 +370,12 @@ function blogEditor() {
                     this.metaTitleVal=c.meta_title; this.metaDescVal=c.meta_description;
                     this.$refs.editor.innerHTML=c.body; this.$refs.bodyInput.value=c.body;
                     this.onEditorChange(); this.aiSuccess=true; this.aiOpen=false;
-                } else { this.aiError=data.message||'Error'; }
+                } else { this.aiError=data.message||'Error al generar contenido.'; }
             } catch(e) { this.aiError='Error: '+e.message; }
             finally { this.aiLoading=false; }
         }
-    }
-}
+    };
+};
 </script>
-@endpush
 
 @endsection

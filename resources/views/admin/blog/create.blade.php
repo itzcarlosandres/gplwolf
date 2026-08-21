@@ -68,7 +68,7 @@
 
         {{-- IA Generator --}}
         <div class="bg-gradient-to-br from-[#FF2121]/[0.06] to-transparent border border-[#FF2121]/15 rounded-2xl p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between cursor-pointer" @click="aiOpen = !aiOpen">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-[#FF2121] rounded-xl flex items-center justify-center">
                         <i class="fas fa-magic text-white text-xs"></i>
@@ -78,19 +78,19 @@
                         <p class="text-gray-600 text-[10px]">Gemini genera el artículo completo + SEO automáticamente</p>
                     </div>
                 </div>
-                <button type="button" @click="aiOpen = !aiOpen"
-                        class="text-[10px] font-black text-[#FF2121] flex items-center gap-1">
-                    <span x-text="aiOpen ? 'Ocultar' : 'Abrir'"></span>
+                <button type="button"
+                        class="text-[10px] font-black text-[#FF2121] flex items-center gap-1.5 bg-[#FF2121]/10 px-3 py-1.5 rounded-lg border border-[#FF2121]/20">
+                    <span x-text="aiOpen ? 'Ocultar' : 'Abrir Asistente'"></span>
                     <i class="fas fa-chevron-down transition-transform" :class="aiOpen ? 'rotate-180' : ''"></i>
                 </button>
             </div>
 
-            <div x-show="aiOpen" x-collapse class="space-y-4">
+            <div x-show="aiOpen" x-transition class="space-y-4 mt-5 pt-5 border-t border-[#FF2121]/10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Tema del artículo</label>
                         <input type="text" x-model="ai.topic"
-                               placeholder="Ej: Mejores plugins SEO para WordPress 2026"
+                               :placeholder="titleVal ? titleVal : 'Ej: Mejores plugins SEO para WordPress 2026'"
                                class="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-3 py-2.5 text-white text-xs placeholder:text-gray-700 focus:outline-none focus:border-[#FF2121]/40">
                     </div>
                     <div>
@@ -122,10 +122,10 @@
                 </div>
 
                 <button type="button" @click="generateAi()"
-                        :disabled="aiLoading || !ai.topic"
-                        class="w-full flex items-center justify-center gap-2 bg-[#FF2121] text-white font-black text-sm py-3 rounded-xl hover:bg-[#e01d1d] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        :disabled="aiLoading || (!ai.topic && !titleVal)"
+                        class="w-full flex items-center justify-center gap-2 bg-[#FF2121] text-white font-black text-sm py-3 rounded-xl hover:bg-[#e01d1d] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#FF2121]/20">
                     <i class="fas fa-magic" :class="aiLoading ? 'animate-spin' : ''"></i>
-                    <span x-text="aiLoading ? 'Generando con Gemini AI... (puede tardar ~30s)' : 'Generar Artículo Completo'"></span>
+                    <span x-text="aiLoading ? 'Generando con Gemini AI... (puede tardar ~30s)' : 'Generar Artículo Completo con IA'"></span>
                 </button>
 
                 <div x-show="aiError" class="text-rose-400 text-xs bg-rose-500/10 border border-rose-500/20 rounded-xl p-3" x-text="aiError"></div>
@@ -346,9 +346,8 @@
 .blog-prose-editor blockquote { border-left:3px solid #FF2121; padding:.75rem 1rem; background:rgba(255,33,33,.06); margin:1rem 0; color:rgba(255,255,255,.8); font-style:italic; border-radius:0 .5rem .5rem 0; }
 </style>
 
-@push('scripts')
 <script>
-function blogEditor() {
+window.blogEditor = function() {
     return {
         titleVal: '{{ old("title") }}',
         slugPreview: '{{ old("slug") }}',
@@ -377,6 +376,12 @@ function blogEditor() {
 
         init() {
             if (this.titleVal) this.slugPreview = this.toSlug(this.titleVal);
+            this.$nextTick(() => {
+                if (this.$refs.editor) {
+                    this.$refs.bodyInput.value = this.$refs.editor.innerHTML;
+                    this.calcSeoScore();
+                }
+            });
         },
 
         updateSlug() {
@@ -384,6 +389,7 @@ function blogEditor() {
         },
 
         toSlug(str) {
+            if (!str) return '';
             return str.toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/[^a-z0-9\s-]/g, '')
@@ -407,8 +413,8 @@ function blogEditor() {
         },
 
         calcSeoScore() {
-            const html = this.$refs.editor.innerHTML;
-            const text = this.$refs.editor.innerText || '';
+            const html = this.$refs.editor ? this.$refs.editor.innerHTML : '';
+            const text = this.$refs.editor ? (this.$refs.editor.innerText || '') : '';
             const wordCount = text.trim().split(/\s+/).filter(w => w).length;
             const checks = {};
             let total = 0;
@@ -438,7 +444,8 @@ function blogEditor() {
             total += checks.blockquote.points;
 
             // Meta desc
-            checks.metaDesc = { passed: this.metaDescVal.length>=120&&this.metaDescVal.length<=160, message: 'Meta desc: '+this.metaDescVal.length+' chars', points: this.metaDescVal.length>=120&&this.metaDescVal.length<=160?10:5 };
+            const mdLen = this.metaDescVal ? this.metaDescVal.length : 0;
+            checks.metaDesc = { passed: mdLen>=120&&mdLen<=160, message: 'Meta desc: '+mdLen+' chars', points: mdLen>=120&&mdLen<=160?10:5 };
             total += checks.metaDesc.points;
 
             this.seoChecks = checks;
@@ -446,23 +453,30 @@ function blogEditor() {
         },
 
         async generateAi() {
-            if (!this.ai.topic) return;
+            const topic = this.ai.topic || this.titleVal;
+            if (!topic) {
+                this.aiError = 'Por favor escribe el tema o título del artículo primero.';
+                return;
+            }
+
             this.aiLoading = true;
             this.aiError = '';
             this.aiSuccess = false;
 
             try {
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
                 const res = await fetch('{{ route("admin.blog.ai.generate") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
                     },
                     body: JSON.stringify({
-                        topic: this.ai.topic,
+                        topic: topic,
                         keywords: this.ai.keywords,
                         tone: this.ai.tone,
-                        word_count: parseInt(this.ai.wordCount),
+                        word_count: parseInt(this.ai.wordCount || 700),
                     }),
                 });
 
@@ -486,7 +500,7 @@ function blogEditor() {
                     this.aiSuccess = true;
                     this.aiOpen    = false;
                 } else {
-                    this.aiError = data.message || 'Error desconocido';
+                    this.aiError = data.message || 'Error desconocido al generar contenido.';
                 }
             } catch (e) {
                 this.aiError = 'Error de conexión: ' + e.message;
@@ -494,9 +508,8 @@ function blogEditor() {
                 this.aiLoading = false;
             }
         }
-    }
-}
+    };
+};
 </script>
-@endpush
 
 @endsection
