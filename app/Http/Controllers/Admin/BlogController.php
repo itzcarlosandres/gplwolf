@@ -57,7 +57,29 @@ class BlogController extends Controller
 
         $categories = Post::whereNotNull('category')->distinct()->pluck('category');
 
-        return view('admin.blog.index', compact('posts', 'stats', 'categories', 'status', 'category', 'search'));
+        $seoSettings = [
+            'blog_seo_title'       => \App\Models\Setting::where('key', 'blog_seo_title')->value('value') ?: 'Blog de WordPress, Plugins y Temas GPL — GPLWolf',
+            'blog_seo_description' => \App\Models\Setting::where('key', 'blog_seo_description')->value('value') ?: 'Explora los mejores tutoriales, guías y recursos sobre WordPress, plugins y temas GPL premium. Aprende a optimizar y acelerar tu sitio web paso a paso.',
+            'blog_seo_keywords'    => \App\Models\Setting::where('key', 'blog_seo_keywords')->value('value') ?: 'blog wordpress, tutoriales wordpress, plugins premium gpl, temas wordpress, elementor pro, woocommerce tips',
+        ];
+
+        return view('admin.blog.index', compact('posts', 'stats', 'categories', 'status', 'category', 'search', 'seoSettings'));
+    }
+
+    // ── Update Blog SEO Settings ───────────────────────────────────────────
+    public function updateSeoSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'blog_seo_title'       => 'required|string|max:80',
+            'blog_seo_description' => 'required|string|max:180',
+            'blog_seo_keywords'    => 'nullable|string|max:300',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value ?? '']);
+        }
+
+        return back()->with('success', 'Configuración SEO del Blog guardada correctamente.');
     }
 
     // ── Create ─────────────────────────────────────────────────────────────

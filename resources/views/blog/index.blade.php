@@ -1,8 +1,8 @@
 @extends('layouts.frontend')
 
-@section('meta_title', 'Blog — ' . ($globalSettings['site_name'] ?? 'GPLWolf'))
-@section('meta_description', 'Tutoriales, guías y noticias sobre WordPress, plugins y temas GPL. Aprende a sacar el máximo provecho de tu sitio web.')
-@section('meta_keywords', 'blog wordpress, tutoriales wordpress, plugins premium, temas wordpress, elementor, woocommerce')
+@section('meta_title', $seoTitle ?? 'Blog de WordPress, Plugins y Temas GPL — GPLWolf')
+@section('meta_description', $seoDescription ?? 'Explora los mejores tutoriales, guías y recursos sobre WordPress, plugins y temas GPL premium. Aprende a optimizar y acelerar tu sitio web paso a paso.')
+@section('meta_keywords', $seoKeywords ?? 'blog wordpress, tutoriales wordpress, plugins premium gpl, temas wordpress, elementor pro, woocommerce tips')
 
 @section('content')
 

@@ -41,7 +41,11 @@ class PostController extends Controller
         $posts      = $query->when($featuredId, fn($q) => $q->where('id', '!=', $featuredId))->paginate(9);
         $categories = Post::publishedCategories();
 
-        return view('blog.index', compact('posts', 'featured', 'categories', 'category', 'search'));
+        $seoTitle       = \App\Models\Setting::where('key', 'blog_seo_title')->value('value') ?: 'Blog de WordPress, Plugins y Temas GPL — GPLWolf';
+        $seoDescription = \App\Models\Setting::where('key', 'blog_seo_description')->value('value') ?: 'Explora los mejores tutoriales, guías y recursos sobre WordPress, plugins y temas GPL premium. Aprende a optimizar y acelerar tu sitio web paso a paso.';
+        $seoKeywords    = \App\Models\Setting::where('key', 'blog_seo_keywords')->value('value') ?: 'blog wordpress, tutoriales wordpress, plugins premium gpl, temas wordpress, elementor pro, woocommerce tips';
+
+        return view('blog.index', compact('posts', 'featured', 'categories', 'category', 'search', 'seoTitle', 'seoDescription', 'seoKeywords'));
     }
 
     public function show(string $slug)

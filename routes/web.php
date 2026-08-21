@@ -204,6 +204,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('blog/ai-generate', [\App\Http\Controllers\Admin\BlogController::class, 'generateAiContent'])
         ->name('blog.ai.generate')
         ->middleware('throttle:10,1');
+    Route::post('blog/seo-settings', [\App\Http\Controllers\Admin\BlogController::class, 'updateSeoSettings'])->name('blog.seo.update');
 
     // User Memberships Management
     Route::resource('memberships', \App\Http\Controllers\Admin\MembershipController::class);

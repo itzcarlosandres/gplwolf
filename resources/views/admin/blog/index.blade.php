@@ -4,6 +4,13 @@
 
 @section('content')
 
+<div x-data="{
+    seoModal: false,
+    seoTitle: @js($seoSettings['blog_seo_title'] ?? ''),
+    seoDesc: @js($seoSettings['blog_seo_description'] ?? ''),
+    seoKeys: @js($seoSettings['blog_seo_keywords'] ?? '')
+}">
+
 {{-- Header --}}
 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
     <div>
@@ -15,7 +22,11 @@
         </h1>
         <p class="text-gray-500 text-sm mt-1 ml-12">Crea, edita y publica artículos con ayuda de IA.</p>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap">
+        <button type="button" @click="seoModal = true"
+                class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#FF2121]/30 rounded-xl text-xs font-black text-gray-300 hover:text-white transition-all flex items-center gap-2">
+            <i class="fas fa-search text-emerald-400"></i> Configuración SEO
+        </button>
         <a href="{{ route('blog.index') }}" target="_blank"
            class="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black text-gray-300 hover:text-white transition-all flex items-center gap-2">
             <i class="fas fa-external-link-alt text-gray-500"></i> Ver Blog
@@ -215,5 +226,108 @@
         </div>
     @endif
 </div>
+
+{{-- ══ MODAL: CONFIGURACIÓN SEO DEL BLOG ════════════════════════════════════ --}}
+<div x-show="seoModal"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+     style="display: none;">
+
+    <div @click.away="seoModal = false"
+         class="bg-[#111111] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto">
+
+        {{-- Modal Header --}}
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-400">
+                    <i class="fas fa-search text-base"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black text-white">SEO de la Página Principal del Blog</h3>
+                    <p class="text-xs text-gray-500">Configura el título y descripción que Google mostrará para <span class="text-gray-300">/blog</span></p>
+                </div>
+            </div>
+            <button type="button" @click="seoModal = false" class="text-gray-500 hover:text-white transition-colors w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/5">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        {{-- Form --}}
+        <form action="{{ route('admin.blog.seo.update') }}" method="POST" class="space-y-5">
+            @csrf
+
+            {{-- Meta Title --}}
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider">
+                        Título SEO (Meta Title)
+                    </label>
+                    <span class="text-[10px] font-bold"
+                          :class="seoTitle.length >= 45 && seoTitle.length <= 65 ? 'text-emerald-400' : 'text-amber-400'"
+                          x-text="seoTitle.length + ' / 60 chars (ideal: 50-60)'"></span>
+                </div>
+                <input type="text" name="blog_seo_title" x-model="seoTitle" maxlength="80" required
+                       class="w-full bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FF2121]/50 transition-colors"
+                       placeholder="Ej: Blog de WordPress, Plugins y Temas GPL — GPLWolf">
+            </div>
+
+            {{-- Meta Description --}}
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider">
+                        Descripción SEO (Meta Description)
+                    </label>
+                    <span class="text-[10px] font-bold"
+                          :class="seoDesc.length >= 135 && seoDesc.length <= 160 ? 'text-emerald-400' : 'text-amber-400'"
+                          x-text="seoDesc.length + ' / 160 chars (ideal: 140-160)'"></span>
+                </div>
+                <textarea name="blog_seo_description" x-model="seoDesc" rows="3" maxlength="180" required
+                          class="w-full bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FF2121]/50 transition-colors resize-none"
+                          placeholder="Ej: Explora los mejores tutoriales, guías y recursos sobre WordPress, plugins y temas GPL premium. Aprende a optimizar tu sitio web."></textarea>
+            </div>
+
+            {{-- Meta Keywords --}}
+            <div>
+                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider mb-2">
+                    Palabras Clave SEO (Keywords)
+                </label>
+                <input type="text" name="blog_seo_keywords" x-model="seoKeys"
+                       class="w-full bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FF2121]/50 transition-colors"
+                       placeholder="blog wordpress, tutoriales wordpress, plugins gpl, temas wordpress">
+            </div>
+
+            {{-- Live Google Search Preview --}}
+            <div class="p-4 bg-[#0a0a0a] border border-white/10 rounded-2xl space-y-1">
+                <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                    <i class="fab fa-google text-blue-400"></i> Vista previa en Google (SERP)
+                </p>
+                <div class="text-[#8ab4f8] text-sm font-medium hover:underline cursor-pointer truncate"
+                     x-text="seoTitle || 'Título del Blog'"></div>
+                <div class="text-[#4caf50] text-[11px] font-mono">https://gplwolf.com/blog</div>
+                <div class="text-[#bdc1c6] text-xs leading-relaxed line-clamp-2"
+                     x-text="seoDesc || 'Descripción del blog para motores de búsqueda...'"></div>
+            </div>
+
+            {{-- Modal Actions --}}
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                <button type="button" @click="seoModal = false"
+                        class="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl text-xs font-black transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-6 py-2.5 bg-[#FF2121] hover:bg-[#e01d1d] text-white rounded-xl text-xs font-black transition-all shadow-lg shadow-[#FF2121]/20 flex items-center gap-2">
+                    <i class="fas fa-save"></i> Guardar Configuración SEO
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>{{-- /x-data --}}
 
 @endsection
