@@ -63,10 +63,10 @@
         <div class="h-5 w-px bg-white/[0.06]"></div>
         {{-- Category filter --}}
         <select name="category" onchange="this.form.submit()"
-                class="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[11px] text-gray-400 focus:outline-none focus:border-[#FF2121]/40">
-            <option value="">Todas las categorías</option>
+                class="bg-[#161616] border border-white/10 rounded-xl px-3 py-1.5 text-[11px] text-gray-300 focus:outline-none focus:border-[#FF2121]/40">
+            <option class="bg-[#161616] text-gray-200 py-1" value="">Todas las categorías</option>
             @foreach($categories as $cat)
-                <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                <option class="bg-[#161616] text-gray-200 py-1" value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
             @endforeach
         </select>
         {{-- Search --}}

@@ -240,7 +240,7 @@
 {{-- ══ RELATED POSTS ═══════════════════════════════════════════════════════ --}}
 @if($related->count() > 0)
 <section class="bg-[#0a0a0a] border-t border-white/[0.04] py-16">
-    <div class="max-width mx-auto px-6">
+    <div class="max-w-5xl mx-auto px-6">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-1 h-6 bg-[#FF2121] rounded-full"></div>
             <h2 class="text-xl font-black text-white">Artículos Relacionados</h2>

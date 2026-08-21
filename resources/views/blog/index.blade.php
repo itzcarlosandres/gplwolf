@@ -12,7 +12,7 @@
     {{-- Glow --}}
     <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-[#FF2121]/[0.05] blur-[120px] rounded-full pointer-events-none"></div>
 
-    <div class="max-width mx-auto px-6 py-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div class="max-w-6xl mx-auto px-6 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         {{-- Text --}}
         <div class="space-y-5">
             <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#FF2121]/10 border border-[#FF2121]/20 rounded-full">
@@ -77,7 +77,7 @@
 
 {{-- ══ FILTERS ════════════════════════════════════════════════════════════════ --}}
 <div class="bg-[#0f0f0f] border-b border-white/[0.04] sticky top-0 z-30 backdrop-blur-sm">
-    <div class="max-width mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6">
         <div class="flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
             <a href="{{ route('blog.index') }}"
                class="flex-shrink-0 px-4 py-1.5 rounded-full text-[11px] font-black transition-all
@@ -106,8 +106,8 @@
 </div>
 
 {{-- ══ GRID ════════════════════════════════════════════════════════════════════ --}}
-<section class="bg-[#0a0a0a] py-14">
-    <div class="max-width mx-auto px-6">
+<section class="bg-[#0a0a0a] py-12">
+    <div class="max-w-6xl mx-auto px-6">
 
         {{-- Header --}}
         <div class="flex items-center justify-between mb-8">
@@ -213,7 +213,7 @@
 
 {{-- ══ NEWSLETTER CTA ══════════════════════════════════════════════════════════ --}}
 <section class="bg-[#0a0a0a] pb-20">
-    <div class="max-width mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6">
         <div class="relative rounded-3xl overflow-hidden border border-[#FF2121]/15 p-12 text-center"
              style="background: linear-gradient(135deg, rgba(255,33,33,0.05) 0%, rgba(255,33,33,0.02) 100%);">
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-[#FF2121]/[0.06] blur-[80px] rounded-full pointer-events-none"></div>

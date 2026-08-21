@@ -93,20 +93,20 @@
                     </div>
                     <div>
                         <label class="text-[9px] font-black text-gray-600 uppercase mb-1 block">Tono</label>
-                        <select x-model="ai.tone" class="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-3 py-2 text-white text-xs focus:outline-none">
-                            <option value="informativo">Informativo</option>
-                            <option value="tutorial">Tutorial</option>
-                            <option value="comparativa">Comparativa</option>
-                            <option value="opinion">Opinión</option>
+                        <select x-model="ai.tone" class="w-full bg-[#161616] border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF2121]/40">
+                            <option class="bg-[#161616] text-gray-200 py-1" value="informativo">Informativo</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="tutorial">Tutorial</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="comparativa">Comparativa</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="opinion">Opinión</option>
                         </select>
                     </div>
                     <div>
                         <label class="text-[9px] font-black text-gray-600 uppercase mb-1 block">Palabras</label>
-                        <select x-model="ai.wordCount" class="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-3 py-2 text-white text-xs focus:outline-none">
-                            <option value="400">~400</option>
-                            <option value="700" selected>~700</option>
-                            <option value="1000">~1000</option>
-                            <option value="1500">~1500</option>
+                        <select x-model="ai.wordCount" class="w-full bg-[#161616] border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF2121]/40">
+                            <option class="bg-[#161616] text-gray-200 py-1" value="400">~400</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="700" selected>~700</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="1000">~1000</option>
+                            <option class="bg-[#161616] text-gray-200 py-1" value="1500">~1500</option>
                         </select>
                     </div>
                 </div>
