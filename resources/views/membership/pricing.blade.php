@@ -37,13 +37,75 @@
             Impulsa tus Sitios Web con<br>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 drop-shadow-sm">Membresía Premium</span>
         </h1>
-        <p class="text-gray-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed mb-12">
+        <p class="text-gray-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed mb-10">
             Descarga miles de themes y plugins premium de WordPress con licencia GPL original, archivos 100% limpios y actualizaciones automáticas.
         </p>
 
+        <!-- ══ HORIZONTAL TRIAL BANNER (100% FREE - NO PAYMENT REQUIRED) ══ -->
+        @if($trialPlan)
+        <div class="max-w-6xl mx-auto mb-14 text-left">
+            <div class="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#1a1308] via-[#111111] to-[#1a1308] border border-amber-500/30 p-6 md:p-8 shadow-2xl shadow-amber-500/10 group">
+                <!-- Ambient Gold Glow -->
+                <div class="absolute -right-20 -top-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-all duration-700"></div>
+                <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+                    <!-- Left Info -->
+                    <div class="space-y-3 max-w-2xl">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-yellow-400 text-black shadow-md shadow-amber-500/20">
+                                <i class="fas fa-bolt"></i> 100% Gratis — Sin Pagos
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold text-amber-300/90 bg-amber-500/10 border border-amber-500/20">
+                                <i class="fas fa-credit-card"></i> Sin tarjeta de crédito
+                            </span>
+                        </div>
+
+                        <h3 class="text-2xl md:text-3xl font-black text-white tracking-tight">
+                            ¿Primera vez en GPLWolf? <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">Prueba 7 Días Gratis</span>
+                        </h3>
+
+                        <p class="text-gray-400 text-xs md:text-sm leading-relaxed">
+                            Descarga hasta <strong>3 plugins o temas diarios</strong> durante 7 días para probar la plataforma. Acceso instantáneo a +5,000 archivos GPL limpios y verificados. Sin cargos ocultos ni renovaciones obligatorias.
+                        </p>
+
+                        <!-- Feature tags -->
+                        <div class="flex items-center gap-4 text-xs font-bold text-gray-300 pt-1 flex-wrap">
+                            <span class="flex items-center gap-1.5 text-emerald-400">
+                                <i class="fas fa-check-circle"></i> 3 descargas al día
+                            </span>
+                            <span class="flex items-center gap-1.5 text-emerald-400">
+                                <i class="fas fa-check-circle"></i> 1 dominio activo
+                            </span>
+                            <span class="flex items-center gap-1.5 text-emerald-400">
+                                <i class="fas fa-check-circle"></i> Sin compromiso de pago
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Right CTA Button -->
+                    <div class="shrink-0 w-full lg:w-auto text-center lg:text-right">
+                        <a href="{{ route('membership.claim-trial') }}" 
+                           class="inline-flex items-center justify-center gap-3 w-full lg:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-amber-500/20 hover:scale-105 hover:shadow-amber-500/40">
+                            <i class="fas fa-rocket text-base"></i>
+                            <span>Activar Prueba Gratis (1-Clic)</span>
+                        </a>
+                        <p class="text-[10px] text-gray-500 mt-2 font-medium">Activación inmediata · Sin cobros futuros</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Plans Grid Header -->
+        <div class="mb-8">
+            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">O Elige Tu Plan Premium de Acceso Ilimitado</h2>
+            <p class="text-xs md:text-sm text-gray-500 mt-1">Para desarrolladores y agencias que necesitan descargas diarias ilimitadas y soporte prioritario.</p>
+        </div>
+
         <!-- Plans Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch text-left">
-            @forelse($plans as $plan)
+            @forelse($plans->filter(fn($p) => $p->slug !== 'prueba-7-dias' && $p->duration !== 'trial') as $plan)
                 @php
                     $isFeatured = $plan->is_featured;
                     $isTrial = $plan->duration === 'trial' || $plan->slug === 'prueba-7-dias';

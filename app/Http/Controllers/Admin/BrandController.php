@@ -11,26 +11,32 @@ use Illuminate\Support\Str;
 class BrandController extends Controller
 {
     /**
-     * Display a listing of brands & promo ads.
+     * Display a listing of brands & promo ads separately.
      */
     public function index()
     {
-        $brands = Brand::orderBy('sort_order', 'asc')->orderBy('created_at', 'asc')->get();
+        $brands = Brand::where('is_promo', false)->orderBy('sort_order', 'asc')->orderBy('name', 'asc')->get();
+        $promos = Brand::where('is_promo', true)->orderBy('sort_order', 'asc')->orderBy('name', 'asc')->get();
         
         $brandsEnabled = Setting::where('key', 'home_brands_enabled')->value('value');
         $brandsEnabled = ($brandsEnabled === null || $brandsEnabled === '1' || $brandsEnabled === 'true' || $brandsEnabled === true);
         
-        $brandsTitle = Setting::where('key', 'home_brands_title')->value('value') ?: 'Marcas de Confianza';
+        $promosEnabled = Setting::where('key', 'home_promos_enabled')->value('value');
+        $promosEnabled = ($promosEnabled === null || $promosEnabled === '1' || $promosEnabled === 'true' || $promosEnabled === true);
 
-        return view('admin.brands.index', compact('brands', 'brandsEnabled', 'brandsTitle'));
+        $brandsTitle = Setting::where('key', 'home_brands_title')->value('value') ?: 'Marcas de Confianza';
+        $promosTitle = Setting::where('key', 'home_promos_title')->value('value') ?: 'Ofertas & Promociones';
+
+        return view('admin.brands.index', compact('brands', 'promos', 'brandsEnabled', 'promosEnabled', 'brandsTitle', 'promosTitle'));
     }
 
     /**
      * Show the form for creating a new brand/promo.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('admin.brands.create');
+        $defaultType = $request->query('type', 'brand'); // 'brand' or 'promo'
+        return view('admin.brands.create', compact('defaultType'));
     }
 
     /**
@@ -58,7 +64,7 @@ class BrandController extends Controller
 
         $validated['is_promo'] = $request->boolean('is_promo');
         $validated['is_active'] = $request->boolean('is_active');
-        $validated['sort_order'] = $validated['sort_order'] ?? (Brand::max('sort_order') + 1);
+        $validated['sort_order'] = $validated['sort_order'] ?? (Brand::where('is_promo', $validated['is_promo'])->max('sort_order') + 1);
         $validated['highlight_color'] = $validated['highlight_color'] ?? 'amber';
 
         Brand::create($validated);
@@ -128,7 +134,7 @@ class BrandController extends Controller
     }
 
     /**
-     * Reorder brands via Drag & Drop (SortableJS).
+     * Reorder brands or promos via Drag & Drop (SortableJS).
      */
     public function reorder(Request $request)
     {
@@ -143,26 +149,36 @@ class BrandController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Orden de marcas y anuncios actualizado correctamente.',
+            'message' => 'Orden actualizado correctamente.',
         ]);
     }
 
     /**
-     * Update global section settings (enable/disable, title).
+     * Update global section settings (enable/disable, title) for brands or promos.
      */
     public function updateSettings(Request $request)
     {
-        $enabled = $request->boolean('home_brands_enabled');
-        $title = $request->input('home_brands_title', 'Marcas de Confianza');
+        if ($request->has('home_brands_enabled')) {
+            $enabled = $request->boolean('home_brands_enabled');
+            Setting::updateOrCreate(['key' => 'home_brands_enabled'], ['value' => $enabled ? '1' : '0']);
+        }
 
-        Setting::updateOrCreate(['key' => 'home_brands_enabled'], ['value' => $enabled ? '1' : '0']);
-        Setting::updateOrCreate(['key' => 'home_brands_title'], ['value' => $title]);
+        if ($request->has('home_brands_title')) {
+            Setting::updateOrCreate(['key' => 'home_brands_title'], ['value' => $request->input('home_brands_title')]);
+        }
+
+        if ($request->has('home_promos_enabled')) {
+            $enabled = $request->boolean('home_promos_enabled');
+            Setting::updateOrCreate(['key' => 'home_promos_enabled'], ['value' => $enabled ? '1' : '0']);
+        }
+
+        if ($request->has('home_promos_title')) {
+            Setting::updateOrCreate(['key' => 'home_promos_title'], ['value' => $request->input('home_promos_title')]);
+        }
 
         return response()->json([
             'success' => true,
-            'enabled' => $enabled,
-            'title' => $title,
-            'message' => $enabled ? 'Sección de Marcas & Anuncios activada en la Home.' : 'Sección de Marcas & Anuncios desactivada en la Home.',
+            'message' => 'Configuración de la sección guardada correctamente.',
         ]);
     }
 

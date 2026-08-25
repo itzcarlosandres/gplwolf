@@ -134,6 +134,13 @@ class HomeController extends Controller
             ->get();
 
         $brands = \App\Models\Brand::where('is_active', true)
+            ->where('is_promo', false)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $promos = \App\Models\Brand::where('is_active', true)
+            ->where('is_promo', true)
             ->orderBy('sort_order', 'asc')
             ->orderBy('name', 'asc')
             ->get();
@@ -150,11 +157,15 @@ class HomeController extends Controller
         $homeBrandsEnabled = ($homeBrandsEnabled === null || $homeBrandsEnabled === '1' || $homeBrandsEnabled === 'true' || $homeBrandsEnabled === true);
         $homeBrandsTitle = \App\Models\Setting::where('key', 'home_brands_title')->value('value') ?: 'Marcas de Confianza';
 
+        $homePromosEnabled = \App\Models\Setting::where('key', 'home_promos_enabled')->value('value');
+        $homePromosEnabled = ($homePromosEnabled === null || $homePromosEnabled === '1' || $homePromosEnabled === 'true' || $homePromosEnabled === true);
+        $homePromosTitle = \App\Models\Setting::where('key', 'home_promos_title')->value('value') ?: 'Ofertas & Promociones';
+
         return view('home', compact(
-            'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands',
+            'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands', 'promos',
             'settings', 'productsCount', 'usersCount',
             'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes',
-            'templateKits', 'otherResources', 'homeBrandsEnabled', 'homeBrandsTitle'
+            'templateKits', 'otherResources', 'homeBrandsEnabled', 'homeBrandsTitle', 'homePromosEnabled', 'homePromosTitle'
         ));
     }
 
