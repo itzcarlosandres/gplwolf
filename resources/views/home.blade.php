@@ -21,34 +21,76 @@
             @includeIf('partials.heroes.aurora')
         @endif
 
-        <!-- Trusted Brands Slider -->
+        <!-- Trusted Brands & Promos Slider -->
+        @if($homeBrandsEnabled && $brands->count() > 0)
         <section class="relative py-12 md:py-16 bg-[#0a0a0a] border-b border-white/[0.04] overflow-hidden">
             <!-- Sliding Neon Line divider -->
             <div class="absolute top-0 left-0 w-full h-px animated-line"></div>
             <div class="max-w-7xl mx-auto px-6 mb-8">
-                <p class="text-center text-xs font-black text-gray-500 uppercase tracking-[0.2em]">Marcas de Confianza</p>
+                <p class="text-center text-xs font-black text-gray-500 uppercase tracking-[0.2em]">{{ $homeBrandsTitle ?? 'Marcas de Confianza' }}</p>
             </div>
             
             <div class="relative">
                 <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
                 <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
                 
-                <div class="flex items-center gap-12 brands-marquee">
+                <div class="flex items-center gap-8 brands-marquee">
                     @foreach([$brands, $brands] as $brandGroup)
-                        <div class="flex items-center gap-12 shrink-0" {{ $loop->index === 1 ? 'aria-hidden="true"' : '' }}>
+                        <div class="flex items-center gap-8 shrink-0" {{ $loop->index === 1 ? 'aria-hidden="true"' : '' }}>
                             @foreach($brandGroup as $brand)
-                                <div class="flex items-center gap-3 px-6 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl shrink-0 hover:bg-white/[0.06] transition-colors">
-                                    <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                                        <i class="{{ $brand->icon ?? 'fas fa-cube' }} text-gray-400 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-gray-300 whitespace-nowrap">{{ $brand->name }}</span>
-                                </div>
+                                @if($brand->is_promo)
+                                    <!-- Promo / Ad Item -->
+                                    <a href="{{ $brand->link_url ?: route('membership.claim-trial') }}" 
+                                       class="flex items-center gap-3 px-5 py-2.5 rounded-xl shrink-0 transition-all duration-300 transform hover:scale-105 shadow-lg group/promo
+                                       @if($brand->highlight_color === 'red')
+                                           bg-gradient-to-r from-red-600/20 to-pink-600/10 border border-red-500/40 text-red-300 shadow-red-500/10 hover:border-red-400
+                                       @elseif($brand->highlight_color === 'emerald')
+                                           bg-gradient-to-r from-emerald-600/20 to-teal-600/10 border border-emerald-500/40 text-emerald-300 shadow-emerald-500/10 hover:border-emerald-400
+                                       @elseif($brand->highlight_color === 'blue')
+                                           bg-gradient-to-r from-blue-600/20 to-indigo-600/10 border border-blue-500/40 text-blue-300 shadow-blue-500/10 hover:border-blue-400
+                                       @elseif($brand->highlight_color === 'purple')
+                                           bg-gradient-to-r from-purple-600/20 to-pink-600/10 border border-purple-500/40 text-purple-300 shadow-purple-500/10 hover:border-purple-400
+                                       @else
+                                           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-300 shadow-amber-500/10 hover:border-amber-400
+                                       @endif">
+                                        <div class="w-8 h-8 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-sm group-hover/promo:rotate-12 transition-transform">
+                                            <i class="{{ $brand->icon ?? 'fas fa-bolt' }}"></i>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm font-black whitespace-nowrap">{{ $brand->name }}</span>
+                                            @if($brand->badge_text)
+                                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-sm animate-pulse">
+                                                    {{ $brand->badge_text }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <i class="fas fa-arrow-right text-[10px] opacity-70 group-hover/promo:translate-x-1 transition-transform"></i>
+                                    </a>
+                                @else
+                                    <!-- Standard Brand Item -->
+                                    @if($brand->link_url)
+                                        <a href="{{ $brand->link_url }}" class="flex items-center gap-3 px-6 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl shrink-0 hover:bg-white/[0.08] hover:border-white/20 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                                <i class="{{ $brand->icon ?? 'fas fa-cube' }} text-gray-400 text-sm"></i>
+                                            </div>
+                                            <span class="text-sm font-bold text-gray-300 whitespace-nowrap">{{ $brand->name }}</span>
+                                        </a>
+                                    @else
+                                        <div class="flex items-center gap-3 px-6 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl shrink-0 hover:bg-white/[0.06] transition-colors">
+                                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                                                <i class="{{ $brand->icon ?? 'fas fa-cube' }} text-gray-400 text-sm"></i>
+                                            </div>
+                                            <span class="text-sm font-bold text-gray-300 whitespace-nowrap">{{ $brand->name }}</span>
+                                        </div>
+                                    @endif
+                                @endif
                             @endforeach
                         </div>
                     @endforeach
                 </div>
             </div>
         </section>
+        @endif
 
         <!-- Products Section -->
         <section id="productos" class="pt-12 md:pt-16 pb-20 md:pb-24 bg-[#0a0a0a]">

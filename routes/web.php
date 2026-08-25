@@ -175,8 +175,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/update-requests/{updateRequest}/complete', [App\Http\Controllers\Admin\UpdateRequestController::class, 'complete'])->name('update-requests.complete');
     Route::delete('/update-requests/{updateRequest}', [App\Http\Controllers\Admin\UpdateRequestController::class, 'destroy'])->name('update-requests.destroy');
     
-    // Categories Management
-    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+    // Brands & Promos Management
+    Route::post('brands/reorder', [BrandController::class, 'reorder'])->name('brands.reorder');
+    Route::post('brands/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('brands.toggle-status');
+    Route::post('brands/settings', [BrandController::class, 'updateSettings'])->name('brands.settings');
     Route::resource('brands', BrandController::class);
     
     // Membership Plans Management

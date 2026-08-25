@@ -146,11 +146,15 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        $homeBrandsEnabled = \App\Models\Setting::where('key', 'home_brands_enabled')->value('value');
+        $homeBrandsEnabled = ($homeBrandsEnabled === null || $homeBrandsEnabled === '1' || $homeBrandsEnabled === 'true' || $homeBrandsEnabled === true);
+        $homeBrandsTitle = \App\Models\Setting::where('key', 'home_brands_title')->value('value') ?: 'Marcas de Confianza';
+
         return view('home', compact(
             'products', 'bestSellers', 'popularProducts', 'plans', 'categories', 'brands',
             'settings', 'productsCount', 'usersCount',
             'latestUpdates', 'homeProductsStyle', 'homeGridColumns', 'latestPlugins', 'latestThemes',
-            'templateKits', 'otherResources'
+            'templateKits', 'otherResources', 'homeBrandsEnabled', 'homeBrandsTitle'
         ));
     }
 
