@@ -266,13 +266,13 @@ class BlogController extends Controller
             return response()->json([
                 'success' => true,
                 'content' => $content,
-            ]);
+            ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error generando contenido: ' . $e->getMessage(),
-            ], 500);
+            ], 500, [], JSON_UNESCAPED_UNICODE);
         }
     }
 }

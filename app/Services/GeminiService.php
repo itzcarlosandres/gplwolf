@@ -62,6 +62,17 @@ class GeminiService
         ];
     }
     
+    /**
+     * Ensure string is clean and valid UTF-8
+     */
+    public function cleanUtf8(?string $string): string
+    {
+        if ($string === null || $string === '') {
+            return '';
+        }
+        return mb_convert_encoding($string, 'UTF-8', 'UTF-8');
+    }
+
     protected function parseResponse($response) {
         if ($response->successful()) {
             $data = $response->json();
@@ -70,15 +81,15 @@ class GeminiService
             $text = trim($text);
             
             // Extract content from markdown code block if present
-            if (preg_match('/```[a-z]*\s*(.*?)\s*```/is', $text, $matches)) {
+            if (preg_match('/```[a-z]*\s*(.*?)\s*```/isu', $text, $matches)) {
                 $text = trim($matches[1]);
             } else {
-                $text = preg_replace('/^```[a-z]*\s*/i', '', $text);
-                $text = preg_replace('/\s*```$/i', '', $text);
+                $text = preg_replace('/^```[a-z]*\s*/iu', '', $text);
+                $text = preg_replace('/\s*```$/iu', '', $text);
             }
             
-            // Trim standard and curly quotes that AI often wraps output in
-            $text = trim($text, "\"'“”«»");
+            // UTF-8 safe trimming of quotes and whitespace (do not use single-byte trim() with multi-byte chars)
+            $text = preg_replace('/^[\s"\'“”«»`]+|[\s"\'“”«»`]+$/u', '', $text);
             
             // Fix double-encoded or encoded HTML entities (e.g. &lt;p&gt; -> <p>, &amp;oacute; -> ó)
             $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -88,18 +99,18 @@ class GeminiService
             $text = str_replace(['**', '__'], '', $text);
             
             // Remove markdown headers markers inside HTML if they leaked (e.g. <h2>## Title</h2>)
-            $text = preg_replace('/(<h[1-6]>)\s*#+\s*/i', '$1', $text);
-            $text = preg_replace('/\s*#+\s*(<\/h[1-6]>)/i', '$1', $text);
+            $text = preg_replace('/(<h[1-6]>)\s*#+\s*/iu', '$1', $text);
+            $text = preg_replace('/\s*#+\s*(<\/h[1-6]>)/iu', '$1', $text);
             
             // Remove markdown list bullet markers inside <li> if they leaked (e.g. <li>* Feature</li>)
-            $text = preg_replace('/<li>\s*[\*\-\•]\s*/i', '<li>', $text);
+            $text = preg_replace('/<li>\s*[*•\-]\s*/u', '<li>', $text);
 
-            // Extract only the HTML content block if HTML tags are present
-            if (stripos($text, '<p') !== false || stripos($text, '<h2') !== false || stripos($text, '<ul') !== false) {
+            // Extract only the HTML content block if HTML tags are present (using multibyte safe functions)
+            if (mb_stripos($text, '<p') !== false || mb_stripos($text, '<h2') !== false || mb_stripos($text, '<ul') !== false) {
                 $firstTagPos = false;
                 $tags = ['<p', '<h2', '<div', '<ul'];
                 foreach ($tags as $tag) {
-                    $pos = stripos($text, $tag);
+                    $pos = mb_stripos($text, $tag);
                     if ($pos !== false && ($firstTagPos === false || $pos < $firstTagPos)) {
                         $firstTagPos = $pos;
                     }
@@ -108,9 +119,9 @@ class GeminiService
                 $lastTagPos = false;
                 $closingTags = ['</p>', '</h2>', '</h3>', '</ul>', '</ol>', '</blockquote>', '</div>'];
                 foreach ($closingTags as $tag) {
-                    $pos = strripos($text, $tag);
+                    $pos = mb_strripos($text, $tag);
                     if ($pos !== false) {
-                        $tagEnd = $pos + strlen($tag);
+                        $tagEnd = $pos + mb_strlen($tag);
                         if ($lastTagPos === false || $tagEnd > $lastTagPos) {
                             $lastTagPos = $tagEnd;
                         }
@@ -118,11 +129,14 @@ class GeminiService
                 }
                 
                 if ($firstTagPos !== false && $lastTagPos !== false && $lastTagPos > $firstTagPos) {
-                    $text = substr($text, $firstTagPos, $lastTagPos - $firstTagPos);
+                    $text = mb_substr($text, $firstTagPos, $lastTagPos - $firstTagPos);
                 }
             }
             
-            return trim($text);
+            $text = trim($text);
+            $text = preg_replace('/^[\s"\'“”«»`]+|[\s"\'“”«»`]+$/u', '', $text);
+
+            return $this->cleanUtf8($text);
         }
 
         $errorMsg = 'API Error';
@@ -377,18 +391,18 @@ REGLAS ESTRICTAS DE FORMATO — devuelve ÚNICAMENTE HTML sin bloques de código
         $tagsResponse     = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($tagsPrompt, 80));
         $categoryResponse = Http::timeout(60)->retry(2, 1000)->withoutVerifying()->post($this->apiUrl . '?key=' . $this->apiKey, $this->buildPayload($categoryPrompt, 20));
 
-        $title    = trim($this->parseResponse($titleResponse));
-        $excerpt  = trim($this->parseResponse($excerptResponse));
-        $body     = trim($this->parseResponse($bodyResponse));
-        $metaDesc = trim($this->parseResponse($metaDescResponse));
-        $tagsRaw  = trim($this->parseResponse($tagsResponse));
-        $category = trim($this->parseResponse($categoryResponse));
+        $title    = $this->cleanUtf8(trim($this->parseResponse($titleResponse)));
+        $excerpt  = $this->cleanUtf8(trim($this->parseResponse($excerptResponse)));
+        $body     = $this->cleanUtf8(trim($this->parseResponse($bodyResponse)));
+        $metaDesc = $this->cleanUtf8(trim($this->parseResponse($metaDescResponse)));
+        $tagsRaw  = $this->cleanUtf8(trim($this->parseResponse($tagsResponse)));
+        $category = $this->cleanUtf8(trim($this->parseResponse($categoryResponse)));
 
         // Clean possible markdown code fences from body
-        $body = preg_replace('/^```html?\s*/i', '', $body);
-        $body = preg_replace('/```\s*$/', '', $body);
+        $body = preg_replace('/^```html?\s*/iu', '', $body);
+        $body = preg_replace('/```\s*$/u', '', $body);
 
-        $tags = array_map('trim', explode(',', $tagsRaw));
+        $tags = array_values(array_filter(array_map([$this, 'cleanUtf8'], array_map('trim', explode(',', $tagsRaw)))));
 
         return [
             'title'             => $title ?: $topic,

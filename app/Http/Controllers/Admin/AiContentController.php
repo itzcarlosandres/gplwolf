@@ -44,13 +44,13 @@ class AiContentController extends Controller
                 'success' => true,
                 'content' => $content,
                 'seo_score' => $seoScore,
-            ]);
+            ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar contenido: ' . $e->getMessage()
-            ], 500);
+            ], 500, [], JSON_UNESCAPED_UNICODE);
         }
     }
 
