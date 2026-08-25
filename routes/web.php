@@ -61,6 +61,7 @@ Route::get('/hero-demos', function() {
 
 // Static Info Pages
 Route::get('/membresias', [\App\Http\Controllers\MembershipController::class, 'pricing'])->name('membership.pricing');
+Route::match(['get', 'post'], '/membresias/prueba-gratis', [\App\Http\Controllers\MembershipController::class, 'claimTrial'])->name('membership.claim-trial');
 Route::get('/licencias', [FrontendProductController::class, 'licenses'])->name('products.licenses');
 Route::view('/plugin-oficial', 'pages.plugin-info')->name('pages.plugin');
 Route::get('/plugin-oficial/descargar', [\App\Http\Controllers\HomeController::class, 'downloadPlugin'])->name('pages.plugin.download');

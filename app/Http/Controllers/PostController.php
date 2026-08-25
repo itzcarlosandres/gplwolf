@@ -57,6 +57,71 @@ class PostController extends Controller
 
         $related = $post->related(3);
 
-        return view('blog.show', compact('post', 'related'));
+        // Intelligent Product Matching for Lead Capture Widget
+        $recommendedProduct = $this->findMatchingProduct($post);
+
+        // Fetch 7-day Trial Plan
+        $trialPlan = \App\Models\MembershipPlan::where('is_active', true)
+            ->where(function ($q) {
+                $q->where('slug', 'prueba-7-dias')
+                  ->orWhere('duration', 'trial');
+            })
+            ->first();
+
+        return view('blog.show', compact('post', 'related', 'recommendedProduct', 'trialPlan'));
+    }
+
+    /**
+     * Find best matching product from catalogue based on post content/category/tags
+     */
+    protected function findMatchingProduct(Post $post): ?\App\Models\Product
+    {
+        $keywords = [];
+
+        // Add tags
+        if (!empty($post->tags_list)) {
+            $keywords = array_merge($keywords, $post->tags_list);
+        }
+
+        // Add category
+        if ($post->category) {
+            $keywords[] = $post->category;
+        }
+
+        // Extract meaningful words from title
+        $titleWords = preg_split('/[\s\-_,.:;!?()"\']+/u', $post->title);
+        $stopWords = ['para', 'como', 'tutorial', 'guia', 'guía', 'mejores', 'top', 'que', 'con', 'sin', 'los', 'las', 'por', 'del', 'the', 'and', 'how', 'tips', 'paso', 'crear', 'usar', 'sitio', 'web', 'wordpress', 'plugin', 'tema', 'theme'];
+        foreach ($titleWords as $word) {
+            $w = mb_strtolower(trim($word));
+            if (mb_strlen($w) >= 3 && !in_array($w, $stopWords)) {
+                $keywords[] = $w;
+            }
+        }
+
+        $keywords = array_unique(array_filter($keywords));
+
+        if (!empty($keywords)) {
+            $matched = \App\Models\Product::where('is_active', true)
+                ->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $kw) {
+                        $q->orWhere('name', 'like', "%{$kw}%")
+                          ->orWhere('slug', 'like', "%{$kw}%")
+                          ->orWhere('description', 'like', "%{$kw}%");
+                    }
+                })
+                ->orderBy('downloads_count', 'desc')
+                ->first();
+
+            if ($matched) {
+                return $matched;
+            }
+        }
+
+        // Fallback: Popular or Featured Product
+        return \App\Models\Product::where('is_active', true)
+            ->where('is_popular', true)
+            ->inRandomOrder()
+            ->first()
+            ?: \App\Models\Product::where('is_active', true)->orderBy('downloads_count', 'desc')->first();
     }
 }

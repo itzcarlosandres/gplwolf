@@ -46,10 +46,11 @@
             @forelse($plans as $plan)
                 @php
                     $isFeatured = $plan->is_featured;
+                    $isTrial = $plan->duration === 'trial' || $plan->slug === 'prueba-7-dias';
                     
                     // Calculamos precios
                     $originalPrice = (float) $plan->price;
-                    $discountedPrice = round($originalPrice * 0.90, 2);
+                    $discountedPrice = $isTrial ? $originalPrice : round($originalPrice * 0.90, 2);
                     
                     // Si el plan es anual simulamos el ahorro
                     $billingType = $plan->duration; // 'monthly', 'yearly', etc.
@@ -58,19 +59,23 @@
 
                 <!-- Pricing Card -->
                 <div class="relative bg-gradient-to-b from-white/[0.04] to-transparent border rounded-[36px] p-8 flex flex-col justify-between transition-all duration-500 transform hover:-translate-y-2 group
-                    {{ $isFeatured ? 'border-red-500/40 shadow-2xl shadow-red-500/10' : 'border-white/[0.06] hover:border-white/20' }}">
+                    {{ $isFeatured ? 'border-red-500/40 shadow-2xl shadow-red-500/10' : ($isTrial ? 'border-amber-500/30 hover:border-amber-500/60 shadow-lg shadow-amber-500/5' : 'border-white/[0.06] hover:border-white/20') }}">
 
-                    <!-- Popular Ribbon -->
+                    <!-- Ribbon -->
                     @if($isFeatured)
                         <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gradient-to-r from-red-600 to-amber-500 text-white text-[10px] font-black uppercase px-5 py-1.5 rounded-full tracking-widest shadow-lg border border-red-500/30 animate-[pulse_2s_infinite]">
                             ★ MÁS RECOMENDADO ★
+                        </div>
+                    @elseif($isTrial)
+                        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gradient-to-r from-amber-500 to-yellow-400 text-black text-[10px] font-black uppercase px-5 py-1.5 rounded-full tracking-widest shadow-lg border border-amber-400/40">
+                            ⚡ PRUEBA DE 7 DÍAS ⚡
                         </div>
                     @endif
 
                     <div>
                         <!-- Plan Name & Description -->
                         <div class="mb-8">
-                            <span class="text-xs font-black uppercase tracking-widest {{ $isFeatured ? 'text-red-500' : 'text-gray-500' }}">
+                            <span class="text-xs font-black uppercase tracking-widest {{ $isFeatured ? 'text-red-500' : ($isTrial ? 'text-amber-400' : 'text-gray-500') }}">
                                 {{ $plan->name }}
                             </span>
                             <p class="text-gray-400 text-xs mt-1">{{ $plan->description ?? 'Acceso a los mejores recursos.' }}</p>
@@ -78,22 +83,32 @@
 
                         <!-- Price Section -->
                         <div class="mb-8 p-6 bg-white/[0.02] border border-white/[0.04] rounded-2xl relative overflow-hidden">
-                            <!-- Discount Slash Effect -->
-                            <div class="absolute top-2 right-4 text-xs font-semibold text-gray-500 line-through">
-                                ${{ number_format($originalPrice, 2) }}
-                            </div>
+                            @if(!$isTrial)
+                                <!-- Discount Slash Effect -->
+                                <div class="absolute top-2 right-4 text-xs font-semibold text-gray-500 line-through">
+                                    ${{ number_format($originalPrice, 2) }}
+                                </div>
+                            @endif
                             
                             <div class="flex items-baseline gap-1">
                                 <span class="text-5xl font-black tracking-tight text-white">
-                                    ${{ number_format($discountedPrice, 2) }}
+                                    @if($isTrial && $originalPrice == 0)
+                                        $0
+                                    @else
+                                        ${{ number_format($discountedPrice, 2) }}
+                                    @endif
                                 </span>
                                 <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">
-                                    / @if($plan->duration === 'monthly') mes @elseif($plan->duration === 'yearly') año @else unico @endif
+                                    / @if($isTrial) 7 días @elseif($plan->duration === 'monthly') mes @elseif($plan->duration === 'yearly') año @else único @endif
                                 </span>
                             </div>
                             
                             <div class="text-[10px] text-emerald-400 font-black uppercase tracking-wider mt-2 flex items-center gap-1">
-                                <i class="fas fa-check-circle"></i> ¡Ahorras ${{ number_format($originalPrice - $discountedPrice, 2) }} hoy!
+                                @if($isTrial)
+                                    <i class="fas fa-bolt text-amber-400"></i> ¡3 descargas diarias por 7 días!
+                                @else
+                                    <i class="fas fa-check-circle"></i> ¡Ahorras ${{ number_format($originalPrice - $discountedPrice, 2) }} hoy!
+                                @endif
                             </div>
                         </div>
 
@@ -143,20 +158,28 @@
                         </div>
                     </div>
 
-                    <!-- Buy CTA Form -->
-                    <form action="{{ route('membership.add', $plan) }}?offer=1" method="POST" class="mt-4">
-                        @csrf
-                        <input type="hidden" name="offer" value="1">
-                        <button type="submit" class="w-full relative group py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider text-white shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]
-                            {{ $isFeatured 
-                                ? 'bg-gradient-to-r from-red-600 to-amber-500 shadow-red-500/20' 
-                                : 'bg-white/5 border border-white/10 hover:bg-white/10' }}">
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                            <span class="flex items-center justify-center gap-2">
-                                Activar Ahora <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
-                            </span>
-                        </button>
-                    </form>
+                    <!-- Buy / Claim CTA Form -->
+                    @if($isTrial && $originalPrice == 0)
+                        <a href="{{ route('membership.claim-trial') }}" class="w-full relative group py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider text-black shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] bg-gradient-to-r from-amber-400 to-yellow-400 shadow-amber-500/20 flex items-center justify-center gap-2">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                            <span>Probar 7 Días Gratis</span>
+                            <i class="fas fa-bolt text-xs"></i>
+                        </a>
+                    @else
+                        <form action="{{ route('membership.add', $plan) }}?offer=1" method="POST" class="mt-4">
+                            @csrf
+                            <input type="hidden" name="offer" value="1">
+                            <button type="submit" class="w-full relative group py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider text-white shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]
+                                {{ $isFeatured 
+                                    ? 'bg-gradient-to-r from-red-600 to-amber-500 shadow-red-500/20' 
+                                    : 'bg-white/5 border border-white/10 hover:bg-white/10' }}">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                                <span class="flex items-center justify-center gap-2">
+                                    Activar Ahora <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                            </button>
+                        </form>
+                    @endif
                 </div>
             @empty
                 <div class="col-span-3 text-center py-20 text-gray-500 italic">No hay planes de membresía activos disponibles en este momento.</div>

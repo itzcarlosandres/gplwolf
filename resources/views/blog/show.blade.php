@@ -129,6 +129,83 @@
                 {!! $post->body !!}
             </article>
 
+            {{-- ══ AUTOMATIC RECOMMENDED PRODUCT WIDGET ════════════════════ --}}
+            @if($recommendedProduct)
+                <div class="mt-12 p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-white/[0.04] via-[#141414] to-white/[0.02] border border-red-500/25 shadow-2xl shadow-red-600/10 relative overflow-hidden group">
+                    {{-- Decorative gradient background glow --}}
+                    <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-red-600/15 transition-all duration-700"></div>
+
+                    {{-- Top badge --}}
+                    <div class="flex items-center justify-between gap-3 mb-5 flex-wrap">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-[10px] font-black uppercase text-red-400 tracking-wider">
+                            <i class="fas fa-fire-alt animate-pulse"></i> Recurso Recomendado para este Artículo
+                        </span>
+                        <span class="text-[11px] font-bold text-gray-500 flex items-center gap-1">
+                            <i class="fas fa-shield-alt text-emerald-400"></i> Licencia GPL 100% Segura
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-6 items-center">
+                        {{-- Product Thumbnail --}}
+                        <a href="{{ route('products.show', $recommendedProduct->slug) }}" class="block aspect-square rounded-2xl overflow-hidden bg-black/40 border border-white/10 relative group/img shrink-0">
+                            @if($recommendedProduct->thumbnail)
+                                <img src="{{ \Illuminate\Support\Str::startsWith($recommendedProduct->thumbnail, ['ui/', 'http']) ? asset($recommendedProduct->thumbnail) : asset('storage/' . $recommendedProduct->thumbnail) }}" 
+                                     alt="{{ $recommendedProduct->name }}" 
+                                     class="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex flex-col items-center justify-center text-gray-600">
+                                    <i class="fas fa-plug text-3xl mb-1 text-red-500/60"></i>
+                                    <span class="text-[9px] font-bold uppercase">GPL Plugin</span>
+                                </div>
+                            @endif
+                            <div class="absolute top-2 left-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[9px] font-bold text-white border border-white/10">
+                                v{{ $recommendedProduct->version ?? 'Latest' }}
+                            </div>
+                        </a>
+
+                        {{-- Product Info & CTAs --}}
+                        <div>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <div class="flex text-amber-400 text-xs">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-[11px] text-gray-400 font-semibold">(4.9/5 · {{ $recommendedProduct->downloads_count ?? 120 }}+ descargas)</span>
+                            </div>
+
+                            <a href="{{ route('products.show', $recommendedProduct->slug) }}" class="text-lg font-black text-white hover:text-red-400 transition-colors line-clamp-1">
+                                {{ $recommendedProduct->name }}
+                            </a>
+
+                            <p class="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+                                {{ $recommendedProduct->description ?: 'Descarga la última versión de este complemento oficial con actualizaciones constantes y soporte para dominios ilimitados.' }}
+                            </p>
+
+                            <div class="mt-4 flex items-center justify-between flex-wrap gap-4 pt-3 border-t border-white/[0.06]">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xs text-gray-500 line-through">${{ number_format($recommendedProduct->price ?: 49, 2) }}</span>
+                                    <span class="text-base font-black text-emerald-400">GRATIS con Membresía</span>
+                                </div>
+
+                                <div class="flex items-center gap-2.5 flex-wrap">
+                                    <a href="{{ route('membership.claim-trial') }}" 
+                                       class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5">
+                                        <i class="fas fa-bolt text-yellow-300"></i> Descargar con Prueba 7 Días
+                                    </a>
+                                    <a href="{{ route('products.show', $recommendedProduct->slug) }}" 
+                                       class="px-3.5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-gray-300 hover:text-white font-bold text-xs border border-white/10 transition-all">
+                                        Ver Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Tags --}}
             @if($post->tags_list)
                 <div class="mt-10 pt-8 border-t border-white/[0.06]">
@@ -177,6 +254,49 @@
 
         {{-- ── Sidebar ── --}}
         <aside class="hidden lg:block sticky top-20 space-y-4">
+
+            {{-- ══ STICKY LEAD CAPTURE TRIAL CARD ════════════════════════ --}}
+            <div class="relative bg-gradient-to-b from-[#191111] via-[#111111] to-[#0d0d0d] border border-amber-500/30 rounded-2xl p-5 shadow-2xl shadow-amber-500/5 overflow-hidden group">
+                <div class="absolute -top-10 -right-10 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-[9px] font-black uppercase text-amber-400 tracking-wider mb-3">
+                    <i class="fas fa-gift text-yellow-300"></i> Oferta Especial
+                </div>
+
+                <h3 class="text-sm font-black text-white leading-snug">
+                    ¿Quieres este y +5,000 plugins?
+                </h3>
+                <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                    Activa tu <span class="text-amber-400 font-bold">Prueba de 7 Días</span> y obtén 3 descargas diarias de inmediato.
+                </p>
+
+                <div class="space-y-2 my-4 text-[11px] text-gray-300">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                        <span>3 descargas diarias</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                        <span>Sin compromiso de permanencia</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                        <span>Actualizaciones directas</span>
+                    </div>
+                </div>
+
+                <a href="{{ route('membership.claim-trial') }}" 
+                   class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95">
+                    <span>Probar 7 Días Gratis</span>
+                    <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+
+                <div class="text-center mt-2.5">
+                    <a href="{{ route('membership.pricing') }}" class="text-[10px] text-gray-500 hover:text-gray-400 underline">
+                        Ver todos los planes de membresía
+                    </a>
+                </div>
+            </div>
 
             {{-- Table of Contents --}}
             <div class="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-5" x-show="toc.length > 0">
@@ -234,6 +354,35 @@
             </a>
         </aside>
 
+    </div>
+</section>
+
+{{-- ══ BOTTOM ARTICLE LEAD MAGNET CONVERSION BANNER ════════════════════════ --}}
+<section class="bg-gradient-to-b from-[#0a0a0a] via-[#110b0b] to-[#0a0a0a] border-t border-white/[0.06] py-16 relative overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-red-600/10 via-amber-500/10 to-red-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-4xl mx-auto px-6 text-center relative">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-black uppercase text-red-500 tracking-widest mb-4">
+            🚀 Potencia tus proyectos
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
+            Descarga Más de 5,000 Plugins y Temas con la <br class="hidden sm:inline">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">Membresía de Prueba de 7 Días</span>
+        </h2>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+            Obtén 3 descargas por día durante 7 días, actualizaciones oficiales y archivos 100% limpios sin compromisos.
+        </p>
+
+        <div class="flex items-center justify-center gap-4 flex-wrap">
+            <a href="{{ route('membership.claim-trial') }}" 
+               class="px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-black text-sm uppercase tracking-wider shadow-2xl shadow-red-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                <i class="fas fa-bolt text-yellow-300"></i> Comenzar Prueba Gratis (7 Días)
+            </a>
+            <a href="{{ route('membership.pricing') }}" 
+               class="px-6 py-4 rounded-2xl bg-white/[0.05] hover:bg-white/10 text-white font-bold text-sm border border-white/10 transition-all">
+                Ver Planes Pro y Anual
+            </a>
+        </div>
     </div>
 </section>
 
