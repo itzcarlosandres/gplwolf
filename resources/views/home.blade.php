@@ -23,46 +23,78 @@
 
         <!-- ══ 1. PROMO ADS BAR (INDEPENDENT) ══════════════════════════════ -->
         @if($homePromosEnabled && $promos->count() > 0)
-        <section class="relative py-4 bg-gradient-to-r from-[#140e0e] via-[#0d0d0d] to-[#140e0e] border-b border-amber-500/20 overflow-hidden shadow-lg">
-            <div class="relative">
-                <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0d0d0d] to-transparent z-10 pointer-events-none"></div>
-                <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0d0d0d] to-transparent z-10 pointer-events-none"></div>
-                
-                <div class="flex items-center gap-6 brands-marquee">
-                    @foreach([$promos, $promos] as $promoGroup)
-                        <div class="flex items-center gap-6 shrink-0" {{ $loop->index === 1 ? 'aria-hidden="true"' : '' }}>
-                            @foreach($promoGroup as $promo)
-                                <a href="{{ $promo->link_url ?: route('membership.claim-trial') }}" 
-                                   class="flex items-center gap-3 px-5 py-2.5 rounded-xl shrink-0 transition-all duration-300 transform hover:scale-105 shadow-md group/promo
-                                   @if($promo->highlight_color === 'red')
-                                       bg-gradient-to-r from-red-600/20 to-pink-600/10 border border-red-500/40 text-red-300 shadow-red-500/10 hover:border-red-400
-                                   @elseif($promo->highlight_color === 'emerald')
-                                       bg-gradient-to-r from-emerald-600/20 to-teal-600/10 border border-emerald-500/40 text-emerald-300 shadow-emerald-500/10 hover:border-emerald-400
-                                   @elseif($promo->highlight_color === 'blue')
-                                       bg-gradient-to-r from-blue-600/20 to-indigo-600/10 border border-blue-500/40 text-blue-300 shadow-blue-500/10 hover:border-blue-400
-                                   @elseif($promo->highlight_color === 'purple')
-                                       bg-gradient-to-r from-purple-600/20 to-pink-600/10 border border-purple-500/40 text-purple-300 shadow-purple-500/10 hover:border-purple-400
-                                   @else
-                                       bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-300 shadow-amber-500/10 hover:border-amber-400
-                                   @endif">
-                                    <div class="w-7 h-7 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-xs group-hover/promo:rotate-12 transition-transform">
-                                        <i class="{{ $promo->icon ?? 'fas fa-bolt' }}"></i>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs sm:text-sm font-black whitespace-nowrap">{{ $promo->name }}</span>
-                                        @if($promo->badge_text)
-                                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-sm animate-pulse">
-                                                {{ $promo->badge_text }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <i class="fas fa-arrow-right text-[10px] opacity-70 group-hover/promo:translate-x-1 transition-transform"></i>
-                                </a>
-                            @endforeach
+        <section class="relative py-3.5 bg-gradient-to-r from-[#140e0e] via-[#0d0d0d] to-[#140e0e] border-b border-amber-500/20 overflow-hidden shadow-lg">
+            @if($promos->count() === 1)
+                @php $promo = $promos->first(); @endphp
+                <div class="max-w-7xl mx-auto px-6 flex items-center justify-center">
+                    <a href="{{ $promo->link_url ?: route('membership.claim-trial') }}" 
+                       class="inline-flex items-center gap-3 px-5 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md group/promo
+                       @if($promo->highlight_color === 'red')
+                           bg-gradient-to-r from-red-600/20 to-pink-600/10 border border-red-500/40 text-red-300 shadow-red-500/10 hover:border-red-400
+                       @elseif($promo->highlight_color === 'emerald')
+                           bg-gradient-to-r from-emerald-600/20 to-teal-600/10 border border-emerald-500/40 text-emerald-300 shadow-emerald-500/10 hover:border-emerald-400
+                       @elseif($promo->highlight_color === 'blue')
+                           bg-gradient-to-r from-blue-600/20 to-indigo-600/10 border border-blue-500/40 text-blue-300 shadow-blue-500/10 hover:border-blue-400
+                       @elseif($promo->highlight_color === 'purple')
+                           bg-gradient-to-r from-purple-600/20 to-pink-600/10 border border-purple-500/40 text-purple-300 shadow-purple-500/10 hover:border-purple-400
+                       @else
+                           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-300 shadow-amber-500/10 hover:border-amber-400
+                       @endif">
+                        <div class="w-6 h-6 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-xs group-hover/promo:rotate-12 transition-transform">
+                            <i class="{{ $promo->icon ?? 'fas fa-bolt' }}"></i>
                         </div>
-                    @endforeach
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs sm:text-sm font-black">{{ $promo->name }}</span>
+                            @if($promo->badge_text)
+                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-sm animate-pulse">
+                                    {{ $promo->badge_text }}
+                                </span>
+                            @endif
+                        </div>
+                        <i class="fas fa-arrow-right text-[10px] opacity-70 group-hover/promo:translate-x-1 transition-transform"></i>
+                    </a>
                 </div>
-            </div>
+            @else
+                <div class="relative">
+                    <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0d0d0d] to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0d0d0d] to-transparent z-10 pointer-events-none"></div>
+                    
+                    <div class="flex items-center gap-6 brands-marquee">
+                        @foreach([$promos, $promos] as $promoGroup)
+                            <div class="flex items-center gap-6 shrink-0" {{ $loop->index === 1 ? 'aria-hidden="true"' : '' }}>
+                                @foreach($promoGroup as $promo)
+                                    <a href="{{ $promo->link_url ?: route('membership.claim-trial') }}" 
+                                       class="flex items-center gap-3 px-5 py-2.5 rounded-xl shrink-0 transition-all duration-300 transform hover:scale-105 shadow-md group/promo
+                                       @if($promo->highlight_color === 'red')
+                                           bg-gradient-to-r from-red-600/20 to-pink-600/10 border border-red-500/40 text-red-300 shadow-red-500/10 hover:border-red-400
+                                       @elseif($promo->highlight_color === 'emerald')
+                                           bg-gradient-to-r from-emerald-600/20 to-teal-600/10 border border-emerald-500/40 text-emerald-300 shadow-emerald-500/10 hover:border-emerald-400
+                                       @elseif($promo->highlight_color === 'blue')
+                                           bg-gradient-to-r from-blue-600/20 to-indigo-600/10 border border-blue-500/40 text-blue-300 shadow-blue-500/10 hover:border-blue-400
+                                       @elseif($promo->highlight_color === 'purple')
+                                           bg-gradient-to-r from-purple-600/20 to-pink-600/10 border border-purple-500/40 text-purple-300 shadow-purple-500/10 hover:border-purple-400
+                                       @else
+                                           bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-300 shadow-amber-500/10 hover:border-amber-400
+                                       @endif">
+                                        <div class="w-7 h-7 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-xs group-hover/promo:rotate-12 transition-transform">
+                                            <i class="{{ $promo->icon ?? 'fas fa-bolt' }}"></i>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs sm:text-sm font-black whitespace-nowrap">{{ $promo->name }}</span>
+                                            @if($promo->badge_text)
+                                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-sm animate-pulse">
+                                                    {{ $promo->badge_text }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <i class="fas fa-arrow-right text-[10px] opacity-70 group-hover/promo:translate-x-1 transition-transform"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </section>
         @endif
 

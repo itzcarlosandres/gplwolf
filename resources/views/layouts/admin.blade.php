@@ -145,10 +145,10 @@
                     <a href="{{ route('admin.brands.index') }}" class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/5 group {{ request()->routeIs('admin.brands.*') ? 'active-link' : 'text-gray-400 hover:text-white' }}">
                         <i class="fas fa-bullhorn w-6 {{ request()->routeIs('admin.brands.*') ? 'text-amber-400' : 'group-hover:text-amber-400' }}"></i>
                         <span x-show="sidebarOpen" class="ml-3 font-medium flex items-center justify-between w-full">
-                            <span>Marcas & Anuncios</span>
+                            <span>Anuncios</span>
                             @php $activePromosCount = \App\Models\Brand::where('is_promo', true)->where('is_active', true)->count(); @endphp
                             @if($activePromosCount > 0)
-                                <span class="bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[9px] font-black px-1.5 py-0.5 rounded-full">{{ $activePromosCount }} promo</span>
+                                <span class="bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[9px] font-black px-1.5 py-0.5 rounded-full">{{ $activePromosCount }} activo</span>
                             @endif
                         </span>
                     </a>

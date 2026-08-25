@@ -42,7 +42,6 @@
         </p>
 
         <!-- ══ HORIZONTAL TRIAL BANNER (100% FREE - NO PAYMENT REQUIRED) ══ -->
-        @if($trialPlan)
         <div class="max-w-6xl mx-auto mb-14 text-left">
             <div class="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-[#1a1308] via-[#111111] to-[#1a1308] border border-amber-500/30 p-6 md:p-8 shadow-2xl shadow-amber-500/10 group">
                 <!-- Ambient Gold Glow -->
@@ -95,7 +94,6 @@
                 </div>
             </div>
         </div>
-        @endif
 
         <!-- Plans Grid Header -->
         <div class="mb-8">
